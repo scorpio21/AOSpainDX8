@@ -1,0 +1,35 @@
+Argentum Online - Licencia de Uso y Distribución
+-----------------------------------------------
+
+El código fuente de Argentum Online se distribuye de forma libre para su
+uso, estudio y modificación. Se permite la creación de servidores,
+clientes, herramientas y modificaciones basadas en este código siempre
+que se cumplan las siguientes condiciones:
+
+1. El presente aviso de licencia debe mantenerse en todas las copias,
+   modificaciones y distribuciones del código.
+
+2. No se permite la venta del código original ni de sus derivados.
+   El software debe permanecer gratuito para todos los usuarios.
+
+3. Se permite la creación de servidores privados, modificaciones y
+   adaptaciones del juego, siempre que no se cobre por el acceso al
+   cliente o al servidor.
+
+4. El autor original, Pablo Márquez, no se responsabiliza por daños,
+   pérdidas o perjuicios derivados del uso del código, ya sea en forma
+   original o modificada.
+
+5. El código se entrega “tal cual”, sin garantías de ningún tipo,
+   explícitas o implícitas.
+
+6. Los nombres “Argentum Online”, “AO” y sus logotipos son propiedad de
+   sus autores. Se permite su uso únicamente para proyectos derivados
+   gratuitos y no comerciales.
+
+7. Cualquier modificación sustancial del código debe indicar claramente
+   qué partes fueron alteradas y quién realizó dichas modificaciones.
+
+-----------------------------------------------
+Autor original: Pablo Márquez
+Año de publicación: 2003
