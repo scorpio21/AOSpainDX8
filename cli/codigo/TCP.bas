@@ -81,6 +81,8 @@ Sub HandleData(ByVal Rdata As String)
             IScombate = False
             UserDescansar = False
             Nombres = True
+            Unload frmCuent
+            If Not frmMain.Visible Then frmMain.Show
             If frmCrearPersonaje.Visible Then
                    Unload frmPasswd
                    Unload frmCrearPersonaje
@@ -105,7 +107,7 @@ Sub HandleData(ByVal Rdata As String)
             UserNavegando = Not UserNavegando
             Exit Sub
         Case "FINOK" ' Graceful exit ;))
-            frmMain.Socket1.Disconnect
+            If EstadoLogin <> LoginAccount Then frmMain.Socket1.Disconnect
             frmMain.Visible = False
             logged = False
             UserParalizado = False
@@ -114,7 +116,6 @@ Sub HandleData(ByVal Rdata As String)
             UserMeditar = False
             UserDescansar = False
             UserNavegando = False
-            frmConnect.Visible = True
             Call Sound.Sound_Stop_All
             Call Sound.Ambient_Stop
             bRain = False
@@ -127,6 +128,12 @@ Sub HandleData(ByVal Rdata As String)
             Next i
             bO = 0
             bK = 0
+            If EstadoLogin = LoginAccount Then
+                If frmConnect.Visible Then Unload frmConnect
+            Else
+                Load frmConnect
+                frmConnect.Visible = True
+            End If
             Exit Sub
         Case "FINCOMOK"          ' >>>>> Finaliza Comerciar :: FINCOMOK
             frmComerciar.List1(0).Clear
@@ -225,9 +232,14 @@ Sub HandleData(ByVal Rdata As String)
             Exit Sub
         Case "BORROK"
             Call MsgBox("El personaje ha sido borrado.", vbApplicationModal + vbDefaultButton1 + vbInformation + vbOKOnly, "Borrado de personaje")
-            frmBorrar.MousePointer = 0
-            frmMain.Socket1.Disconnect
-            Unload frmBorrar
+            If frmCuent.Visible Then
+                Call LimpiarPJsCuentas
+                If frmBorrar.Visible Then frmBorrar.MousePointer = 0: Unload frmBorrar
+            Else
+                frmBorrar.MousePointer = 0
+                frmMain.Socket1.Disconnect
+                Unload frmBorrar
+            End If
             Exit Sub
         Case "SFH"
             frmHerrero.Show
@@ -710,7 +722,7 @@ Sub HandleData(ByVal Rdata As String)
             Rdata = Right$(Rdata, Len(Rdata) - 3)
             frmOldPersonaje.MousePointer = 1
             frmPasswd.MousePointer = 1
-            If Not frmCrearPersonaje.Visible Then frmMain.Socket1.Disconnect
+            If Not frmCrearPersonaje.Visible And EstadoLogin <> LoginAccount And EstadoLogin <> Normal Then frmMain.Socket1.Disconnect
             MsgBox Rdata
             Exit Sub
     End Select
@@ -821,6 +833,30 @@ Sub HandleData(ByVal Rdata As String)
             CharIndex = Val(ReadField(1, Rdata, 44))
             charlist(CharIndex).invisible = (Val(ReadField(2, Rdata, 44)) = 1)
             Exit Sub
+        Case "INIAC"
+            Rdata = Right$(Rdata, Len(Rdata) - 5)
+            Call LimpiarPJsCuentas
+            frmCuent.Label3.Caption = ReadField(1, Rdata, 44)
+            frmCuent.Show
+            frmCuent.SetFocus
+            If frmConnect.Visible Then Unload frmConnect
+            Exit Sub
+        Case "ADDPJ"
+            Rdata = Right$(Rdata, Len(Rdata) - 5)
+            rcvName = ReadField(1, Rdata, 44)
+            rcvIndex = CLng(ReadField(2, Rdata, 44))
+            rcvHead = CLng(ReadField(3, Rdata, 44))
+            rcvBody = CLng(ReadField(4, Rdata, 44))
+            rcvWeapon = CLng(ReadField(5, Rdata, 44))
+            rcvShield = CLng(ReadField(6, Rdata, 44))
+            rcvCasco = CLng(ReadField(7, Rdata, 44))
+            rcvCrimi = (CLng(ReadField(8, Rdata, 44)) = 1)
+            rcvBaned = CLng(ReadField(9, Rdata, 44))
+            rcvLevel = CLng(ReadField(10, Rdata, 44))
+            rcvClase = ReadField(11, Rdata, 44)
+            rcvMuerto = CLng(ReadField(12, Rdata, 44))
+            Call DibujarTodo(rcvIndex - 1, CLng(rcvBody), CLng(rcvHead), CLng(rcvCasco), CLng(rcvShield), CLng(rcvWeapon), CLng(rcvBaned), rcvName, CLng(rcvLevel), rcvClase, CLng(rcvMuerto))
+            Exit Sub
     End Select
     
     Select Case Left(sData, 6)
@@ -843,6 +879,35 @@ Sub HandleData(ByVal Rdata As String)
                 frmEntrenador.lstCriaturas.AddItem ReadField(i + 1, Rdata, 44)
             Next i
             frmEntrenador.Show
+            Exit Sub
+        Case "GENPAS"
+            Rdata = Right$(Rdata, Len(Rdata) - 6)
+            MsgBox "Su nueva contraseña es: " & Rdata & ". Asegurate de cambiarla antes de entrar en un personaje, de lo contrario no podras acceder a tus personajes."
+            On Error Resume Next: Unload frmRecuperarCuenta
+            Exit Sub
+        Case "PEDPRE"
+            Rdata = Right$(Rdata, Len(Rdata) - 6)
+            If frmCambiarPass.Visible Then
+                frmCambiarPass.pregunta.Caption = Rdata
+                Exit Sub
+            End If
+            If frmRecuperarCuenta.Visible Then
+                frmRecuperarCuenta.Height = 4980
+                frmRecuperarCuenta.txtMail.Locked = True
+                frmRecuperarCuenta.txtNombre.Locked = True
+                frmRecuperarCuenta.txtPregunta.Visible = True
+                frmRecuperarCuenta.txtRespuesta.Visible = True
+                frmRecuperarCuenta.txtRespuesta.SetFocus
+                frmRecuperarCuenta.Recuperar.Visible = True
+                frmRecuperarCuenta.Picture = LoadPicture(App.Path & "\Graficos\Principal\Recuperar2Fin.jpg")
+                frmRecuperarCuenta.Siguiente.Visible = False
+                frmRecuperarCuenta.Cancelar.Visible = False
+                frmRecuperarCuenta.txtPregunta.Caption = Rdata
+            End If
+            Exit Sub
+        Case "REPASS"
+            Rdata = Right$(Rdata, Len(Rdata) - 6)
+            MsgBox Rdata
             Exit Sub
     End Select
     
@@ -991,9 +1056,64 @@ retcode = frmMain.Socket1.Write(sdData, Len(sdData))
 
 End Sub
 
+Public Sub EnviarLoginCuenta(ByVal sNombre As String, ByVal sPass As String)
+    nombrecuent = sNombre
+    UserPassword = MD5String(sPass)
+    MD5HushYo = UserPassword
+    EstadoLogin = LoginAccount
+    Call Login(0)
+End Sub
+
+Public Sub EnviarCrearCuenta(ByVal sNombre As String, ByVal sPass As String, ByVal sEmail As String)
+    frmCrearAccount.Show vbModal, frmAccLogin
+End Sub
+
+Public Sub EnviarSeleccionarPJ(ByVal iIndex As Integer)
+    PJClickeado = iIndex
+    EstadoLogin = Normal
+    Call Login(0)
+End Sub
+
+Public Sub EnviarSolicitudBorrado(ByVal iIndex As Integer)
+    PJClickeado = iIndex
+    EstadoLogin = BorrarPj
+    Call Login(0)
+End Sub
+
 Sub Login(ByVal valcode As Integer)
 Dim Passcliente As String
 Passcliente = "orophin"
+
+If EstadoLogin >= Normal And EstadoLogin <= RecuperarPass Then
+    Select Case EstadoLogin
+        Case Normal
+            SendData "OOLOGI" & PJClickeado & "," & nombrecuent
+        Case LoginAccount
+            SendData "ALOGIN" & nombrecuent & "," & UserPassword & "," & App.Major & "." & App.Minor & "." & App.Revision & "," & MD5HushYo
+        Case BorrarPj
+            SendData "BORR" & PJClickeado & "," & nombrecuent
+        Case CrearNuevoPj
+            SendData ("NLOGIN" & UserName & "," & UserPassword _
+            & "," & 0 & "," & 0 & "," _
+            & App.Major & "." & App.Minor & "." & App.Revision & _
+            "," & UserRaza & "," & UserSexo & "," & UserClase & "," & _
+            UserAtributos(1) & "," & UserAtributos(2) & "," & UserAtributos(3) _
+            & "," & UserAtributos(4) & "," & UserAtributos(5) _
+             & "," & UserSkills(1) & "," & UserSkills(2) _
+             & "," & UserSkills(3) & "," & UserSkills(4) _
+             & "," & UserSkills(5) & "," & UserSkills(6) _
+             & "," & UserSkills(7) & "," & UserSkills(8) _
+             & "," & UserSkills(9) & "," & UserSkills(10) _
+             & "," & UserSkills(11) & "," & UserSkills(12) _
+             & "," & UserSkills(13) & "," & UserSkills(14) _
+             & "," & UserSkills(15) & "," & UserSkills(16) _
+             & "," & UserSkills(17) & "," & UserSkills(18) _
+             & "," & UserSkills(19) & "," & UserSkills(20) _
+             & "," & UserSkills(21) & "," & UserSkills(22) _
+             & "," & UserEmail & "," & UserHogar & "," & valcode & "," & nombrecuent)
+    End Select
+    Exit Sub
+End If
 
 'Personaje grabado
 If SendNewChar = False Then
