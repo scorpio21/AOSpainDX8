@@ -19,6 +19,13 @@ Public Const SND_WAV_NAVEGANDO  = "50.wav"
 Public Const SND_WAV_OVER       = "click2.Wav"
 Public Const SND_WAV_DICE       = "cupdice.Wav"
 
+Public Enum PlayLoop
+    plNone = 0
+    plLluviain = 1
+    plLluviaout = 2
+    plFogata = 3
+End Enum
+
 ' -------------------------------------------------------
 ' PlayWaveDS - Reproduce un WAV usando Win32 sndPlaySound
 ' Compatible con todas las llamadas existentes del cliente

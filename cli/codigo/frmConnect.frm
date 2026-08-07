@@ -193,13 +193,21 @@ Begin VB.Form frmConnect
       Top             =   3720
       Width           =   2595
    End
-   Begin VB.Image imgGetPass 
-      Height          =   480
-      Left            =   9390
-      MousePointer    =   99  'Custom
-      Top             =   7935
-      Width           =   2370
-   End
+    Begin VB.CommandButton cmdAccLogin 
+       Caption         =   "CUENTA"
+       Height          =   360
+       Left            =   9390
+       TabIndex        =   8
+       Top             =   8490
+       Width           =   2370
+    End
+    Begin VB.Image imgGetPass 
+       Height          =   480
+       Left            =   9390
+       MousePointer    =   99  'Custom
+       Top             =   7935
+       Width           =   2370
+    End
    Begin VB.Label version 
       AutoSize        =   -1  'True
       BackStyle       =   0  'Transparent
@@ -255,7 +263,7 @@ Attribute VB_Exposed = False
 'Copyright (C) 2002 Marquez Pablo Ignacio
 'Copyright (C) 2002 Otto Perez
 'Copyright (C) 2002 Aaron Perkins
-'Copyright (C) 2002 Matias Fernando Pequeño
+'Copyright (C) 2002 Matias Fernando Pequeï¿½o
 '
 'This program is free software; you can redistribute it and/or modify
 'it under the terms of the GNU General Public License as published by
@@ -284,7 +292,7 @@ Attribute VB_Exposed = False
 'Codigo Postal 1900
 'Pablo Ignacio Marquez
 '
-'Matias Fernando Pequeño
+'Matias Fernando Pequeï¿½o
 'matux@fibertel.com.ar
 'www.noland-studios.com.ar
 'Acoyte 678 Piso 17 Dto B
@@ -345,7 +353,7 @@ If KeyCode = 27 Then
         frmCargando.Refresh
         DeinitTileEngine
         AddtoRichTextBox frmCargando.Status, "Hecho", 0, 0, 0, 1, 0, 1
-        AddtoRichTextBox frmCargando.Status, "¡¡¡Gracias por jugar Argentum Online!!", 0, 0, 0, 1, 0, 1
+        AddtoRichTextBox frmCargando.Status, "ï¿½ï¿½ï¿½Gracias por jugar Argentum Online!!", 0, 0, 0, 1, 0, 1
         frmCargando.Refresh
         Call UnloadAllForms
 End If
@@ -409,7 +417,7 @@ Dim nArchivo As String
 Dim eArchivo As String
 
 If Not IsIp(IPTxt) And CurServer <> 0 Then
-    If MsgBox("Atencion, esta intentando conectarse a un servidor no oficial, NoLand Studios no se hace responsable de los posibles problemas que estos servidores presenten. ¿Desea continuar?", vbYesNo) = vbNo Then
+    If MsgBox("Atencion, esta intentando conectarse a un servidor no oficial, NoLand Studios no se hace responsable de los posibles problemas que estos servidores presenten. ï¿½Desea continuar?", vbYesNo) = vbNo Then
         If CurServer <> 0 Then
             IPTxt = ServersLst(CurServer).Ip
             PortTxt = ServersLst(CurServer).Puerto
@@ -432,7 +440,7 @@ Select Case Index
         
         If Musica = 0 Then
             CurMidi = DirMidi & "7.mid"
-            LoopMidi = 1
+    'DX8: LoopMidi = 1  '-- LoopMidi eliminado (loop gestionado por clsSoundEngine)
             Call CargarMIDI(CurMidi)
             Call Play_Midi
         End If
@@ -521,6 +529,11 @@ Select Case Index
         'abre la pagina de AOSpain.com
         ShellExecute frmMain.hwnd, vbNullString, "http://www.caratula2000.net", vbNullString, vbNullString, vbNormalFocus
 End Select
+End Sub
+
+Private Sub cmdAccLogin_Click()
+    Call PlayWaveDS(SND_WAV_CLICK)
+    Call frmAccLogin.Show(vbModal, frmConnect)
 End Sub
 
 Private Sub imgGetPass_Click()

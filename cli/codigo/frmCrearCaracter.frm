@@ -173,7 +173,7 @@ Select Case Index
     Case 0
         If Musica = 0 Then
             CurMidi = DirMidi & "2.mid"
-            LoopMidi = 1
+    'DX8: LoopMidi = 1  '-- LoopMidi eliminado (loop gestionado por clsSoundEngine)
             Call CargarMIDI(CurMidi)
             Call Play_Midi
         End If

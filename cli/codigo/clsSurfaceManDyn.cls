@@ -17,7 +17,7 @@ Attribute VB_Exposed = False
 'For removale it uses LRU, attempting to just keep in memory those surfaces
 'that are actually usefull.
 '
-' Developed by Maraxus (Juan Martín Sotuyo Dodero - juansotuyo@hotmail.com)
+' Developed by Maraxus (Juan Martï¿½n Sotuyo Dodero - juansotuyo@hotmail.com)
 ' Last Modify Date: 3/06/2006
 '**************************************************************
 
@@ -83,7 +83,7 @@ Private Const DIB_RGB_COLORS As Long = 0
 
 Private Sub Class_Initialize()
 '**************************************************************
-'Author: Juan Martín Sotuyo Dodero
+'Author: Juan Martï¿½n Sotuyo Dodero
 'Last Modify Date: 3/06/2006
 '
 '**************************************************************
@@ -93,7 +93,7 @@ End Sub
 
 Private Sub Class_Terminate()
 '**************************************************************
-'Author: Juan Martín Sotuyo Dodero
+'Author: Juan Martï¿½n Sotuyo Dodero
 'Last Modify Date: 3/06/2006
 'Clean up
 '**************************************************************
@@ -115,7 +115,7 @@ End Sub
 
 Private Sub clsSurfaceManager_Initialize(ByRef DD As D3DX8, ByVal videoMemory As Boolean, ByVal graphicPath As String, Optional ByVal maxMemoryUsageInMb As Long = -1)
 '**************************************************************
-'Author: Juan Martín Sotuyo Dodero
+'Author: Juan Martï¿½n Sotuyo Dodero
 'Last Modify Date: 3/06/2006
 'Initializes the manager
 '**************************************************************
@@ -136,7 +136,7 @@ End Sub
 
 Private Property Get clsSurfaceManager_Surface(ByVal fileIndex As Long) As Direct3DTexture8
 '**************************************************************
-'Author: Juan Martín Sotuyo Dodero
+'Author: Juan Martï¿½n Sotuyo Dodero
 'Last Modify Date: 3/06/2006
 'Retrieves the requested texture
 '**************************************************************
@@ -178,18 +178,23 @@ On Error GoTo errhandler
         'Set last access time (if we didn't we would reckon this texture as the one lru)
         .lastAccess = GetTickCount
             
-        InfoHead = File_Find(App.Path & "\Recursos\Graphics.DRAG", CStr(fileIndex) & ".bmp")
-            
-        If InfoHead.lngFileSize <> 0 Then
-            Extract_File_Memory Graphics, App.Path & "\Recursos\", LCase$(CStr(fileIndex) & ".bmp"), buffer()
-                    
-            Set .Surface = DirectD3D.CreateTextureFromFileInMemoryEx(DirectDevice, buffer(0), UBound(buffer()) + 1, _
-                    D3DX_DEFAULT, D3DX_DEFAULT, 3, 0, D3DFMT_A8R8G8B8, D3DPOOL_MANAGED, D3DX_FILTER_NONE, _
-                    D3DX_FILTER_NONE, &HFF000000, texture_info, ByVal 0)
-                
-            Erase buffer
+        Dim FileNum As Integer
+        Dim FileSize As Long
+        FileNum = FreeFile
+        If FileExist(App.Path & "\Graficos\" & fileIndex & ".bmp", vbNormal) Then
+            Open App.Path & "\Graficos\" & fileIndex & ".bmp" For Binary As #FileNum
+                FileSize = LOF(FileNum)
+                If FileSize > 0 Then
+                    ReDim buffer(0 To FileSize - 1)
+                    Get #FileNum, , buffer
+                    Set .Surface = DirectD3D.CreateTextureFromFileInMemoryEx(DirectDevice, buffer(0), FileSize, _
+                            D3DX_DEFAULT, D3DX_DEFAULT, 3, 0, D3DFMT_A8R8G8B8, D3DPOOL_MANAGED, D3DX_FILTER_NONE, _
+                            D3DX_FILTER_NONE, &HFF000000, texture_info, ByVal 0)
+                    Erase buffer
+                End If
+            Close #FileNum
         End If
- 
+
         .Surface.GetLevelDesc 0, surface_desc
        
     End With
@@ -223,7 +228,7 @@ End Function
 
 Private Function RemoveLRU() As Boolean
 '**************************************************************
-'Author: Juan Martín Sotuyo Dodero
+'Author: Juan Martï¿½n Sotuyo Dodero
 'Last Modify Date: 3/06/2006
 'Removes the Least Recently Used surface to make some room for new ones
 '**************************************************************

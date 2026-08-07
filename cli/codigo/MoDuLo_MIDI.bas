@@ -17,10 +17,19 @@ Public MIdi_Inicio As String  ' Musica de inicio
 Public Sub CargarMIDI(Archivo As String)
     On Error Resume Next
     If Sound Is Nothing Then Exit Sub
-    CurMidi = Archivo
-    ' En el motor DX8, la musica se carga via Sound.NextMusic
-    ' El archivo se procesa en Sound_Render
-    Sound.NextMusic = Archivo
+    If LenB(Archivo) = 0 Then Exit Sub
+    
+    'DX8: el motor extrae "<id>.mp3" desde los recursos, por lo que solo usamos el nombre base
+    Dim f As String
+    Dim i As Long
+    f = Archivo
+    i = InStrRev(f, "\")
+    If i > 0 Then f = Mid$(f, i + 1)
+    i = InStrRev(f, ".")
+    If i > 0 Then f = Left$(f, i - 1)
+    
+    CurMidi = f
+    Sound.NextMusic = f
     Sound.Fading = 350
 End Sub
 

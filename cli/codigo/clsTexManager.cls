@@ -44,7 +44,7 @@ Private Declare Function GetTickCount Lib "kernel32" () As Long
  
 Private Sub Class_Terminate()
 '**************************************************************
-'Author: Juan Martín Sotuyo Dodero
+'Author: Juan Martï¿½n Sotuyo Dodero
 'Last Modify Date: 5/04/2005
 '**************************************************************
     Dim i As Long
@@ -89,7 +89,7 @@ End Function
 
 Public Function Init(ByRef D3D8 As D3DX8, ByRef d3d_device As Direct3DDevice8, ByVal MaxMemory As Long) As Boolean
 '**************************************************************
-'Author: Juan Martín Sotuyo Dodero
+'Author: Juan Martï¿½n Sotuyo Dodero
 'Last Modify Date: 5/04/2005
 '
 '**************************************************************
@@ -122,17 +122,24 @@ On Error GoTo errhandler
  
              Dim InfoHead As INFOHEADER
              Dim buffer() As Byte
+             Dim FileNum As Integer
+             Dim FileSize As Long
             
-             InfoHead = File_Find(App.Path & "\Recursos\Graphics.DRAG", CStr(Archivo) & ".bmp")
-            
-             If InfoHead.lngFileSize <> 0 Then
-                 Extract_File_Memory Graphics, App.Path & "\Recursos\", LCase$(CStr(Archivo) & ".bmp"), buffer()
-                    
-                 Set .Texture = D3DX.CreateTextureFromFileInMemoryEx(D3DDevice, buffer(0), UBound(buffer()) + 1, D3DX_DEFAULT, _
-                                                                     D3DX_DEFAULT, 0, 0, D3DFMT_A8R8G8B8, D3DPOOL_MANAGED, _
-                                                                     D3DX_FILTER_POINT, D3DX_FILTER_NONE, _
-                                                                     &HFF000000, texture_info, ByVal 0)
-                 Erase buffer
+             FileNum = FreeFile
+             FileSize = 0
+             If FileExist(App.Path & "\Graficos\" & Archivo & ".bmp", vbNormal) Then
+                 Open App.Path & "\Graficos\" & Archivo & ".bmp" For Binary As #FileNum
+                     FileSize = LOF(FileNum)
+                     If FileSize > 0 Then
+                         ReDim buffer(0 To FileSize - 1)
+                         Get #FileNum, , buffer
+                         Set .Texture = mD3D.CreateTextureFromFileInMemoryEx(device, buffer(0), FileSize, D3DX_DEFAULT, _
+                                                                             D3DX_DEFAULT, 0, 0, D3DFMT_A8R8G8B8, D3DPOOL_MANAGED, _
+                                                                             D3DX_FILTER_POINT, D3DX_FILTER_NONE, _
+                                                                             &HFF000000, texture_info, ByVal 0)
+                         Erase buffer
+                     End If
+                 Close #FileNum
              End If
                
             .Texture.GetLevelDesc 0, surface_desc

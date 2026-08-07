@@ -799,6 +799,38 @@ UserList(UserIndex).Reputacion.Promedio = val(GetVar(UserFile, "REP", "Promedio"
 End Sub
 
 
+Sub LoadUserAccount(ByVal PJinit As String)
+On Error Resume Next
+PJEnCuenta = GetVar(CharPath & "\" & PJinit, "INIT", "Head") & "," & GetVar(CharPath & "\" & PJinit, "INIT", "Body") & "," & _
+GetVar(CharPath & "\" & PJinit, "INIT", "Arma") & "," & GetVar(CharPath & "\" & PJinit, "INIT", "Escudo") & ","
+PJEnCuentaB = GetVar(CharPath & "\" & PJinit, "INIT", "Casco") & "," & UserAccountEsCrimi(PJinit) & "," & GetVar(CharPath & "\" & PJinit, "FLAGS", "Ban") & "," & GetVar(CharPath & "\" & PJinit, "STATS", "ELV") & "," & GetVar(CharPath & "\" & PJinit, "INIT", "Clase") & "," & GetVar(CharPath & "\" & PJinit, "FLAGS", "Muerto")
+End Sub
+
+Function UserAccountEsCrimi(ByVal PJinit As String) As Integer
+
+Dim AsesinoRep As Double
+Dim BurguesRep As Double
+Dim NobleRep As Double
+Dim PlebeRep As Double
+Dim LadronRep As Double
+Dim BandidoRep As Double
+Dim l As Long
+
+AsesinoRep = GetVar(CharPath & "\" & PJinit, "REP", "Asesino")
+BurguesRep = GetVar(CharPath & "\" & PJinit, "REP", "Burguesia")
+NobleRep = GetVar(CharPath & "\" & PJinit, "REP", "Nobles")
+LadronRep = GetVar(CharPath & "\" & PJinit, "REP", "Ladrones")
+PlebeRep = GetVar(CharPath & "\" & PJinit, "REP", "Plebe")
+BandidoRep = GetVar(CharPath & "\" & PJinit, "REP", "Bandido")
+
+l = (-AsesinoRep) + (-BandidoRep) + BurguesRep + (-LadronRep) + NobleRep + PlebeRep
+l = l / 6
+
+If (l < 0) = False Then UserAccountEsCrimi = 0
+If (l < 0) = True Then UserAccountEsCrimi = 1
+
+End Function
+
 Sub LoadUserInit(UserIndex As Integer, UserFile As String)
 
 
@@ -862,6 +894,9 @@ End If
 
 
 UserList(UserIndex).Desc = GetVar(UserFile, "INIT", "Desc")
+
+UserList(UserIndex).Char.Account = GetVar(UserFile, "CHAR", "Cuenta")
+UserList(UserIndex).Accounted = UserList(UserIndex).Char.Account
 
 
 UserList(UserIndex).Pos.Map = val(ReadField(1, GetVar(UserFile, "INIT", "Position"), 45))
@@ -1713,6 +1748,8 @@ Call WriteVar(UserFile, "INIT", "Hogar", UserList(UserIndex).Hogar)
 Call WriteVar(UserFile, "INIT", "Clase", UserList(UserIndex).Clase)
 Call WriteVar(UserFile, "INIT", "Password", UserList(UserIndex).Password)
 Call WriteVar(UserFile, "INIT", "Desc", UserList(UserIndex).Desc)
+
+Call WriteVar(UserFile, "CHAR", "Cuenta", UserList(UserIndex).Char.Account)
 
 Call WriteVar(UserFile, "INIT", "Heading", Str(UserList(UserIndex).Char.Heading))
 

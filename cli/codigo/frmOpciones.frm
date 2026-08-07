@@ -87,7 +87,7 @@ Attribute VB_Exposed = False
 'Copyright (C) 2002 Marquez Pablo Ignacio
 'Copyright (C) 2002 Otto Perez
 'Copyright (C) 2002 Aaron Perkins
-'Copyright (C) 2002 Matias Fernando Pequeño
+'Copyright (C) 2002 Matias Fernando Pequeï¿½o
 '
 'This program is free software; you can redistribute it and/or modify
 'it under the terms of the GNU General Public License as published by
@@ -126,10 +126,12 @@ Select Case Index
     Case 0
         If Musica = 0 Then
             Musica = 1
+            Opciones.sMusica = CONST_DESHABILITADA
             command1(0).Caption = "Musica Desactivada"
             Stop_Midi
         Else
             Musica = 0
+            Opciones.sMusica = CONST_MP3
             command1(0).Caption = "Musica Activada"
             Call CargarMIDI(DirMidi & "2.mid")
             Play_Midi
@@ -139,10 +141,12 @@ Select Case Index
     
         If Fx = 0 Then
             Fx = 1
+            Opciones.Audio = 0
             command1(1).Caption = "FX Desactivados"
             
         Else
             Fx = 0
+            Opciones.Audio = 1
             command1(1).Caption = "FX Activados"
         End If
 End Select

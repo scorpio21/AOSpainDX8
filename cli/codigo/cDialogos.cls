@@ -13,10 +13,10 @@ Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 'Argentum Online 0.9.0.9
 '
-'Copyright (C) 2002 Márquez Pablo Ignacio
+'Copyright (C) 2002 Mï¿½rquez Pablo Ignacio
 'Copyright (C) 2002 Otto Perez
 'Copyright (C) 2002 Aaron Perkins
-'Copyright (C) 2002 Matías Fernando Pequeño
+'Copyright (C) 2002 Matï¿½as Fernando Pequeï¿½o
 '
 'This program is free software; you can redistribute it and/or modify
 'it under the terms of the GNU General Public License as published by
@@ -40,10 +40,10 @@ Attribute VB_Exposed = False
 'You can contact me at:
 'morgolock@speedy.com.ar
 'www.geocities.com/gmorgolock
-'Calle 3 número 983 piso 7 dto A
+'Calle 3 nï¿½mero 983 piso 7 dto A
 'La Plata - Pcia, Buenos Aires - Republica Argentina
-'Código Postal 1900
-'Pablo Ignacio Márquez
+'Cï¿½digo Postal 1900
+'Pablo Ignacio Mï¿½rquez
 
 
 Option Explicit
@@ -94,9 +94,9 @@ End If
 End Function
 
 
-'¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?
-'¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?Formatea la cadena S¿?¿?¿?¿?¿?¿?¿?¿?
-'¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?
+'ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?
+'ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?Formatea la cadena Sï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?
+'ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?
 Private Function DarFormato(s As String, i As Integer, k As Integer, anti As Integer, Dialgi As Integer)
 On Error Resume Next
 If anti + i <= Len(s) + 1 Then
@@ -194,7 +194,7 @@ End If
 
 End Function
 
-Public Sub Update_Dialog_Pos(X As Integer, Y As Integer, Index As Integer)
+Public Sub Update_Dialog_Pos(ByVal X As Integer, ByVal Y As Integer, ByVal Index As Integer)
 On Error Resume Next
 Dim MiUserIndex As Integer
 If BuscarUserIndex(Index, MiUserIndex) Then
@@ -232,15 +232,8 @@ Public Sub DrawText(lngXPos As Integer, lngYPos As Integer, strText As String, l
 On Error Resume Next
 
    If strText <> "" Then
-        BackBufferSurface.SetFontTransparency True
-        BackBufferSurface.SetForeColor vbBlack
-        BackBufferSurface.SetFont frmMain.Font
-        BackBufferSurface.DrawText lngXPos - 2, lngYPos - 1, strText, False
-        
-        BackBufferSurface.SetFontTransparency True
-        BackBufferSurface.SetForeColor lngColor
-        BackBufferSurface.SetFont frmMain.Font
-        BackBufferSurface.DrawText lngXPos, lngYPos, strText, False
+        Call Texto.Engine_Text_Draw(lngXPos - 1, lngYPos - 1, strText, vbBlack)
+        Call Texto.Engine_Text_Draw(lngXPos, lngYPos, strText, lngColor)
    End If
    
 End Sub
@@ -267,6 +260,11 @@ For i = 1 To CantidadDialogos
       Dialogos(i).Delay = 0
     End If
 Next
+End Sub
+
+Public Sub Render()
+On Error Resume Next
+    MostrarTexto
 End Sub
 
 Public Sub QuitarDialogo(ByVal CharIndex As Integer)

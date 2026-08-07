@@ -21,7 +21,7 @@ End Type
 
 Public Enum resource_file_type
     Graphics
-    Musica
+    rcMusica
     Wav
     Scripts
     Patch
@@ -32,7 +32,7 @@ Public Enum resource_file_type
 End Enum
 
 Private Const GRAPHIC_PATH As String = "\PNG\"
-Private Const Musica_PATH As String = "\Musica\"
+Private Const rcMusica_PATH As String = "\Musica\"
 Private Const WAV_PATH As String = "\Wav\"
 Private Const MAP_PATH As String = "\Mapas\"
 Private Const INTERFACE_PATH As String = "\Interface\"
@@ -61,7 +61,7 @@ Private Declare Sub MoveMemory Lib "kernel32" Alias "RtlMoveMemory" (pDest As An
 
 Public Sub Compress_Data(ByRef Data() As Byte)
 '*****************************************************************
-'Author: Juan Martín Dotuyo Dodero
+'Author: Juan Martï¿½n Dotuyo Dodero
 'Last Modify Date: 10/13/2004
 'Compresses binary data avoiding data loses
 '*****************************************************************
@@ -111,7 +111,7 @@ End Sub
 
 Public Function Extract_All_Files(ByVal file_type As resource_file_type, ByVal resource_path As String, Optional ByVal UseOutputFolder As Boolean = False) As Boolean
 '*****************************************************************
-'Author: Juan Martín Dotuyo Dodero
+'Author: Juan Martï¿½n Dotuyo Dodero
 'Last Modify Date: 10/13/2004
 'Extracts all files from a resource file
 '*****************************************************************
@@ -136,13 +136,13 @@ On Local Error GoTo errhandler
             End If
             OutputFilePath = resource_path & GRAPHIC_PATH
         
-        Case Musica
+        Case rcMusica
             If UseOutputFolder Then
                 SourceFilePath = resource_path & OUTPUT_PATH & "Musics.DRAG"
             Else
                 SourceFilePath = resource_path & "\Music_HD.DRAG"
             End If
-            OutputFilePath = resource_path & Musica_PATH
+            OutputFilePath = resource_path & rcMusica_PATH
         
         Case Wav
             If UseOutputFolder Then
@@ -270,7 +270,7 @@ End Function
 
 Public Function Extract_Patch(ByVal resource_path As String, ByVal file_name As String) As Boolean
 '*****************************************************************
-'Author: Juan Martín Dotuyo Dodero
+'Author: Juan Martï¿½n Dotuyo Dodero
 'Last Modify Date: 10/13/2004
 'Comrpesses all files to a resource file
 '*****************************************************************
@@ -341,7 +341,7 @@ On Local Error GoTo errhandler
     
     If RequiredSpace >= General_Drive_Get_Free_Bytes(Left(App.Path, 3)) Then
         Erase InfoHead
-        MsgBox "¡No hay espacio suficiente para extraer el archivo!", , "Error"
+        MsgBox "ï¿½No hay espacio suficiente para extraer el archivo!", , "Error"
         Exit Function
     End If
     
@@ -588,7 +588,7 @@ End Function
 
 Public Function Compress_Files(ByVal file_type As resource_file_type, ByVal resource_path As String, ByVal dest_path As String) As Boolean
 '*****************************************************************
-'Author: Juan Martín Dotuyo Dodero
+'Author: Juan Martï¿½n Dotuyo Dodero
 'Last Modify Date: 10/13/2004
 'Comrpesses all files to a resource file
 '*****************************************************************
@@ -614,8 +614,8 @@ On Local Error GoTo errhandler
             SourceFileExtension = ".bmp"
             OutputFilePath = dest_path & "Graphics.DRAG"
 
-        Case Musica
-            SourceFilePath = resource_path & Musica_PATH
+        Case rcMusica
+            SourceFilePath = resource_path & rcMusica_PATH
             SourceFileExtension = ".*"
             OutputFilePath = dest_path & "Musics.DRAG"
         
@@ -771,7 +771,7 @@ End Function
 
 Public Function Extract_File(ByVal file_type As resource_file_type, ByVal resource_path As String, ByVal file_name As String, ByVal OutputFilePath As String, Optional ByVal UseOutputFolder As Boolean = False) As Boolean
 '*****************************************************************
-'Author: Juan Martín Dotuyo Dodero
+'Author: Juan Martï¿½n Dotuyo Dodero
 'Last Modify Date: 10/13/2004
 'Extracts all files from a resource file
 '*****************************************************************
@@ -791,7 +791,7 @@ On Local Error GoTo errhandler
                 SourceFilePath = resource_path & "\Graphics.DRAG"
             End If
             
-        Case Musica
+        Case rcMusica
             If UseOutputFolder Then
                 SourceFilePath = resource_path & OUTPUT_PATH & "Musics.DRAG"
             Else
@@ -903,7 +903,7 @@ End Function
 
 Public Function Delete_File(ByVal file_path As String) As Boolean
 '*****************************************************************
-'Author: Juan Martín Dotuyo Dodero
+'Author: Juan Martï¿½n Dotuyo Dodero
 'Last Modify Date: 3/03/2005
 'Deletes a resource files
 '*****************************************************************
@@ -955,7 +955,7 @@ On Local Error GoTo errhandler
         Case Graphics
                 SourceFilePath = resource_path & "\Graphics.DRAG"
             
-        Case Musica
+        Case rcMusica
                 SourceFilePath = resource_path & "\Musics.DRAG"
         
         Case Wav
@@ -1009,7 +1009,7 @@ End Function
 
 Public Function Extract_File_Ex(ByVal file_type As resource_file_type, ByVal resource_path As String, ByVal file_name As String, ByRef bytArr() As Byte) As Boolean
 '*****************************************************************
-'Author: Juan Martín Dotuyo Dodero
+'Author: Juan Martï¿½n Dotuyo Dodero
 'Last Modify Date: 10/13/2004
 'Extracts all files from a resource file
 '*****************************************************************
@@ -1025,7 +1025,7 @@ On Local Error GoTo errhandler
         Case Graphics
                 SourceFilePath = resource_path & "\Graphics.DRAG"
             
-        Case Musica
+        Case rcMusica
                 SourceFilePath = resource_path & "\Musics.DRAG"
         
         Case Wav
@@ -1061,7 +1061,7 @@ On Local Error GoTo errhandler
     'Make sure there is enough space in the HD
     If InfoHead.lngFileSizeUncompressed > General_Drive_Get_Free_Bytes(Left$(App.Path, 3)) Then
         Close Handle
-        MsgBox "¡Espacio insuficiente!", , "Error"
+        MsgBox "ï¿½Espacio insuficiente!", , "Error"
         Exit Function
     End If
     
@@ -1090,7 +1090,7 @@ End Function
 
 Public Function File_Find(ByVal resource_file_path As String, ByVal file_name As String) As INFOHEADER
 '**************************************************************
-'Author: Juan Martín Sotuyo Dodero
+'Author: Juan Martï¿½n Sotuyo Dodero
 'Last Modify Date: 5/04/2005
 'Looks for a compressed file in a resource file. Uses binary search ;)
 '**************************************************************
@@ -1153,7 +1153,7 @@ End Function
 
 Public Function General_Get_Temp_Dir() As String
 '**************************************************************
-'Author: Augusto José Rando
+'Author: Augusto Josï¿½ Rando
 'Last Modify Date: 6/11/2005
 'Gets windows temporary directory
 '**************************************************************
@@ -1173,7 +1173,7 @@ End Function
 
 Public Sub General_Quick_Sort(ByRef SortArray As Variant, ByVal first As Long, ByVal last As Long)
 '**************************************************************
-'Author: juan Martín Sotuyo Dodero
+'Author: juan Martï¿½n Sotuyo Dodero
 'Last Modify Date: 3/03/2005
 'Good old QuickSort algorithm :)
 '**************************************************************
@@ -1205,7 +1205,7 @@ End Sub
 
 Public Function General_Drive_Get_Free_Bytes(ByVal DriveName As String) As Currency
 '**************************************************************
-'Author: Juan Martín Sotuyo Dodero
+'Author: Juan Martï¿½n Sotuyo Dodero
 'Last Modify Date: 6/07/2004
 '
 '**************************************************************

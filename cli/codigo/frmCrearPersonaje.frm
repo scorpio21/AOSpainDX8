@@ -895,7 +895,7 @@ Attribute VB_Exposed = False
 'Copyright (C) 2002 Marquez Pablo Ignacio
 'Copyright (C) 2002 Otto Perez
 'Copyright (C) 2002 Aaron Perkins
-'Copyright (C) 2002 Matias Fernando Pequeño
+'Copyright (C) 2002 Matias Fernando Pequeï¿½o
 '
 'This program is free software; you can redistribute it and/or modify
 'it under the terms of the GNU General Public License as published by
@@ -1010,8 +1010,8 @@ Select Case Index
         
     Case 1
         If Musica = 0 Then
-            CurMidi = DirMidi & MIdi_Inicio & ".mid"
-            LoopMidi = 1
+            CurMidi = DirMidi & MUS_Inicio & ".mid"
+    'DX8: LoopMidi = 1  '-- LoopMidi eliminado (loop gestionado por clsSoundEngine)
             Call CargarMIDI(CurMidi)
             Call Play_Midi
         End If

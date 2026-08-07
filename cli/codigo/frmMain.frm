@@ -528,6 +528,46 @@ Begin VB.Form frmMain
       Top             =   1995
       Width           =   8205
    End
+   Begin VB.PictureBox picSpell
+      Appearance      =   0  'Flat
+      AutoRedraw      =   -1  'True
+      BackColor       =   &H00000000&
+      BorderStyle     =   0  'None
+      Height          =   1980
+      Left            =   11115
+      ScaleHeight     =   1980
+      ScaleWidth      =   3870
+      TabIndex        =   17
+      Top             =   2640
+      Visible         =   0   'False
+      Width           =   3870
+   End
+   Begin VB.PictureBox Minimap
+      AutoRedraw      =   -1  'True
+      BackColor       =   &H00000000&
+      BorderStyle     =   0  'None
+      Height          =   1530
+      Left            =   8760
+      ScaleHeight     =   102
+      ScaleMode       =   0  'User
+      ScaleWidth      =   102
+      TabIndex        =   18
+      Top             =   420
+      Visible         =   0   'False
+      Width           =   1530
+   End
+   Begin VB.PictureBox renderer
+      BackColor       =   &H00000000&
+      BorderStyle     =   0  'None
+      Height          =   8055
+      Left            =   0
+      ScaleHeight     =   537
+      ScaleMode       =   3  'Pixel
+      ScaleWidth      =   695
+      TabIndex        =   16
+      Top             =   0
+      Width           =   10425
+   End
    Begin VB.Menu mnuObj 
       Caption         =   "Objeto"
       Visible         =   0   'False
@@ -552,7 +592,7 @@ Attribute VB_Exposed = False
 'Copyright (C) 2002 Marquez Pablo Ignacio
 'Copyright (C) 2002 Otto Perez
 'Copyright (C) 2002 Aaron Perkins
-'Copyright (C) 2002 Matias Fernando Pequeño
+'Copyright (C) 2002 Matias Fernando Pequeï¿½o
 '
 'This program is free software; you can redistribute it and/or modify
 'it under the terms of the GNU General Public License as published by
@@ -585,64 +625,21 @@ Option Explicit
 
 Public ActualSecond As Long
 Public LastSecond As Long
-Public tX As Integer
-Public tY As Integer
+Public tX As Byte
+Public tY As Byte
 Public MouseX As Long
 Public MouseY As Long
 
-'Dim gDSB As DirectSoundBuffer  '-- DX8: reemplazado
-'Dim gD As DSBUFFERDESC  '-- DX8: reemplazado
-'Dim gW As WAVEFORMATEX  '-- DX8: reemplazado
-Dim gFileName As String
-'Dim dsE As DirectSoundEnum  '-- DX8: reemplazado
-'Dim POS(0) As DSBPOSITIONNOTIFY  '-- DX8: reemplazado
 Public IsPlaying As Byte
-
-Dim endEvent As Long
-'Implements DirectXEvent  '-- DX8: reemplazado
-
-Private Sub DirectXEvent_DXCallback(ByVal eventid As Long)
-
-End Sub
-
-Private Sub CreateEvent()
-     endEvent = DirectX.CreateEvent(Me)
-End Sub
-
-
-Private Function LoadSoundBufferFromFile(sFile As String) As Integer
-    On Error GoTo err_out
-        With gD
-            .lFlags = DSBCAPS_CTRLVOLUME Or DSBCAPS_CTRLPAN Or DSBCAPS_CTRLFREQUENCY Or DSBCAPS_CTRLPOSITIONNOTIFY
-            .lReserved = 0
-        End With
-        Set gDSB = DirectSound.CreateSoundBufferFromFile(DirSound & sFile, gD, gW)
-        With Pos(0)
-            .hEventNotify = endEvent
-            .lOffset = -1
-        End With
-        DirectX.SetEvent endEvent
-        'gDSB.SetNotificationPositions 1, POS()
-    Exit Function
-
-err_out:
-    MsgBox "Error creating sound buffer", vbApplicationModal
-    LoadSoundBufferFromFile = 1
-
-
-End Function
-
 
 Public Sub Play(ByVal Nombre As String, Optional ByVal LoopSound As Boolean = False)
     If Fx = 1 Then Exit Sub
-    Call LoadSoundBufferFromFile(Nombre)
-
+    On Error Resume Next
     If LoopSound Then
-        gDSB.Play DSBPLAY_LOOPING
+        sndPlaySound DirSound & Nombre, SND_ASYNC Or SND_NODEFAULT Or SND_LOOP
     Else
-        gDSB.Play DSBPLAY_DEFAULT
+        sndPlaySound DirSound & Nombre, SND_ASYNC Or SND_NODEFAULT
     End If
-
 End Sub
 
 Private Sub Form_QueryUnload(Cancel As Integer, UnloadMode As Integer)
@@ -652,9 +649,6 @@ If UserParalizado = True Or UserCiego = True Or UserEstupido = True Then     '65
     Cancel = True
     Exit Sub
 Else
-    If endEvent Then
-        DirectX.DestroyEvent endEvent
-    End If
     If prgRun = True Then
         prgRun = False
         Cancel = 1
@@ -664,11 +658,8 @@ End If
 End Sub
 
 Public Sub StopSound()
-    On Local Error Resume Next
-    If Not gDSB Is Nothing Then
-            gDSB.Stop
-            gDSB.SetCurrentPosition 0
-    End If
+    On Error Resume Next
+    sndPlaySound vbNullString, 0
 End Sub
 
 Private Sub FPS_Timer()
@@ -711,7 +702,7 @@ End Sub
 ''''''''''''''''''''''''''''''''''''''
 
 Private Sub Trabajo_Timer()
-    NoPuedeUsar = False
+    bNoPuedeUsar = False
 End Sub
 
 Private Sub Attack_Timer()
@@ -794,7 +785,7 @@ Private Sub Form_Click()
     If Cartel Then Cartel = False
 
     If Not Comerciando Then
-        Call ConvertCPtoTP(MainViewShp.Left, MainViewShp.Top, MouseX, MouseY, tX, tY)
+        Call ConvertCPtoTP(MouseX, MouseY, tX, tY)
 
         If UsingSkill = 0 Then
             SendData "LC" & tX & "," & tY
@@ -822,7 +813,7 @@ If (Not SendTxt.Visible) And _
         
             Select Case KeyCode
                 Case vbKeyM:
-                    If Not IsPlayingCheck Then
+                    If Not Sonando() Then
                         Musica = 0
                         Play_Midi
                     Else
@@ -851,8 +842,8 @@ If (Not SendTxt.Visible) And _
                 Case vbKeyX:
                     Call SendData("RPU")
                 Case vbKeyU:
-                    If Not NoPuedeUsar Then
-                        NoPuedeUsar = True
+                    If Not bNoPuedeUsar Then
+                        bNoPuedeUsar = True
                         Call UsarItem
                     End If
             End Select
@@ -901,6 +892,13 @@ End Sub
 Private Sub Form_MouseMove(Button As Integer, Shift As Integer, X As Single, Y As Single)
     MouseX = X
     MouseY = Y
+End Sub
+
+Private Sub renderer_MouseMove(Button As Integer, Shift As Integer, X As Single, Y As Single)
+    MouseX = X
+    MouseY = Y
+
+    ConvertCPtoTP X, Y, tX, tY
 End Sub
 
 Private Sub hlst_KeyDown(KeyCode As Integer, Shift As Integer)

@@ -28,13 +28,15 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 Private Sub btnConsejo_Click()
-    Call Audio.General_Set_Wav(SND_WAV_CLICK)
-    ConsejoSeleccionado = Consejos(RandomNumber(1, UBound(ListaConsejos())))
+    Call PlayWaveDS(SND_WAV_CLICK)
+    If UBound(ListaConsejos) >= 1 Then
+        ConsejoSeleccionado = Consejos(RandomNumber(1, UBound(ListaConsejos)))
+    End If
 End Sub
 
 Private Sub Form_KeyDown(KeyCode As Integer, Shift As Integer)
     If KeyCode = 27 Then
-        Call Audio.General_Set_Wav(SND_WAV_CLICK)
+        Call PlayWaveDS(SND_WAV_CLICK)
         Call CloseClient
     End If
 End Sub

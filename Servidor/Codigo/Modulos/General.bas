@@ -335,6 +335,7 @@ ENDL = Chr(13) & Chr(10)
 ENDC = Chr(1)
 IniPath = App.Path & "\"
 CharPath = App.Path & "\Charfile\"
+AccountsPath = App.Path & "\Accounts\"
 
 'Bordes del mapa
 MinXBorder = XMinMapSize + (XWindow \ 2)

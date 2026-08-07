@@ -344,7 +344,7 @@ US1 As String, US2 As String, US3 As String, US4 As String, US5 As String, _
 US6 As String, US7 As String, US8 As String, US9 As String, US10 As String, _
 US11 As String, US12 As String, US13 As String, US14 As String, US15 As String, _
 US16 As String, US17 As String, US18 As String, US19 As String, US20 As String, _
-US21 As String, US22 As String, UserEmail As String, Hogar As String)
+US21 As String, US22 As String, UserEmail As String, Hogar As String, Optional Cuenta As String = "")
 
 If Not NombrePermitido(Name) Then
     Call SendData(ToIndex, UserIndex, 0, "ERRLos nombres de los personajes deben pertencer a la fantasia, el nombre indicado es invalido.")
@@ -386,6 +386,9 @@ UserList(UserIndex).Raza = UserRaza
 UserList(UserIndex).Genero = UserSexo
 UserList(UserIndex).Email = UserEmail
 UserList(UserIndex).Hogar = Hogar
+UserList(UserIndex).Char.Account = Cuenta
+UserList(UserIndex).Accounted = Cuenta
+UserList(UserIndex).AccountedPass = Password
 
 UserList(UserIndex).Stats.UserAtributos(Fuerza) = Abs(CInt(UA1))
 UserList(UserIndex).Stats.UserAtributos(Inteligencia) = Abs(CInt(UA2))
@@ -599,9 +602,150 @@ UserList(UserIndex).Invent.WeaponEqpSlot = 3
 Call SaveUser(UserIndex, CharPath & UCase$(Name) & ".chr")
   
 'Open User
-Call ConnectUser(UserIndex, Name, Password)
+Call ConnectUser(UserIndex, Name, Password, Cuenta)
   
 End Sub
+
+Public Function IsYourChr(ByVal Account As String, ByVal PJ As String)
+
+Dim i As Integer
+Dim numPjs As Integer
+Dim ChrToView As String
+
+numPjs = val(GetVar(AccountsPath & Account & ".act", "PJS", "NumPjs"))
+
+IsYourChr = False
+
+For i = 1 To numPjs
+    ChrToView = GetVar(AccountsPath & Account & ".act", "PJS", "PJ" & i)
+    If ChrToView = PJ Then IsYourChr = True
+Next i
+
+End Function
+
+Sub ConnectAccount(ByVal UserIndex As Integer, Name As String, Password As String)
+
+If Password <> GetVar(AccountsPath & Name & ".act", Name, "password") Then
+    Call SendData(ToIndex, UserIndex, 0, "ERRPassword incorrecto.")
+    Call CloseSocket(UserIndex)
+    Exit Sub
+End If
+
+UserList(UserIndex).Accounted = Name
+UserList(UserIndex).AccountedPass = Password
+
+Call EnviarListaPJs(UserIndex, Name)
+End Sub
+
+Public Sub EnviarListaPJs(ByVal UserIndex As Integer, ByVal Name As String)
+    Dim i As Integer
+    Dim Pjjj As String
+    Dim numPjs As Integer
+
+    numPjs = val(GetVar(AccountsPath & Name & ".act", "PJS", "NumPjs"))
+
+    If TienePjs(Name) = True Then
+        Call SendData(ToIndex, UserIndex, 0, "INIAC" & Name & "," & numPjs + 1)
+    Else
+        Call SendData(ToIndex, UserIndex, 0, "INIAC0")
+    End If
+
+    For i = 1 To numPjs
+        Pjjj = GetVar(AccountsPath & Name & ".act", "PJS", "PJ" & i)
+        If Pjjj = "" Then Exit For
+
+        Call LoadUserAccount(Pjjj & ".chr")
+        Call SendData(ToIndex, UserIndex, 0, "ADDPJ" & Pjjj & "," & i & "," & PJEnCuenta & PJEnCuentaB)
+    Next i
+End Sub
+
+Sub ChrToAccount(ByVal Accounted As String, tName As String)
+
+Dim numPjs As Integer
+Dim n As Integer
+
+numPjs = val(GetVar(AccountsPath & Accounted & ".act", "PJS", "NumPjs"))
+
+If numPjs = 1 And (GetVar(AccountsPath & Accounted & ".act", "PJS", "PJ" & numPjs) = "") Then
+    Call WriteVar(AccountsPath & Accounted & ".act", "PJS", "NumPjs", CStr(numPjs))
+    Call WriteVar(AccountsPath & Accounted & ".act", "PJS", "PJ" & numPjs, tName)
+    Exit Sub
+End If
+
+numPjs = numPjs + 1
+
+Call WriteVar(AccountsPath & Accounted & ".act", "PJS", "NumPjs", CStr(numPjs))
+Call WriteVar(AccountsPath & Accounted & ".act", "PJS", "PJ" & numPjs, tName)
+
+End Sub
+
+Sub CreateAccount(ByVal Account As String, Password As String, Mail As String, pregunta As String, Respuesta As String, UserIndex As Integer)
+
+On Error GoTo errhandler
+
+If FileExist(AccountsPath & Account & ".act", vbNormal) = True Then
+Call SendData(ToIndex, UserIndex, 0, "ERREl nombre de la cuenta ya esta siendo utilizado por otro usuario.")
+    Exit Sub
+End If
+
+Dim n As Integer
+
+n = FreeFile()
+
+Open AccountsPath & Account & ".act" For Output As n
+    Print #n, "[" & Account & "]"
+    Print #n, "password=" & MD5String(Password)
+    Print #n, "mail=" & Mail
+    Print #n, "Pregunta=" & pregunta
+    Print #n, "Respuesta=" & Respuesta
+    Print #n, "ban=0"
+    Print #n, "[PJS]"
+    Print #n, "NumPjs=0"
+    Print #n, "PJ1="
+    Print #n, "PJ2="
+    Print #n, "PJ3="
+    Print #n, "PJ4="
+    Print #n, "PJ5="
+    Print #n, "PJ6="
+    Print #n, "PJ7="
+    Print #n, "PJ8="
+Close n
+
+DoEvents
+
+Call CloseSocket(UserIndex)
+
+Call SendData(ToIndex, UserIndex, 0, "HLQ")
+
+Exit Sub
+
+errhandler:
+
+Call LogError("NewAccount - Error = " & Err.Number & " - Descripcion = " & Err.Description)
+
+End Sub
+
+Public Function TienePjs(ByVal Account As String) As Boolean
+
+Dim frstPj As String
+
+frstPj = GetVar(AccountsPath & Account & ".act", "PJS", "PJ1")
+
+If frstPj <> "" Then
+    TienePjs = True
+Else
+    TienePjs = False
+End If
+
+End Function
+
+Function CuentaExiste(Cuenta As String) As Boolean
+If FileExist(AccountsPath & Cuenta & ".act", vbNormal) Then
+    CuentaExiste = True
+Else
+    CuentaExiste = False
+End If
+End Function
 
 Sub CloseSocket(ByVal UserIndex As Integer)
 '<<<<<<<<<<<<<<<<<< NO TOCAR >>>>>>>>>>>>>>>>>>>>>>
@@ -849,7 +993,7 @@ UserList(UserIndex).Char.Body <> 0 And ValidateSkills(UserIndex)
 
 End Function
 
-Sub ConnectUser(ByVal UserIndex As Integer, Name As String, Password As String)
+Sub ConnectUser(ByVal UserIndex As Integer, Name As String, Password As String, Optional Cuenta As String = "")
 Dim n As Integer
 
 'Reseteamos los FLAGS
@@ -860,7 +1004,25 @@ UserList(UserIndex).Flags.TargetObj = 0
 UserList(UserIndex).Flags.TargetUser = 0
 UserList(UserIndex).Char.FX = 0
 
+UserList(UserIndex).Char.Account = Cuenta
+UserList(UserIndex).Accounted = Cuenta
+UserList(UserIndex).AccountedPass = Password
 
+
+
+'ï¿½Loguio mas de un personaje por cuenta?
+If Cuenta <> "" Then
+    Dim j As Long
+    For j = 1 To LastUser
+        If LastUser <> 0 Then
+            If UserList(UserIndex).Char.Account = UserList(j).Char.Account And UserList(j).Flags.UserLogged = True Then
+                Call SendData(ToIndex, UserIndex, 0, "ERRNo se puede logear mas de un usuario por cuenta.")
+                CloseSocket UserIndex
+                Exit Sub
+            End If
+        End If
+    Next j
+End If
 
 'Controlamos no pasar el maximo de usuarios
 If NumUsers >= MaxUsers Then
@@ -1440,6 +1602,36 @@ Dim Y As Integer
 Dim ClientCRC As String
 Dim ServerSideCRC As Long
 
+Dim CuentaName As String
+Dim Respuesta As String
+Dim preguntapedida As String
+Dim mailName As String
+Dim PassName As String
+Dim pregunta As String
+Dim PassActual As String
+Dim Newpass As String
+Dim PasswordGen As Integer
+Dim Personaje As String
+Dim Acc As String
+Dim NCuenta As String
+Dim Passw As String
+Dim Mail As String
+Dim PersonajeAsd As String
+Dim ii As Integer
+
+Dim bAccName As String
+Dim bValidationData As String
+Dim bPass As String
+Dim bMail As String
+Dim bRespuesta As String
+Dim bPath As String
+Dim realPass As String
+Dim realMail As String
+Dim realRespuesta As String
+Dim numPjs As Integer
+Dim pIdx As Integer
+Dim pName As String
+
 CadenaOriginal = rdata
 
 '¿Tiene un indece valido?
@@ -1551,20 +1743,195 @@ If UserList(UserIndex).Flags.UserLogged Then UserList(UserIndex).Counters.IdleCo
                      ReadField(14, rdata, 44), ReadField(15, rdata, 44), ReadField(16, rdata, 44), ReadField(17, rdata, 44), ReadField(18, rdata, 44), ReadField(19, rdata, 44), _
                      ReadField(20, rdata, 44), ReadField(21, rdata, 44), ReadField(22, rdata, 44), ReadField(23, rdata, 44), ReadField(24, rdata, 44), ReadField(25, rdata, 44), _
                      ReadField(26, rdata, 44), ReadField(27, rdata, 44), ReadField(28, rdata, 44), ReadField(29, rdata, 44), ReadField(30, rdata, 44), ReadField(31, rdata, 44), _
-                     ReadField(32, rdata, 44), ReadField(33, rdata, 44), ReadField(34, rdata, 44), ReadField(35, rdata, 44), ReadField(36, rdata, 44), ReadField(37, rdata, 44))
+                     ReadField(32, rdata, 44), ReadField(33, rdata, 44), ReadField(34, rdata, 44), ReadField(35, rdata, 44), ReadField(36, rdata, 44), ReadField(37, rdata, 44), ReadField(39, rdata, 44))
+                     If ReadField(39, rdata, 44) <> "" Then Call ChrToAccount(ReadField(39, rdata, 44), ReadField(1, rdata, 44))
                 Else
                      Call SendData(ToIndex, UserIndex, 0, "!!Esta version del juego es obsoleta, la version correcta es " & ULTIMAVERSION & ". La misma se encuentra disponible en nuestra pagina.")
                      Exit Sub
                 End If
                 
                 Exit Sub
+            Case "REECUU" 'Segunda parte de recuperar cuenta.
+                rdata = Right$(rdata, Len(rdata) - 6)
+                CuentaName = ReadField(1, rdata, Asc(","))
+                Respuesta = ReadField(2, rdata, Asc(","))
+                If Respuesta <> GetVar(AccountsPath & CuentaName & ".act", CuentaName, "Respuesta") Then
+                    Call SendData(ToIndex, UserIndex, 0, "ERRLa respuesta es incorrecta.")
+                    CloseSocket (UserIndex)
+                    Exit Sub
+                Else
+                    PasswordGen = RandomNumber(100, 999)
+                    Call SendData(ToIndex, UserIndex, 0, "GENPAS" & PasswordGen)
+                    Call WriteVar(AccountsPath & CuentaName & ".act", CuentaName, "Password", MD5String(CStr(PasswordGen)))
+                    For ii = 1 To val(GetVar(AccountsPath & CuentaName & ".act", "PJS", "NumPjs"))
+                        PersonajeAsd = GetVar(AccountsPath & CuentaName & ".act", "PJS", "pj" & ii)
+                        Call WriteVar(CharPath & PersonajeAsd & ".chr", "INIT", "Password", MD5String(CStr(PasswordGen)))
+                    Next ii
+                    Exit Sub
+                End If
+
+            Case "RECCUU" 'primera parte de recuperar cuenta.
+                rdata = Right$(rdata, Len(rdata) - 6)
+                CuentaName = ReadField(1, rdata, Asc(","))
+                mailName = ReadField(2, rdata, Asc(","))
+                preguntapedida = GetVar(AccountsPath & CuentaName & ".act", CuentaName, "Pregunta")
+                If Not CuentaExiste(CuentaName) Then
+                    Call SendData(ToIndex, UserIndex, 0, "ERRLa cuenta no existe.")
+                    CloseSocket (UserIndex)
+                    Exit Sub
+                End If
+                If mailName <> GetVar(AccountsPath & CuentaName & ".act", CuentaName, "mail") Then
+                    Call SendData(ToIndex, UserIndex, 0, "ERRE-mail Incorrecto.")
+                    CloseSocket (UserIndex)
+                    Exit Sub
+                End If
+                Call SendData(ToIndex, UserIndex, 0, "PEDPRE" & preguntapedida)
+                Exit Sub
+
+            Case "PEDPRE" 'ENVIO DE LA PREGUNTA SECRETA
+                rdata = Right$(rdata, Len(rdata) - 6)
+                CuentaName = UCase$(ReadField(1, rdata, Asc(",")))
+                preguntapedida = GetVar(AccountsPath & CuentaName & ".act", CuentaName, "Pregunta")
+                Call SendData(ToIndex, UserIndex, 0, "PEDPRE" & preguntapedida)
+                Exit Sub
+
+            Case "REPASS" 'Cambio de pass
+                rdata = Right$(rdata, Len(rdata) - 6)
+                PassName = ReadField(1, rdata, Asc(","))
+                pregunta = ReadField(2, rdata, Asc(","))
+                Respuesta = ReadField(3, rdata, Asc(","))
+                PassActual = ReadField(4, rdata, Asc(","))
+                Newpass = ReadField(5, rdata, Asc(","))
+                If pregunta <> GetVar(AccountsPath & PassName & ".act", PassName, "Pregunta") Then
+                    Call SendData(ToIndex, UserIndex, 0, "ERRLa pregunta secreta que nos proporciono, no coincide con la del registro.")
+                    Exit Sub
+                End If
+                If Respuesta <> GetVar(AccountsPath & PassName & ".act", PassName, "Respuesta") Then
+                    Call SendData(ToIndex, UserIndex, 0, "ERRLa respuesta secreta que nos proporciono, no coincide con la del registro.")
+                    Exit Sub
+                End If
+                If MD5String(PassActual) <> GetVar(AccountsPath & PassName & ".act", PassName, "password") Then
+                    Call SendData(ToIndex, UserIndex, 0, "ERRLa Password actual que nos proporciono, no coincide con la del registro.")
+                    Exit Sub
+                End If
+                Call WriteVar(AccountsPath & PassName & ".act", PassName, "Password", MD5String(Newpass))
+                For ii = 1 To val(GetVar(AccountsPath & PassName & ".act", "PJS", "NumPjs"))
+                    PersonajeAsd = GetVar(AccountsPath & PassName & ".act", "PJS", "pj" & ii)
+                    Call WriteVar(CharPath & PersonajeAsd & ".chr", "INIT", "Password", MD5String(Newpass))
+                Next ii
+                Call SendData(ToIndex, UserIndex, 0, "ERRLa password de su cuenta fue cambiada con exito. Ahora para logear debera de utilizar la nueva.")
+                Exit Sub
+
+            Case "OOLOGI"
+                rdata = Right$(rdata, Len(rdata) - 6)
+                Personaje = ReadField(1, rdata, Asc(","))
+                Acc = ReadField(2, rdata, Asc(","))
+                If Not PersonajeExiste(Personaje) Then
+                    Call SendData(ToIndex, UserIndex, 0, "ERREl personaje no existe.")
+                    Call CloseSocket(UserIndex)
+                    Exit Sub
+                End If
+                If Not BANCheck(Personaje) Then
+                    Call ConnectUser(UserIndex, Personaje, UserList(UserIndex).AccountedPass, Acc)
+                Else
+                    Call SendData(ToIndex, UserIndex, 0, "ERRSe te ha prohibido la entrada a AOSPain por tu mal comportamiento.")
+                End If
+                Exit Sub
+
+            Case "ALOGIN"
+                rdata = Right$(rdata, Len(rdata) - 6)
+                If Not AsciiValidos(ReadField(1, rdata, 44)) Then
+                    Call SendData(ToIndex, UserIndex, 0, "ERRNombre invalido.")
+                    Call CloseSocket(UserIndex)
+                    Exit Sub
+                End If
+                If Not CuentaExiste(ReadField(1, rdata, 44)) Then
+                    Call SendData(ToIndex, UserIndex, 0, "ERRLa cuenta no existe.")
+                    Call CloseSocket(UserIndex)
+                    Exit Sub
+                End If
+                Call ConnectAccount(UserIndex, ReadField(1, rdata, 44), ReadField(2, rdata, 44))
+                Exit Sub
+
+            Case "NACCNT"
+                rdata = Right$(rdata, Len(rdata) - 6)
+                NCuenta = ReadField(1, rdata, Asc(","))
+                Passw = ReadField(2, rdata, Asc(","))
+                Mail = ReadField(3, rdata, Asc(","))
+                pregunta = ReadField(4, rdata, Asc(","))
+                Respuesta = ReadField(5, rdata, Asc(","))
+                Call CreateAccount(NCuenta, Passw, Mail, pregunta, Respuesta, UserIndex)
+                Exit Sub
         End Select
     End If
     
 Select Case Left$(rdata, 4)
     Case "BORR" ' <<< borra personajes
-       On Error GoTo ExitErr1
         rdata = Right$(rdata, Len(rdata) - 4)
+        '--- BORR POR CUENTA (campo 2 = nombre de cuenta) ---
+        If CuentaExiste(ReadField(2, rdata, Asc(","))) Then
+            Dim CharName As String
+            Dim AccName As String
+            Dim EsDeLaCuenta As Boolean
+            Dim iPJ As Integer
+            Dim TotalPJsAccount As Integer
+            Dim actPath As String
+            Dim bakPath As String
+            Dim tempPJ As String
+            Dim countRestantes As Integer
+            Dim PjsRestantes(1 To 8) As String
+
+            CharName = UCase$(ReadField(1, rdata, Asc(",")))
+            AccName = ReadField(2, rdata, Asc(","))
+            If CharName = "" Or AccName = "" Then Exit Sub
+            actPath = AccountsPath & AccName & ".act"
+            TotalPJsAccount = val(GetVar(actPath, "PJS", "NumPjs"))
+            EsDeLaCuenta = False
+            For iPJ = 1 To TotalPJsAccount
+                If UCase$(GetVar(actPath, "PJS", "PJ" & iPJ)) = CharName Then
+                    EsDeLaCuenta = True
+                    Exit For
+                End If
+            Next iPJ
+            If Not EsDeLaCuenta Then
+                Call LogError("HACK: Intento de borrado de PJ " & CharName & " desde cuenta " & AccName & " sin permiso.")
+                Exit Sub
+            End If
+
+            CharName = UCase$(Trim$(CharName))
+            bakPath = App.Path & "\ChrBackUp\" & CharName & ".bak"
+            If FileExist(CharPath & CharName & ".chr", vbNormal) Then
+                If FileExist(bakPath, vbNormal) Then Kill bakPath
+                On Error Resume Next
+                Name CharPath & CharName & ".chr" As bakPath
+                If Err.Number <> 0 Then
+                    Kill CharPath & CharName & ".chr"
+                    Err.Clear
+                End If
+                On Error GoTo 0
+            End If
+            countRestantes = 0
+            For iPJ = 1 To 8
+                tempPJ = GetVar(actPath, "PJS", "PJ" & iPJ)
+                If tempPJ <> "" Then
+                    countRestantes = countRestantes + 1
+                    PjsRestantes(countRestantes) = tempPJ
+                End If
+            Next iPJ
+            For iPJ = 1 To 8
+                Call WriteVar(actPath, "PJS", "PJ" & iPJ, "")
+            Next iPJ
+            For iPJ = 1 To countRestantes
+                Call WriteVar(actPath, "PJS", "PJ" & iPJ, PjsRestantes(iPJ))
+            Next iPJ
+            Call WriteVar(actPath, "PJS", "NumPjs", CStr(countRestantes))
+            Call SendData(ToIndex, UserIndex, 0, "BORROK")
+            Call EnviarListaPJs(UserIndex, AccName)
+            Exit Sub
+        End If
+
+        '--- BORR CLASICO ---
+       On Error GoTo ExitErr1
         If (UserList(UserIndex).Flags.ValCoDe = 0) Or (ValidarLoginMSG(UserList(UserIndex).Flags.ValCoDe) <> CInt(val(ReadField(3, rdata, 44)))) Then
                       Call LogHackAttemp("IP:" & frmMain.Socket2(UserIndex).PeerAddress & " intento borrar un personaje.")
                       Call CloseSocket(UserIndex)
@@ -1597,6 +1964,54 @@ ExitErr1:
     Call LogError(Err.Description & " " & rdata)
     Exit Sub
         'End If
+    Case "BRCU" ' <<< borrar personaje de una cuenta (desde el cliente por cuenta)
+        On Error GoTo ErrBrcu
+        rdata = Right$(rdata, Len(rdata) - 4)
+        bAccName = ReadField(1, rdata, Asc(","))
+        bValidationData = ReadField(2, rdata, Asc(","))
+        bPass = ReadField(3, rdata, Asc(","))
+        bMail = ReadField(4, rdata, Asc(","))
+        bRespuesta = ReadField(5, rdata, Asc(","))
+        bPath = AccountsPath & bAccName & ".act"
+        realPass = GetVar(bPath, bAccName, "Password")
+        realMail = GetVar(bPath, bAccName, "Mail")
+        realRespuesta = GetVar(bPath, bAccName, "Respuesta")
+        If bValidationData <> UCase$(GetVar(bPath, bAccName, "Nombre")) Then
+            Call SendData(ToIndex, UserIndex, 0, "ERREl nombre no es el correcto.")
+            Exit Sub
+        End If
+        If MD5String(bPass) <> realPass Then
+            Call SendData(ToIndex, UserIndex, 0, "ERRLa Password es incorrecta.")
+            Exit Sub
+        End If
+        If bMail <> realMail Then
+            Call SendData(ToIndex, UserIndex, 0, "ERREl e-mail es incorrecto.")
+            Exit Sub
+        End If
+        If bRespuesta <> realRespuesta Then
+            Call SendData(ToIndex, UserIndex, 0, "ERRLa respuesta secreta es incorrecta.")
+            Exit Sub
+        End If
+        numPjs = val(GetVar(bPath, "PJS", "NumPjs"))
+        Dim bAux As Integer
+        bAux = 0
+        For pIdx = 1 To 8
+            pName = GetVar(bPath, "PJS", "PJ" & pIdx)
+            If pName <> "" Then
+                bAux = bAux + 1
+                If bAux = numPjs Then
+                    If FileExist(CharPath & pName & ".chr", vbNormal) Then Kill CharPath & pName & ".chr"
+                    Call WriteVar(bPath, "PJS", "PJ" & pIdx, "")
+                    Call WriteVar(bPath, "PJS", "NumPjs", CStr(numPjs - 1))
+                    Call SendData(ToIndex, UserIndex, 0, "BORROK")
+                    Exit Sub
+                End If
+            End If
+        Next pIdx
+        Exit Sub
+ErrBrcu:
+    Call LogError("BRCU: " & Err.Description)
+    Exit Sub
 End Select
 
 '<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

@@ -35,7 +35,7 @@ Attribute VB_Exposed = False
 '*****************************************************************
 
 '*****************************************************************
-'Augusto José Rando (barrin@imperiumao.com.ar)
+'Augusto Josï¿½ Rando (barrin@imperiumao.com.ar)
 '   - First Relase
 '*****************************************************************
 
@@ -74,7 +74,7 @@ Private WavPath As String
 Private MidiPath As String
 Private MP3Path As String
 
-'¿Está el engine iniciado?
+'ï¿½Estï¿½ el engine iniciado?
 Private Engine_Initialized As Boolean
 
 'Manejador de buffers
@@ -82,29 +82,29 @@ Private Buffers As clsBufferMan
 Private Buffers_Sec As clsBufferMan
 Private Buffers_Ter As clsBufferMan
 
-'El volúmen actual real (sonidos)
+'El volï¿½men actual real (sonidos)
 Private mEffectsVolume As Long
 
-'El volúmen actual real (ambientes)
+'El volï¿½men actual real (ambientes)
 Private mEffectsVolumeAmbient As Long
 
-'El volúmen actual real (música)
+'El volï¿½men actual real (mï¿½sica)
 Private mMusicVolume As Long
 
-'El volúmen máximo en la configuración (sonidos)
+'El volï¿½men mï¿½ximo en la configuraciï¿½n (sonidos)
 Private mEffectsVolumeMax As Long
 
-'El volúmen máximo en la configuración (ambientes)
+'El volï¿½men mï¿½ximo en la configuraciï¿½n (ambientes)
 Private mAmbientVolumeMax As Long
 
-'El volúmen máximo en la configuración (música)
+'El volï¿½men mï¿½ximo en la configuraciï¿½n (mï¿½sica)
 Private mMusicVolumeMax As Long
 
-'¿Estamos haciendo efecto fade?
+'ï¿½Estamos haciendo efecto fade?
 Private mFadingStatus As Byte
 Private mFadingMusicMod As Long
 
-'¿Próximo MP3 o MIDI?
+'ï¿½Prï¿½ximo MP3 o MIDI?
 Private mNextMusic As String
 Private mLastMusic As String
 
@@ -127,7 +127,7 @@ Private lastMid As Boolean
 
 Private Property Let SetWavPath(ByVal inString As String)
 '**************************************************************
-'Author: Augusto José Rando (barrin@imperiumao.com.ar)
+'Author: Augusto Josï¿½ Rando (barrin@imperiumao.com.ar)
 'Last Modify Date: 2/08/2006
 '**************************************************************
 
@@ -137,7 +137,7 @@ End Property
 
 Private Property Let SetMP3Path(ByVal inString As String)
 '**************************************************************
-'Author: Augusto José Rando (barrin@imperiumao.com.ar)
+'Author: Augusto Josï¿½ Rando (barrin@imperiumao.com.ar)
 'Last Modify Date: 2/08/2006
 '**************************************************************
 
@@ -146,7 +146,7 @@ End Property
 
 Private Property Let SetMidiPath(ByVal inString As String)
 '**************************************************************
-'Author: Augusto José Rando (barrin@imperiumao.com.ar)
+'Author: Augusto Josï¿½ Rando (barrin@imperiumao.com.ar)
 'Last Modify Date: 2/08/2006
 '**************************************************************
 
@@ -155,7 +155,7 @@ End Property
 
 Public Property Get Engine_Running() As Boolean
 '**************************************************************
-'Author: Augusto José Rando (barrin@imperiumao.com.ar)
+'Author: Augusto Josï¿½ Rando (barrin@imperiumao.com.ar)
 'Last Modify Date: 2/08/2006
 '**************************************************************
 
@@ -165,7 +165,7 @@ End Property
 
 Public Function Engine_DeInitialize()
 '**************************************************************
-'Author: Augusto José Rando (barrin@imperiumao.com.ar)
+'Author: Augusto Josï¿½ Rando (barrin@imperiumao.com.ar)
 'Last Modify Date: 2/08/2006
 '**************************************************************
 
@@ -210,7 +210,7 @@ End Function
 
 Public Function Initialize_Engine(ByVal main_hwnd As String, ByVal Set_Wav_Path As String, ByVal Set_MP3_Path As String, ByVal Set_Midi_Path As String, Optional ByVal Play_only_on_focus As Boolean = True, Optional ByVal Initialize_Sounds As Boolean = True, Optional ByVal Initialize_Music As Boolean = True, Optional ByVal sound_volume As Long, Optional ByVal music_volume As Long, Optional ByVal invert_snd As Boolean) As Boolean
 '**************************************************************
-'Author: Augusto José Rando (barrin@imperiumao.com.ar)
+'Author: Augusto Josï¿½ Rando (barrin@imperiumao.com.ar)
 'Last Modify Date: 2/08/2006
 '**************************************************************
 
@@ -283,7 +283,7 @@ End Function
 
 Public Property Get AmbienteActual() As Integer
 '**************************************************************
-'Author: Augusto José Rando (barrin@imperiumao.com.ar)
+'Author: Augusto Josï¿½ Rando (barrin@imperiumao.com.ar)
 'Last Modify Date: 2/08/2006
 '**************************************************************
 
@@ -292,7 +292,7 @@ End Property
 
 Public Property Get MusicActual() As String
 '**************************************************************
-'Author: Augusto José Rando (barrin@imperiumao.com.ar)
+'Author: Augusto Josï¿½ Rando (barrin@imperiumao.com.ar)
 'Last Modify Date: 2/08/2006
 '**************************************************************
 
@@ -301,7 +301,7 @@ End Property
 
 Public Property Let MusicActual(ByVal vNewValue As String)
 '**************************************************************
-'Author: Augusto José Rando (barrin@imperiumao.com.ar)
+'Author: Augusto Josï¿½ Rando (barrin@imperiumao.com.ar)
 'Last Modify Date: 2/08/2006
 '**************************************************************
 
@@ -310,7 +310,7 @@ End Property
 
 Public Property Let Fading(ByVal vNewValue As Long)
 '**************************************************************
-'Author: Augusto José Rando (barrin@imperiumao.com.ar)
+'Author: Augusto Josï¿½ Rando (barrin@imperiumao.com.ar)
 'Last Modify Date: 2/08/2006
 '**************************************************************
 
@@ -320,7 +320,7 @@ End Property
 
 Public Property Get Fading() As Long
 '**************************************************************
-'Author: Augusto José Rando (barrin@imperiumao.com.ar)
+'Author: Augusto Josï¿½ Rando (barrin@imperiumao.com.ar)
 'Last Modify Date: 2/08/2006
 '**************************************************************
 
@@ -329,7 +329,7 @@ End Property
 
 Public Property Get VolumenActual() As Long
 '**************************************************************
-'Author: Augusto José Rando (barrin@imperiumao.com.ar)
+'Author: Augusto Josï¿½ Rando (barrin@imperiumao.com.ar)
 'Last Modify Date: 2/08/2006
 '**************************************************************
 
@@ -338,7 +338,7 @@ End Property
 
 Public Property Get VolumenActualAmbient() As Long
 '**************************************************************
-'Author: Augusto José Rando (barrin@imperiumao.com.ar)
+'Author: Augusto Josï¿½ Rando (barrin@imperiumao.com.ar)
 'Last Modify Date: 2/08/2006
 '**************************************************************
 
@@ -351,7 +351,7 @@ End Sub
 
 Public Property Let VolumenActual(ByVal vNewValue As Long)
 '**************************************************************
-'Author: Augusto José Rando (barrin@imperiumao.com.ar)
+'Author: Augusto Josï¿½ Rando (barrin@imperiumao.com.ar)
 'Last Modify Date: 2/08/2006
 '**************************************************************
 
@@ -372,7 +372,7 @@ End Property
 
 Public Property Get InvertirSonido() As Boolean
 '**************************************************************
-'Author: Augusto José Rando (barrin@imperiumao.com.ar)
+'Author: Augusto Josï¿½ Rando (barrin@imperiumao.com.ar)
 'Last Modify Date: 2/08/2006
 '**************************************************************
 
@@ -381,7 +381,7 @@ End Property
 
 Public Property Let InvertirSonido(ByVal vNewValue As Boolean)
 '**************************************************************
-'Author: Augusto José Rando (barrin@imperiumao.com.ar)
+'Author: Augusto Josï¿½ Rando (barrin@imperiumao.com.ar)
 'Last Modify Date: 2/08/2006
 '**************************************************************
 
@@ -390,7 +390,7 @@ End Property
 
 Public Property Let VolumenActualMusicMax(ByVal vNewValue As Long)
 '**************************************************************
-'Author: Augusto José Rando (barrin@imperiumao.com.ar)
+'Author: Augusto Josï¿½ Rando (barrin@imperiumao.com.ar)
 'Last Modify Date: 2/08/2006
 '**************************************************************
 
@@ -403,7 +403,7 @@ End Property
 
 Public Property Get VolumenActualMusicMax() As Long
 '**************************************************************
-'Author: Augusto José Rando (barrin@imperiumao.com.ar)
+'Author: Augusto Josï¿½ Rando (barrin@imperiumao.com.ar)
 'Last Modify Date: 2/08/2006
 '**************************************************************
 
@@ -412,7 +412,7 @@ End Property
 
 Public Property Get VolumenActualMusic() As Long
 '**************************************************************
-'Author: Augusto José Rando (barrin@imperiumao.com.ar)
+'Author: Augusto Josï¿½ Rando (barrin@imperiumao.com.ar)
 'Last Modify Date: 2/08/2006
 '**************************************************************
 
@@ -421,7 +421,7 @@ End Property
 
 Public Property Get LastMapMusic() As Integer
 '**************************************************************
-'Author: Augusto José Rando (barrin@imperiumao.com.ar)
+'Author: Augusto Josï¿½ Rando (barrin@imperiumao.com.ar)
 'Last Modify Date: 2/08/2006
 '**************************************************************
 
@@ -430,7 +430,7 @@ End Property
 
 Public Property Let LastMapMusic(ByVal vNewValue As Integer)
 '**************************************************************
-'Author: Augusto José Rando (barrin@imperiumao.com.ar)
+'Author: Augusto Josï¿½ Rando (barrin@imperiumao.com.ar)
 'Last Modify Date: 2/08/2006
 '**************************************************************
 
@@ -439,7 +439,7 @@ End Property
 
 Public Property Let VolumenActualMusic(ByVal vNewValue As Long)
 '**************************************************************
-'Author: Augusto José Rando (barrin@imperiumao.com.ar)
+'Author: Augusto Josï¿½ Rando (barrin@imperiumao.com.ar)
 'Last Modify Date: 2/08/2006
 '**************************************************************
 
@@ -448,7 +448,7 @@ End Property
 
 Public Property Let NextMusic(ByVal vNewValue As String)
 '**************************************************************
-'Author: Augusto José Rando (barrin@imperiumao.com.ar)
+'Author: Augusto Josï¿½ Rando (barrin@imperiumao.com.ar)
 'Last Modify Date: 2/08/2006
 '**************************************************************
 
@@ -463,7 +463,7 @@ End Property
 
 Public Function Sound_Stop_All() As Boolean
 '**************************************************************
-'Author: Augusto José Rando (barrin@imperiumao.com.ar)
+'Author: Augusto Josï¿½ Rando (barrin@imperiumao.com.ar)
 'Last Modify Date: 2/08/2006
 '**************************************************************
 
@@ -486,7 +486,7 @@ End Function
 
 Public Function Sound_Play(ByVal Sound_File As Integer, Optional ByVal Do_Loop As Boolean = False, Optional ByVal Volume As Long = 0, Optional ByVal pan As Long = 0) As Boolean
 '**************************************************************
-'Author: Augusto José Rando (barrin@imperiumao.com.ar)
+'Author: Augusto Josï¿½ Rando (barrin@imperiumao.com.ar)
 'Last Modify Date: 2/08/2006
 '**************************************************************
 
@@ -510,7 +510,7 @@ End Function
 
 Public Function Sound_Stop(ByVal Sound_File As Integer) As Boolean
 '**************************************************************
-'Author: Augusto José Rando (barrin@imperiumao.com.ar)
+'Author: Augusto Josï¿½ Rando (barrin@imperiumao.com.ar)
 'Last Modify Date: 2/08/2006
 '**************************************************************
 
@@ -533,7 +533,7 @@ End Function
 
 Public Function Music_Empty() As Boolean
 '**************************************************************
-'Author: Augusto José Rando (barrin@imperiumao.com.ar)
+'Author: Augusto Josï¿½ Rando (barrin@imperiumao.com.ar)
 'Last Modify Date: 2/08/2006
 '**************************************************************
     
@@ -568,7 +568,7 @@ End Function
 
 Public Function Music_Load(ByVal file_str As String, Optional ByVal Volume As Long = 0, Optional ByVal balance As Long = 0) As Boolean '**** Loads a MP3 *****
 '**************************************************************
-'Author: Augusto José Rando (barrin@imperiumao.com.ar)
+'Author: Augusto Josï¿½ Rando (barrin@imperiumao.com.ar)
 'Last Modify Date: 2/08/2006
 '**************************************************************
     
@@ -579,11 +579,10 @@ Public Function Music_Load(ByVal file_str As String, Optional ByVal Volume As Lo
     If (LenB(file_str) <= 0) Or (Opciones.sMusica = CONST_DESHABILITADA) Or (Engine_Initialized = False) Then Exit Function
 
     If Opciones.sMusica = CONST_MP3 Then
-        If Extract_File(Musica, MP3Path, file_str & ".mp3", Windows_Temp_Dir, False) Then
+        If FileExist(MP3Path & file_str & ".mp3", vbNormal) Then
             If Not Music_Empty() = True Then GoTo Error_Handl
             Set IMC = New FilgraphManager
-            IMC.RenderFile Windows_Temp_Dir & file_str & ".mp3"
-            Kill Windows_Temp_Dir & file_str & ".mp3"
+            IMC.RenderFile MP3Path & file_str & ".mp3"
             lastMid = False
         'Lorwik> Deshabilito el midi.
         'ElseIf Extract_File(Midi, MidiPath, file_str & ".mid", Windows_Temp_Dir, False) Then
@@ -636,7 +635,7 @@ End Function
 
 Public Function Music_Play() As Boolean
 '**************************************************************
-'Author: Augusto José Rando (barrin@imperiumao.com.ar)
+'Author: Augusto Josï¿½ Rando (barrin@imperiumao.com.ar)
 'Last Modify Date: 2/08/2006
 '**************************************************************
     
@@ -661,7 +660,7 @@ End Function
 
 Public Function Music_GetLoop() As Boolean
 '**************************************************************
-'Author: Augusto José Rando (barrin@imperiumao.com.ar)
+'Author: Augusto Josï¿½ Rando (barrin@imperiumao.com.ar)
 'Last Modify Date: 2/08/2006
 '**************************************************************
     
@@ -686,7 +685,7 @@ End Function
 
 Public Function Music_Stop() As Boolean
 '**************************************************************
-'Author: Augusto José Rando (barrin@imperiumao.com.ar)
+'Author: Augusto Josï¿½ Rando (barrin@imperiumao.com.ar)
 'Last Modify Date: 2/08/2006
 '**************************************************************
 
@@ -712,7 +711,7 @@ End Function
 
 Public Function Music_Pause() As Boolean
 '**************************************************************
-'Author: Augusto José Rando (barrin@imperiumao.com.ar)
+'Author: Augusto Josï¿½ Rando (barrin@imperiumao.com.ar)
 'Last Modify Date: 2/08/2006
 '**************************************************************
 
@@ -731,7 +730,7 @@ End Function
 
 Public Function Music_Volume_Set(ByVal sound_volume As Long) As Boolean
 '**************************************************************
-'Author: Augusto José Rando (barrin@imperiumao.com.ar)
+'Author: Augusto Josï¿½ Rando (barrin@imperiumao.com.ar)
 'Last Modify Date: 2/08/2006
 '**************************************************************
 
@@ -759,7 +758,7 @@ End Function
 
 Public Function Ambient_Load(ByVal file_name As Integer, Optional ByVal Volume As Long = 0)
 '**************************************************************
-'Author: Augusto José Rando (barrin@imperiumao.com.ar)
+'Author: Augusto Josï¿½ Rando (barrin@imperiumao.com.ar)
 'Last Modify Date: 2/08/2006
 '**************************************************************
     
@@ -782,7 +781,7 @@ End Function
 
 Public Function Ambient_General_Load(ByVal Volume As Long)
 '**************************************************************
-'Author: Augusto José Rando (barrin@imperiumao.com.ar)
+'Author: Augusto Josï¿½ Rando (barrin@imperiumao.com.ar)
 'Last Modify Date: 2/08/2006
 '**************************************************************
     
@@ -809,7 +808,7 @@ End Function
 
 Public Function Ambient_Play() As Boolean
 '**************************************************************
-'Author: Augusto José Rando (barrin@imperiumao.com.ar)
+'Author: Augusto Josï¿½ Rando (barrin@imperiumao.com.ar)
 'Last Modify Date: 2/08/2006
 '**************************************************************
     
@@ -827,7 +826,7 @@ End Function
 
 Public Function Ambient_Rain_Play() As Boolean
 '**************************************************************
-'Author: Augusto José Rando (barrin@imperiumao.com.ar)
+'Author: Augusto Josï¿½ Rando (barrin@imperiumao.com.ar)
 'Last Modify Date: 2/08/2006
 '**************************************************************
     
@@ -846,7 +845,7 @@ End Function
 
 Public Function Ambient_Rain_Int_Play() As Boolean
 '**************************************************************
-'Author: Augusto José Rando (barrin@imperiumao.com.ar)
+'Author: Augusto Josï¿½ Rando (barrin@imperiumao.com.ar)
 'Last Modify Date: 2/08/2006
 '**************************************************************
     
@@ -865,7 +864,7 @@ End Function
 
 Public Function Ambient_Stop() As Boolean
 '**************************************************************
-'Author: Augusto José Rando (barrin@imperiumao.com.ar)
+'Author: Augusto Josï¿½ Rando (barrin@imperiumao.com.ar)
 'Last Modify Date: 2/08/2006
 '**************************************************************
 
@@ -890,7 +889,7 @@ End Function
 
 Public Function Ambient_Volume_Set(ByVal sound_volume As Long) As Boolean
 '**************************************************************
-'Author: Augusto José Rando (barrin@imperiumao.com.ar)
+'Author: Augusto Josï¿½ Rando (barrin@imperiumao.com.ar)
 'Last Modify Date: 2/08/2006
 '**************************************************************
 
@@ -914,7 +913,7 @@ End Function
 
 Public Function Sound_Render()
 '**************************************************************
-'Author: Augusto José Rando (barrin@imperiumao.com.ar)
+'Author: Augusto Josï¿½ Rando (barrin@imperiumao.com.ar)
 'Last Modify Date: 17/08/2005
 '**************************************************************
 
@@ -944,7 +943,7 @@ If Engine_Initialized Then
                 Call Ambient_Play
             End If
                 
-            If under_roof Then 'En los interiores el sonido es más suave :)
+            If under_roof Then 'En los interiores el sonido es mï¿½s suave :)
                 If mEffectsVolumeAmbient <> INTERIOR_VOLUME Then
                     Call Ambient_Volume_Set(INTERIOR_VOLUME)
                     mEffectsVolumeAmbient = INTERIOR_VOLUME
@@ -993,7 +992,7 @@ If Engine_Initialized Then
             
     If mFadingMusicMod <> 0 And Opciones.sMusica <> CONST_DESHABILITADA Then
         
-        '¿Fade up or fade down? Primero fade down, después fade up
+        'ï¿½Fade up or fade down? Primero fade down, despuï¿½s fade up
         If TimeElapsed + 60 < TiempoActual Then
             
             TimeElapsed = TiempoActual
@@ -1043,7 +1042,7 @@ End Function
 
 Public Function Sound_Load(ByVal file_num As Integer) As Boolean
 '**************************************************************
-'Author: Augusto José Rando
+'Author: Augusto Josï¿½ Rando
 'Last Modify Date: 7/16/2005
 '**************************************************************
     
@@ -1057,7 +1056,7 @@ End Function
 
 Public Function Calculate_Pan(ByVal map_x As Integer, ByVal map_y As Integer) As Long
 '**************************************************************
-'Author: Augusto José Rando
+'Author: Augusto Josï¿½ Rando
 'Last Modify Date: 7/16/2005
 '**************************************************************
     
@@ -1093,7 +1092,7 @@ End Function
 
 Public Function Calculate_Volume(ByVal map_x As Integer, ByVal map_y As Integer) As Long
 '**************************************************************
-'Author: Augusto José Rando
+'Author: Augusto Josï¿½ Rando
 'Last Modify Date: 7/16/2005
 '**************************************************************
     
@@ -1119,7 +1118,7 @@ End Function
 
 Public Sub BorraTimer()
 '**************************************************************
-'Author: Augusto José Rando (barrin@imperiumao.com.ar)
+'Author: Augusto Josï¿½ Rando (barrin@imperiumao.com.ar)
 'Last Modify Date: 2/08/2006
 '**************************************************************
 

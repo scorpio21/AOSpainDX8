@@ -563,6 +563,7 @@ Type Char
     loops As Integer
     
     Heading As Byte
+    Account As String
 End Type
 
 'Tipos de objetos
@@ -821,6 +822,8 @@ Type UserFlags
     OldHead As Integer
     AdminInvisible As Byte
     
+    Account As String
+    
 End Type
 
 Type UserCounters
@@ -932,6 +935,8 @@ Type User
      '[Alejo]
     ComUsu As tCOmercioUsuario
     '[/Alejo]
+    Accounted As String
+    AccountedPass As String
 End Type
 
 
@@ -1144,6 +1149,9 @@ Public IniPath As String
 Public CharPath As String
 Public MapPath As String
 Public DatPath As String
+Public AccountsPath As String
+Public PJEnCuenta As String
+Public PJEnCuentaB As String
 
 'Bordes del mapa
 Public MinXBorder As Byte

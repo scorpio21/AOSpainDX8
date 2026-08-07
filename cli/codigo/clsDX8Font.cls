@@ -220,11 +220,12 @@ Sub Engine_Init_FontSettings()
         For i = 1 To 3
                'Load the header information
                FileNum = FreeFile
-               file = Get_Extract(Scripts, "texdefault" & i & ".dat")
-               Open file For Binary As #FileNum
-                    Get #FileNum, , cfonts(i).HeaderInfo
-               Close #FileNum
-               Delete_File file
+               file = App.Path & "\Init\texdefault" & i & ".dat"
+               If FileExist(file, vbNormal) Then
+                   Open file For Binary As #FileNum
+                        Get #FileNum, , cfonts(i).HeaderInfo
+                   Close #FileNum
+               End If
                
                'Calculate some common values
                cfonts(i).CharHeight = cfonts(i).HeaderInfo.CellHeight - 4
@@ -295,16 +296,21 @@ Sub Engine_Init_FontTextures()
         For i = 1 To 3
         
         'Lorwik> Para no complicarnos la vida, los graficos de las font van a ir uno detras de otro, asi le podemos meter un For ;)
-        InfoHead = File_Find(App.Path & "\RECURSOS\Fuentes.DRAG", CStr(i) & ".png")
-        'Si existe usamos BMP
-        If InfoHead.lngFileSize <> 0 Then
-            Extract_File_Memory Fuentes, App.Path & "\Recursos\", LCase$(CStr(i) & ".png"), Data()
-            
-            Set cfonts(i).Texture = DirectD3D8.CreateTextureFromFileInMemoryEx(DirectDevice, Data(0), UBound(Data) + 1, _
-                D3DX_DEFAULT, D3DX_DEFAULT, 3, 0, D3DFMT_A8R8G8B8, D3DPOOL_MANAGED, D3DX_FILTER_NONE, _
-                D3DX_FILTER_NONE, ByVal 0, ByVal 0, ByVal 0)
-                
-            Erase Data
+        Dim FileNum As Integer
+        Dim FileSize As Long
+        FileNum = FreeFile
+        If FileExist(App.Path & "\Recursos\Fuentes\" & i & ".png", vbNormal) Then
+            Open App.Path & "\Recursos\Fuentes\" & i & ".png" For Binary As #FileNum
+                FileSize = LOF(FileNum)
+                If FileSize > 0 Then
+                    ReDim Data(0 To FileSize - 1)
+                    Get #FileNum, , Data
+                    Set cfonts(i).Texture = DirectD3D8.CreateTextureFromFileInMemoryEx(DirectDevice, Data(0), FileSize, _
+                        D3DX_DEFAULT, D3DX_DEFAULT, 3, 0, D3DFMT_A8R8G8B8, D3DPOOL_MANAGED, D3DX_FILTER_NONE, _
+                        D3DX_FILTER_NONE, ByVal 0, ByVal 0, ByVal 0)
+                    Erase Data
+                End If
+            Close #FileNum
         End If
         
             'Store the size of the texture

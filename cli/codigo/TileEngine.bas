@@ -203,7 +203,24 @@ Public Type MapInfo
     StartPos As WorldPos
     MapVersion As Integer
     Ambient As String
+    battle_mode As Boolean
 End Type
+
+Private Type tZona
+    x1 As Integer
+    x2 As Integer
+    y1 As Integer
+    y2 As Integer
+    Grh As Grh
+End Type
+Private ZonaList(-1 To -1) As tZona
+
+Private Type tEfecto
+    EfectoIndex As Long
+    beneficioso As Boolean
+    Grh As Grh
+End Type
+Private EfectoList(-1 To -1) As tEfecto
 
 Public Type D3D8Textures
     Texture As Direct3DTexture8
@@ -242,12 +259,14 @@ Public Type TLVERTEX2
 End Type
 
 Public Const PI As Single = 3.14159265358979 'Numero PI
+Public Const OFFSET_HEAD As Integer = 34 'pixeles del grh de la cabeza superpuestos al cuerpo
 Public base_light As Long
 Public LightIluminado(3) As Long
 Public LightOscurito(3) As Long
 Public NoPuedeUsar(3) As Long
 Public TechoColor(3) As Long
 Public AmbientColor As D3DCOLORVALUE
+Public ColoresPJ(0 To 50) As Long
 
 '*********************************
 'Particulas
@@ -401,6 +420,7 @@ Dim char_list() As char
 
 Public engineBaseSpeed As Single
 Public FPS As Long
+Public FramesPerSec As Integer
 Public FramesPerSecCounter As Long
 Private fpsLastCheck As Long
 
@@ -500,7 +520,7 @@ Public AddtoUserPos As Position 'Si se mueve
 
 Public EngineRun As Boolean
 
-'Tamaño de los tiles en pixels
+'Tamaï¿½o de los tiles en pixels
 Public TilePixelHeight As Integer
 Public TilePixelWidth As Integer
 
@@ -516,7 +536,7 @@ Public NumShieldAnims As Integer
 Private MainViewWidth As Integer
 Private MainViewHeight As Integer
 
-'¿?¿?¿?¿?¿?¿?¿?¿?¿?¿Graficos¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?
+'ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½Graficosï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?
 Public GrhData() As GrhData 'Guarda todos los grh
 Public BodyData() As BodyData
 Public HeadData() As HeadData
@@ -525,20 +545,33 @@ Public WeaponAnimData() As WeaponAnimData
 Public ShieldAnimData() As ShieldAnimData
 Public CascoAnimData() As HeadData
 Public AtaqueData() As AtaqueAnimData
-'¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?
+Public GrhCount As Long
+Public NumHeads As Integer
+Public NumCascos As Integer
+Public NumCuerpos As Integer
+Public NumFxs As Integer
+Public NumAtaques As Integer
+Public heads() As tHead
+Public Cascos() As tHead
+Public UserMaxAGU As Integer
+Public UserMinAGU As Integer
+Public UserMaxHAM As Integer
+Public UserMinHAM As Integer
+'ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?
 
-'¿?¿?¿?¿?¿?¿?¿?¿?¿?¿Mapa?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?
+'ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½Mapa?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?
 Public MapData() As MapBlock ' Mapa
 Public MapInfo As MapInfo ' Info acerca del mapa en uso
-'¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?
+'ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?
 
 Public bTecho       As Boolean 'hay techo?
 Public bTechoAB As Byte
+Public bRain        As Boolean 'est? raineando?
 
 Public charlist(1 To 10000) As char
 
 '       [END]
-'¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?
+'ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?
 
 'Very percise counter 64bit system counter
 Private Declare Function QueryPerformanceFrequency Lib "kernel32" (lpFrequency As Currency) As Long
@@ -660,7 +693,7 @@ With charlist(CharIndex)
     MapData(.Pos.X, .Pos.Y).CharIndex = 0
     
     'Remove char's dialog
-    Call Dialogos.RemoveDialog(CharIndex)
+    Call Dialogos.QuitarDialogo(CharIndex)
     
     Call ResetCharInfo(CharIndex)
     
@@ -830,9 +863,9 @@ On Error Resume Next
         End If
     End With
     
-    If Not EstaPCarea(CharIndex) Then Call Dialogos.RemoveDialog(CharIndex)
+    If Not EstaPCarea(CharIndex) Then Call Dialogos.QuitarDialogo(CharIndex)
     
-    If (nY < MinLimiteY) Or (nY > MaxLimiteY) Or (nX < MinLimiteX) Or (nX > MaxLimiteX) Then
+    If (nY < YMinMapSize) Or (nY > YMaxMapSize) Or (nX < XMinMapSize) Or (nX > XMaxMapSize) Then
         Call EraseChar(CharIndex)
     End If
 End Sub
@@ -879,7 +912,7 @@ Sub MoveScreen(ByVal nHeading As E_Heading)
     End If
 End Sub
 
-Private Function HayFogata(ByRef location As Position) As Boolean
+Public Function HayFogata(ByRef location As Position) As Boolean
     Dim j As Long
     Dim k As Long
     
@@ -898,7 +931,7 @@ Private Function HayFogata(ByRef location As Position) As Boolean
     Next j
 End Function
 
-Function NextOpenChar() As Integer
+Public Function NextOpenChar() As Integer
 '*****************************************************************
 'Finds next open char slot in CharList
 '*****************************************************************
@@ -1069,18 +1102,14 @@ Public Sub ActualizarMiniMapa()
 'Esta es la forma mas optima que se me ha ocurrido. Solo dibuja una vez.
     
     If UserPos.X < 100 Then
-        frmMain.UserM.Left = UserPos.X - 1
         MinimapMaxX = XMaxMapSize - 100
     ElseIf UserPos.X > 100 Then
-        frmMain.UserM.Left = UserPos.X - 101
         MinimapMaxX = XMaxMapSize
     End If
     
     If UserPos.Y < 100 Then
-        frmMain.UserM.Top = UserPos.Y - 1
         MinimapMaxY = YMaxMapSize - 100
     ElseIf UserPos.Y > 100 Then
-        frmMain.UserM.Top = UserPos.Y - 101
         MinimapMaxY = YMaxMapSize
     End If
     
@@ -1158,7 +1187,7 @@ Public Sub ClimaX()
         Call CalculateRGB(160, 160, 160, 1)
     Else
         Select Case DayStatus
-            'Mañana
+            'Maï¿½ana
             Case 0
                 Call CalculateRGB(230, 200, 200, 255)
             'MedioDia
@@ -1297,8 +1326,8 @@ Sub ShowNextFrame(ByVal DisplayFormTop As Integer, ByVal DisplayFormLeft As Inte
         End If
 
         Texto.Engine_Text_Draw 360, 50, MapInfo.Name, vbWhite, TransMapAB, True, 2
-        If MapDat.battle_mode = True Then
-            Texto.Engine_Text_Draw 350, 120, "¡Estas en zona insegura!", vbBlue, TransMapAB, True
+        If MapInfo.battle_mode = True Then
+            Texto.Engine_Text_Draw 350, 120, "ï¿½Estas en zona insegura!", vbBlue, TransMapAB, True
         Else
             Texto.Engine_Text_Draw 350, 120, "Estas en zona segura", vbGreen, TransMapAB, True
         End If
@@ -1768,7 +1797,7 @@ Private Sub CharRender(ByVal CharIndex As Long, ByVal PixelOffsetX As Integer, B
         End If
         
         'Actualizamos los dialogos
-        Call Dialogos.UpdateDialogPos(PixelOffsetX + .Body.HeadOffset.X, PixelOffsetY + .Body.HeadOffset.Y + OFFSET_HEAD, CharIndex)   '34 son los pixeles del grh de la cabeza que quedan superpuestos al cuerpo
+        Call Dialogos.Update_Dialog_Pos(PixelOffsetX + .Body.HeadOffset.X, PixelOffsetY + .Body.HeadOffset.Y + OFFSET_HEAD, CharIndex)   '34 son los pixeles del grh de la cabeza que quedan superpuestos al cuerpo
         movSpeed = 1
         
         '************Particulas************
@@ -1806,6 +1835,7 @@ End Sub
 Public Sub RenderConnect()
 
     Dim X As Byte, Y As Byte
+    Dim MapaConnect As tMapaConnect
     
     Static re As RECT
     
@@ -1852,13 +1882,14 @@ Public Sub RenderConnect()
         Next Y
     Next X
     
-    If Not frmCuenta.ListPJ.ListIndex < 0 Then 'Con este If evitamos que tire error en caso de que no tengamos ningun pj seleccionado
-        With Cuenta.pjs(frmCuenta.ListPJ.ListIndex + 1)
-            Call DrawHead(180, 180 + BodyData(.Acuerpo).HeadOffset.Y, True, LightIluminado(), 1, .rcvHead)
-            Call DDrawGrhtoSurface(BodyData(.Acuerpo).Walk(1), 180, 180, 1, 1, LightIluminado())
-            Texto.Engine_Text_Draw 195, 210, .NamePJ, vbWhite, , True
-        End With
-    End If
+    'Bloque desactivado: dependia de frmCuenta/Cuenta (no existen en este cliente DX8)
+    'If Not frmCuenta.ListPJ.ListIndex < 0 Then 'Con este If evitamos que tire error en caso de que no tengamos ningun pj seleccionado
+    '    With Cuenta.pjs(frmCuenta.ListPJ.ListIndex + 1)
+    '        Call DrawHead(180, 180 + BodyData(.Acuerpo).HeadOffset.Y, True, LightIluminado(), 1, .rcvHead)
+    '        Call DDrawGrhtoSurface(BodyData(.Acuerpo).Walk(1), 180, 180, 1, 1, LightIluminado())
+    '        Texto.Engine_Text_Draw 195, 210, .NamePJ, vbWhite, , True
+    '    End With
+    'End If
     
     'Capa 4
     For X = 1 To 32
@@ -1873,10 +1904,11 @@ Public Sub RenderConnect()
         
     Texto.Engine_Text_Draw 5, 750, "Version: " & App.Major & "." & App.Minor & "." & App.Revision, vbCyan
     
-    If frmCuenta.Visible = True Then
-        Texto.Engine_Text_Draw 505, 600, ConsejoSeleccionado, vbWhite, , 1
-        Texto.Engine_Text_Draw 505, 630, "Siguiente consejo", &HC0FFFF, , 1
-    End If
+    'Bloque desactivado: dependia de frmCuenta (no existe en este cliente DX8)
+    'If frmCuenta.Visible = True Then
+    '    Texto.Engine_Text_Draw 505, 600, ConsejoSeleccionado, vbWhite, , 1
+    '    Texto.Engine_Text_Draw 505, 630, "Siguiente consejo", &HC0FFFF, , 1
+    'End If
     
     'Clima**************************************
     Call ClimaX
@@ -2070,6 +2102,20 @@ Error:
     End If
 End Sub
 
+Public Sub InitColoresPJ()
+'*******************************************
+'Inicializa los colores de los nombres de los jugadores
+'*******************************************
+Dim i As Integer
+
+    For i = 0 To 50
+        ColoresPJ(i) = vbWhite
+    Next i
+    ColoresPJ(49) = RGB(0, 255, 255)
+    ColoresPJ(50) = RGB(255, 0, 0)
+
+End Sub
+
 Public Function InitTileEngine(ByVal setDisplayFormhWnd As Long, ByVal setMainViewTop As Integer, ByVal setMainViewLeft As Integer, ByVal setTilePixelHeight As Integer, ByVal setTilePixelWidth As Integer, ByVal setWindowTileHeight As Integer, ByVal setWindowTileWidth As Integer, ByVal setTileBufferSize As Integer, ByVal pixelsToScrollPerFrameX As Integer, pixelsToScrollPerFrameY As Integer, ByVal engineSpeed As Single) As Boolean
 
 movSpeed = 1
@@ -2081,6 +2127,7 @@ movSpeed = 1
 '***************************************************
     
     'Fill startup variables
+    Call InitColoresPJ
     MainViewTop = setMainViewTop
     MainViewLeft = setMainViewLeft
     TilePixelWidth = setTilePixelWidth
@@ -2088,6 +2135,8 @@ movSpeed = 1
     WindowTileHeight = setWindowTileHeight
     WindowTileWidth = setWindowTileWidth
     TileBufferSize = setTileBufferSize
+    
+    IniPath = App.Path & "\Init\"
     
     HalfWindowTileHeight = (frmMain.renderer.Height / 32) \ 2
     HalfWindowTileWidth = (frmMain.renderer.Width / 32) \ 2
@@ -2124,44 +2173,44 @@ movSpeed = 1
     
 On Error GoTo 0
     
-    frmCargando.Status.Caption = "Cargando Graficos...."
+    frmCargando.Status.Text = "Cargando Graficos...."
     frmCargando.Refresh
     Call frmCargando.progresoConDelay(20)
     Call LoadGrhData
-    frmCargando.Status.Caption = "Cargando Particulas..."
+    frmCargando.Status.Text = "Cargando Particulas..."
     frmCargando.Refresh
     Call frmCargando.progresoConDelay(25)
     Call CargarParticulas
-    frmCargando.Status.Caption = "Cargando Minimapa...."
+    frmCargando.Status.Text = "Cargando Minimapa...."
     frmCargando.Refresh
     Call frmCargando.progresoConDelay(30)
     Call LoadMiniMap
-    frmCargando.Status.Caption = "Cargando Cuerpos...."
+    frmCargando.Status.Text = "Cargando Cuerpos...."
     frmCargando.Refresh
     Call frmCargando.progresoConDelay(40)
     Call CargarCuerpos
-    frmCargando.Status.Caption = "Cargando Ataques...."
+    frmCargando.Status.Text = "Cargando Ataques...."
     frmCargando.Refresh
     Call frmCargando.progresoConDelay(45)
     Call CargarAtaques
-    frmCargando.Status.Caption = "Cargando Cabezas...."
+    frmCargando.Status.Text = "Cargando Cabezas...."
     frmCargando.Refresh
     Call frmCargando.progresoConDelay(50)
     Call CargarCabezas
-    frmCargando.Status.Caption = "Cargando Cascos...."
+    frmCargando.Status.Text = "Cargando Cascos...."
     frmCargando.Refresh
     Call frmCargando.progresoConDelay(55)
     Call CargarCascos
-    frmCargando.Status.Caption = "Cargando Fx's...."
+    frmCargando.Status.Text = "Cargando Fx's...."
     frmCargando.Refresh
     Call frmCargando.progresoConDelay(60)
     Call CargarFxs
-    frmCargando.Status.Caption = "Cargando Luces...."
+    frmCargando.Status.Text = "Cargando Luces...."
     frmCargando.Refresh
     Call frmCargando.progresoConDelay(67)
     Call InitColor 'Lorwik> OJO! Colores de luces !!
     
-    frmCargando.Status.Caption = "Cargando Fuentes...."
+    frmCargando.Status.Text = "Cargando Fuentes...."
     frmCargando.Refresh
     Call frmCargando.progresoConDelay(65)
     Call Texto.Engine_Init_FontSettings
@@ -2474,7 +2523,7 @@ Sub MoveCharbyHead(ByVal CharIndex As Integer, ByVal nHeading As E_Heading)
     Call ActualizarMiniMapa
     
     'areas viejos
-    If (nY < MinLimiteY) Or (nY > MaxLimiteY) Or (nX < MinLimiteX) Or (nX > MaxLimiteX) Then
+    If (nY < YMinMapSize) Or (nY > YMaxMapSize) Or (nX < XMinMapSize) Or (nX > XMaxMapSize) Then
         If CharIndex <> UserCharIndex Then
             Call EraseChar(CharIndex)
         End If
@@ -2494,7 +2543,6 @@ Public Sub DrawSpells()
     With DirectDevice
         .Clear 0, ByVal 0, D3DCLEAR_TARGET, 0, 0, 0
         .BeginScene
-        Spells.DrawSpells
         .EndScene
         .Present re, ByVal 0, frmMain.picSpell.hwnd, ByVal 0
     End With
@@ -3247,3 +3295,383 @@ End Function
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
+
+'=== DrawGrhtoHdc - Stub DX8 ===
+'En DX7 dibujaba un GRH al HDC de una PictureBox via DirectDraw.
+'En DX8 el render de inventario se hace via clsGraphicalInventory/Direct3D.
+'Este stub permite compilar los formularios que aun llaman a la funcion.
+Public Sub DrawGrhtoHdc(ByVal hwnd As Long, ByVal Hdc As Long, ByVal GrhIdx As Integer, _
+                        SourceRect As RECT, destRect As RECT)
+    'DX8: TODO - implementar render de GRH en PictureBox via D3D texture
+    'Por ahora no-op para permitir compilacion
+End Sub
+
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+'Loaders migrados (los datos .ind del cliente usan el formato historico:
+'cabecera tCabecera + campos Integer/Int16; los arrays de destino son los del
+'motor DX8, por eso los campos se leen en variables temporales).
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+Sub LoadGrhData()
+'*****************************************************************
+'Carga Graficos.ind: MiCabecera + 5 x Integer + registros Int16
+'terminados en un indice <= 0. Pasa 1: halla el indice maximo para
+'dimensionar GrhData. Pasa 2: lee los registros.
+'*****************************************************************
+On Error Resume Next
+    Dim Grh As Long
+    Dim Frame As Long
+    Dim i As Long
+    Dim tempint As Integer
+    Dim maxGrh As Long
+    Dim grhIdx As Long
+    Dim nf As Integer
+    Dim fileNum As Integer
+    Dim sx As Integer
+    Dim sy As Integer
+    Dim pw As Integer
+    Dim ph As Integer
+    Dim sp As Integer
+    Dim fr As Integer
+    Dim Handle As Integer
+
+    Handle = FreeFile
+    Open IniPath & "Graficos.ind" For Binary Access Read As #Handle
+
+    'Pasa 1: determinar el indice de grh maximo
+    Get #Handle, , MiCabecera
+    For i = 1 To 5
+        Get #Handle, , tempint
+    Next i
+
+    maxGrh = 0
+    Do
+        Get #Handle, , grhIdx
+        If grhIdx <= 0 Then Exit Do
+        If grhIdx > maxGrh Then maxGrh = grhIdx
+        Get #Handle, , nf
+        If nf > 1 Then
+            For Frame = 1 To nf
+                Get #Handle, , fr
+            Next Frame
+            Get #Handle, , sp
+        Else
+            Get #Handle, , fileNum
+            Get #Handle, , sx
+            Get #Handle, , sy
+            Get #Handle, , pw
+            Get #Handle, , ph
+        End If
+    Loop
+
+    If maxGrh <= 0 Then
+        Close #Handle
+        Exit Sub
+    End If
+
+    ReDim GrhData(1 To maxGrh) As GrhData
+
+    'Pasa 2: leer los registros
+    Seek #Handle, 1
+    Get #Handle, , MiCabecera
+    For i = 1 To 5
+        Get #Handle, , tempint
+    Next i
+
+    Do
+        Get #Handle, , grhIdx
+        If grhIdx <= 0 Then Exit Do
+        GrhData(grhIdx).Active = True
+        Get #Handle, , nf
+        If nf < 1 Then nf = 1
+        GrhData(grhIdx).NumFrames = nf
+        ReDim GrhData(grhIdx).Frames(1 To nf)
+        If nf > 1 Then
+            For Frame = 1 To nf
+                Get #Handle, , fr
+                GrhData(grhIdx).Frames(Frame) = fr
+            Next Frame
+            Get #Handle, , sp
+            GrhData(grhIdx).Speed = sp
+            GrhData(grhIdx).pixelHeight = GrhData(GrhData(grhIdx).Frames(1)).pixelHeight
+            GrhData(grhIdx).pixelWidth = GrhData(GrhData(grhIdx).Frames(1)).pixelWidth
+            GrhData(grhIdx).TileWidth = GrhData(GrhData(grhIdx).Frames(1)).TileWidth
+            GrhData(grhIdx).TileHeight = GrhData(GrhData(grhIdx).Frames(1)).TileHeight
+        Else
+            Get #Handle, , fileNum
+            GrhData(grhIdx).FileNum = fileNum
+            Get #Handle, , sx
+            GrhData(grhIdx).SX = sx
+            Get #Handle, , sy
+            GrhData(grhIdx).SY = sy
+            Get #Handle, , pw
+            GrhData(grhIdx).pixelWidth = pw
+            Get #Handle, , ph
+            GrhData(grhIdx).pixelHeight = ph
+            GrhData(grhIdx).TileWidth = pw / TilePixelHeight
+            GrhData(grhIdx).TileHeight = ph / TilePixelWidth
+            GrhData(grhIdx).Frames(1) = grhIdx
+        End If
+    Loop
+
+    Close #Handle
+
+    GrhCount = maxGrh
+End Sub
+
+Sub CargarCuerpos()
+'*****************************************************************
+'Carga Personajes.ind: MiCabecera + NumCuerpos + registros
+'tIndiceCuerpo (4 grh de caminata + offset de cabeza).
+'*****************************************************************
+On Error Resume Next
+    Dim n As Integer
+    Dim i As Long
+    Dim j As Byte
+    Dim MisCuerpos() As tIndiceCuerpo
+
+    n = FreeFile
+    Open IniPath & "Personajes.ind" For Binary Access Read As #n
+
+    Get #n, , MiCabecera
+    Get #n, , NumCuerpos
+
+    ReDim BodyData(0 To NumCuerpos + 1) As BodyData
+    ReDim MisCuerpos(0 To NumCuerpos + 1) As tIndiceCuerpo
+
+    For i = 1 To NumCuerpos
+        Get #n, , MisCuerpos(i)
+        For j = 1 To 4
+            Call InitGrh(BodyData(i).Walk(j), MisCuerpos(i).Body(j), 0)
+        Next j
+        BodyData(i).HeadOffset.X = MisCuerpos(i).HeadOffsetX
+        BodyData(i).HeadOffset.Y = MisCuerpos(i).HeadOffsetY
+    Next i
+
+    Close #n
+End Sub
+
+Sub CargarCabezas()
+'*****************************************************************
+'Carga Cabezas.ind: MiCabecera + NumHeads + registros tIndiceCabeza.
+'Ademas deriva heads() (textura/coords) para DrawHead desde el
+'primer grh de cada cabeza.
+'*****************************************************************
+On Error Resume Next
+    Dim n As Integer
+    Dim i As Long
+    Dim j As Byte
+    Dim grhIndex As Long
+    Dim Miscabezas() As tIndiceCabeza
+
+    n = FreeFile
+    Open IniPath & "Cabezas.ind" For Binary Access Read As #n
+
+    Get #n, , MiCabecera
+    Get #n, , NumHeads
+
+    ReDim HeadData(0 To NumHeads + 1) As HeadData
+    ReDim Miscabezas(0 To NumHeads + 1) As tIndiceCabeza
+    ReDim heads(0 To NumHeads + 1) As tHead
+
+    For i = 1 To NumHeads
+        Get #n, , Miscabezas(i)
+        For j = 1 To 4
+            Call InitGrh(HeadData(i).Head(j), Miscabezas(i).Head(j), 0)
+        Next j
+        grhIndex = HeadData(i).Head(1).GrhIndex
+        If grhIndex > 0 And grhIndex <= UBound(GrhData) Then
+            heads(i).Texture = GrhData(grhIndex).FileNum
+            heads(i).startX = GrhData(grhIndex).SX
+            heads(i).startY = GrhData(grhIndex).SY
+        End If
+    Next i
+
+    Close #n
+End Sub
+
+Sub CargarCascos()
+'*****************************************************************
+'Carga Cascos.ind: MiCabecera + NumCascos + registros tIndiceCabeza.
+'Ademas deriva Cascos() (textura/coords) para DrawHead.
+'*****************************************************************
+On Error Resume Next
+    Dim n As Integer
+    Dim i As Long
+    Dim j As Byte
+    Dim grhIndex As Long
+    Dim Miscabezas() As tIndiceCabeza
+
+    n = FreeFile
+    Open IniPath & "Cascos.ind" For Binary Access Read As #n
+
+    Get #n, , MiCabecera
+    Get #n, , NumCascos
+
+    ReDim CascoAnimData(0 To NumCascos + 1) As HeadData
+    ReDim Miscabezas(0 To NumCascos + 1) As tIndiceCabeza
+    ReDim Cascos(0 To NumCascos + 1) As tHead
+
+    For i = 1 To NumCascos
+        Get #n, , Miscabezas(i)
+        For j = 1 To 4
+            Call InitGrh(CascoAnimData(i).Head(j), Miscabezas(i).Head(j), 0)
+        Next j
+        grhIndex = CascoAnimData(i).Head(1).GrhIndex
+        If grhIndex > 0 And grhIndex <= UBound(GrhData) Then
+            Cascos(i).Texture = GrhData(grhIndex).FileNum
+            Cascos(i).startX = GrhData(grhIndex).SX
+            Cascos(i).startY = GrhData(grhIndex).SY
+        End If
+    Next i
+
+    Close #n
+End Sub
+
+Sub CargarFxs()
+'*****************************************************************
+'Carga Fxs.ind: MiCabecera + NumFxs + registros tIndiceFx.
+'*****************************************************************
+On Error Resume Next
+    Dim n As Integer
+    Dim i As Long
+
+    n = FreeFile
+    Open IniPath & "Fxs.ind" For Binary Access Read As #n
+
+    Get #n, , MiCabecera
+    Get #n, , NumFxs
+
+    ReDim FxData(1 To NumFxs) As tIndiceFx
+
+    For i = 1 To NumFxs
+        Get #n, , FxData(i)
+    Next i
+
+    Close #n
+End Sub
+
+Sub CargarAtaques()
+'*****************************************************************
+'Carga Ataques.ind si existe (no presente en este cliente): MiCabecera
+'+ NumAtaques + registros tIndiceAtaque. Si el archivo falta, deja
+'AtaqueData dimensionado a 0 para que MakeChar con Ataque=0 no falle.
+'*****************************************************************
+On Error Resume Next
+    Dim n As Integer
+    Dim i As Long
+    Dim j As Byte
+    Dim MisAtaques() As tIndiceAtaque
+
+    n = FreeFile
+    Open IniPath & "Ataques.ind" For Binary Access Read As #n
+
+    Get #n, , MiCabecera
+    Get #n, , NumAtaques
+
+    If NumAtaques < 1 Then NumAtaques = 0
+    ReDim AtaqueData(0 To NumAtaques) As AtaqueAnimData
+    ReDim MisAtaques(0 To NumAtaques) As tIndiceAtaque
+
+    For i = 1 To NumAtaques
+        Get #n, , MisAtaques(i)
+        If MisAtaques(i).Body(1) Then
+            For j = 1 To 4
+                Call InitGrh(AtaqueData(i).AtaqueWalk(j), MisAtaques(i).Body(j), 0)
+            Next j
+            AtaqueData(i).HeadOffset.X = MisAtaques(i).HeadOffsetX
+            AtaqueData(i).HeadOffset.Y = MisAtaques(i).HeadOffsetY
+        End If
+    Next i
+
+    Close #n
+End Sub
+
+Sub LoadMiniMap()
+'*****************************************************************
+'El cliente no dispone de minimap.dat; los colores del minimapa se
+'obtienen de GrhData.MiniMap_color (que el render dibuja directamente).
+'*****************************************************************
+On Error Resume Next
+End Sub
+
+Sub CargarParticulas()
+'*****************************************************************
+'El cliente no dispone de particulas.ini; las particulas se crean en
+'tiempo de ejecucion via Particle_Group_Create / Char_Particle_Group_Create.
+'*****************************************************************
+On Error Resume Next
+End Sub
+
+'[B2 ACCOUNT] Declaraciones GDI para GrhRenderToHdc (cache de bitmaps)
+Private Declare Function CreateCompatibleDC Lib "gdi32" (ByVal hDC As Long) As Long
+Private Declare Function SelectObject Lib "gdi32" (ByVal hDC As Long, ByVal hObject As Long) As Long
+Private Declare Function DeleteDC Lib "gdi32" (ByVal hDC As Long) As Long
+Public Declare Function BitBlt Lib "gdi32" (ByVal hDestDC As Long, ByVal X As Long, ByVal Y As Long, ByVal nWidth As Long, ByVal nHeight As Long, ByVal hSrcDC As Long, ByVal xSrc As Long, ByVal ySrc As Long, ByVal dwRop As Long) As Long
+
+Public Const SRCCOPY = &HCC0020 ' (DWORD) dest = source
+
+Private GrhHdcCache_FileNum() As Integer
+Private GrhHdcCache_Picture() As Object   ' StdPicture no disponible en .bas, usamos Object
+Private GrhHdcCache_Count As Long
+
+Private Function GetGrhPictureForHdc(ByVal FileNum As Integer) As Object
+    Dim i As Long
+    For i = 1 To GrhHdcCache_Count
+        If GrhHdcCache_FileNum(i) = FileNum Then
+            Set GetGrhPictureForHdc = GrhHdcCache_Picture(i)
+            Exit Function
+        End If
+    Next i
+
+    On Error Resume Next
+    Dim Pic As Object
+    Set Pic = LoadPicture(DirGraficos & FileNum & ".bmp")
+    On Error GoTo 0
+    If Pic Is Nothing Then Exit Function
+
+    GrhHdcCache_Count = GrhHdcCache_Count + 1
+    ReDim Preserve GrhHdcCache_FileNum(1 To GrhHdcCache_Count)
+    ReDim Preserve GrhHdcCache_Picture(1 To GrhHdcCache_Count)
+    GrhHdcCache_FileNum(GrhHdcCache_Count) = FileNum
+    Set GrhHdcCache_Picture(GrhHdcCache_Count) = Pic
+    Set GetGrhPictureForHdc = Pic
+End Function
+
+Public Sub GrhRenderToHdc(ByVal GrhIndex As Long, ByVal DesthDC As Long, ByVal X As Integer, ByVal Y As Integer, ByVal Transparent As Boolean)
+    On Error Resume Next
+
+    Dim FileNum As Integer
+    Dim sX As Integer, sY As Integer
+    Dim pixelWidth As Integer, pixelHeight As Integer
+    Dim Pic As Object
+    Dim MemDC As Long
+    Dim OldBmp As Long
+
+    If GrhIndex <= 0 Then Exit Sub
+
+    ' Obtener datos del Grh
+    With GrhData(GrhIndex)
+        sX = .SX
+        sY = .SY
+        pixelWidth = .pixelWidth
+        pixelHeight = .pixelHeight
+        FileNum = .FileNum
+    End With
+
+    ' Validaciones de seguridad
+    If FileNum <= 0 Then Exit Sub
+
+    Set Pic = GetGrhPictureForHdc(FileNum)
+    If Pic Is Nothing Then Exit Sub
+
+    ' Crear un DC compatible en memoria y seleccionar el bitmap cargado
+    MemDC = CreateCompatibleDC(DesthDC)
+    OldBmp = SelectObject(MemDC, Pic.Handle)
+
+    Call BitBlt(DesthDC, X, Y, pixelWidth, pixelHeight, MemDC, sX, sY, SRCCOPY)
+
+    ' Restaurar y liberar el DC temporal (el bitmap en si queda vivo en cache)
+    Call SelectObject(MemDC, OldBmp)
+    Call DeleteDC(MemDC)
+End Sub

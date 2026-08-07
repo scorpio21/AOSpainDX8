@@ -86,10 +86,14 @@ Public Const bTorso = 6
 
 Public Const PrimerBodyBarco = 84
 Public Const UltimoBodyBarco = 87
+Public Const CASPER_HEAD As Integer = 500
+Public Const FRAGATA_FANTASMAL As Integer = 87
 
 
 Public Dialogos As New cDialogos
 Public Sound As clsSoundEngine  ' Motor de audio DX8 - inicializado en General.bas
+Public SurfaceDB As clsSurfaceManager  ' Gestor de superficies/texturas DX8 - inicializado en TileEngine.DirectXInit
+Public Texto As New clsDX8Font  ' Motor de texto DX8 - inicializado en TileEngine.InitTileEngine
 Public NumEscudosAnims As Integer
 
 Public ArmasHerrero(0 To 100) As Integer
@@ -189,8 +193,11 @@ Type Inventory
     Valor As Long
     OBJType As Integer
     Def As Integer
+    MaxDef As Integer
+    MinDef As Integer
     MaxHit As Integer
     MinHit As Integer
+    PuedeUsar As Integer
 End Type
 
 Type NpCinV
@@ -298,7 +305,7 @@ Public Alocados As Integer
 Public flags() As Integer
 Public Oscuridad As Integer
 Public logged As Boolean
-Public NoPuedeUsar As Boolean
+Public bNoPuedeUsar As Boolean
 
 Public UsingSkill As Integer
 
@@ -466,7 +473,7 @@ Public Type Servidores
     Puerto As Integer
 End Type
 
-Private Type tMapaConnect
+Public Type tMapaConnect
     Map As Byte
     X As Byte
     Y As Byte
@@ -557,9 +564,31 @@ Public Enum E_MODO
     Normal = 1
     CrearNuevoPj = 2
     Dados = 3
-    LoginCuenta = 4
-    BorrandoPJ = 5
+    CrearAccount = 4
+    LoginAccount = 5
+    BorrarPj = 6
+    RecuperarPass = 7
 End Enum
+
+Public nombrecuent As String
+Public passcuent As String
+Public EstadoLogin As E_MODO
+Public PJClickeado As String
+
+Public rcvName As String
+Public rcvHead As Long
+Public rcvBody As Long
+Public rcvShield As Long
+Public rcvWeapon As Long
+Public rcvCasco As Long
+Public rcvIndex As Integer
+Public rcvCrimi As Boolean
+Public rcvBaned As Long
+Public rcvLevel As Integer
+Public rcvClase As String
+Public rcvMuerto As Integer
+
+Public PJSAmount As Integer
 
 Public Type pjs
     NamePJ As String
@@ -726,3 +755,29 @@ End Enum
 '=== Variables globales de motor DX8 (agregadas para compatibilidad TileEngine) ===
 Public UserCharIndex As Integer  ' Indice del personaje del usuario en CharList()
 
+
+'=== Variables globales faltantes usadas por TileEngine.bas (DX8) ===
+Public ConsejoSeleccionado As String
+Public Consejos(1 To 100) As String
+Public ListaConsejos() As String
+Public Form_Caption As String
+Public DayStatus As Byte
+Public LastMapName As String
+Public TransMapAB As Byte
+Public UserNameClan As String
+Public UserPartyId As Integer
+Public IsAttacking As Boolean
+Public UserMontando As Boolean
+Public TotalStreams As Integer
+
+'=== Arrays de tipos complejos de TileEngine (DX8) ===
+Public Pasos() As tPaso          ' Array de sonidos de pasos por tipo de terreno (tPaso)
+Public StreamData() As Stream    ' Sistema de particulas/streams del TileEngine
+
+'=== Tipo RECT (Windows API) para compatibilidad DX8 ===
+Public Type RECT
+    Left As Long
+    Top As Long
+    Bottom As Long
+    Right As Long
+End Type

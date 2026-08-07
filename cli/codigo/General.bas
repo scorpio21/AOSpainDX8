@@ -4,7 +4,7 @@ Attribute VB_Name = "Mod_General"
 'Copyright (C) 2002 Marquez Pablo Ignacio
 'Copyright (C) 2002 Otto Perez
 'Copyright (C) 2002 Aaron Perkins
-'Copyright (C) 2002 Matias Fernando Pequeño
+'Copyright (C) 2002 Matias Fernando Pequeï¿½o
 '
 'This program is free software; you can redistribute it and/or modify
 'it under the terms of the GNU General Public License as published by
@@ -44,12 +44,15 @@ Public banners As String
 
 Public bInvMod     As Boolean  'El inventario se modificï¿½?
 
+Public bNoResChange As Boolean
+
 Public bFogata As Boolean
 
 Public bLluvia() As Byte ' Array para determinar si
 'debemos mostrar la animacion de la lluvia
 
 Private lFrameLimiter As Long
+Private LastTime As Long
 
 Public lFrameModLimiter As Long
 Public lFrameTimer As Long
@@ -285,7 +288,7 @@ cad = LCase$(cad)
 For i = 1 To Len(cad)
     car = Asc(mid$(cad, i, 1))
     
-    If ((car < 97 Or car > 122) Or car = Asc("º")) And (car <> 255) And (car <> 32) Then
+    If ((car < 97 Or car > 122) Or car = Asc("ï¿½")) And (car <> 255) And (car <> 32) Then
         AsciiValidos = False
         Exit Function
     End If
@@ -446,12 +449,11 @@ End Sub
 Sub MoveNorth()
 If Cartel Then Cartel = False
 
-If LegalPos(UserPos.X, UserPos.Y - 1) Then
+If MoveToLegalPos(UserPos.X, UserPos.Y - 1) Then
     Call SendData("M" & E_Heading.NORTH)
     If Not UserDescansar And Not UserMeditar And Not UserParalizado Then
         Call MoveCharbyHead(UserCharIndex, E_Heading.NORTH)
         Call MoveScreen(E_Heading.NORTH)
-        DoFogataFx
     End If
 Else
     If charlist(UserCharIndex).Heading <> E_Heading.NORTH Then
@@ -462,12 +464,11 @@ End Sub
 
 Sub MoveEast()
 If Cartel Then Cartel = False
-If LegalPos(UserPos.X + 1, UserPos.Y) Then
+If MoveToLegalPos(UserPos.X + 1, UserPos.Y) Then
     Call SendData("M" & E_Heading.EAST)
     If Not UserDescansar And Not UserMeditar And Not UserParalizado Then
         Call MoveCharbyHead(UserCharIndex, E_Heading.EAST)
         Call MoveScreen(E_Heading.EAST)
-        Call DoFogataFx
     End If
 Else
     If charlist(UserCharIndex).Heading <> E_Heading.EAST Then
@@ -479,12 +480,11 @@ End Sub
 Sub MoveSouth()
 If Cartel Then Cartel = False
 
-If LegalPos(UserPos.X, UserPos.Y + 1) Then
+If MoveToLegalPos(UserPos.X, UserPos.Y + 1) Then
     Call SendData("M" & E_Heading.SOUTH)
     If Not UserDescansar And Not UserMeditar And Not UserParalizado Then
         MoveCharbyHead UserCharIndex, E_Heading.SOUTH
         MoveScreen E_Heading.SOUTH
-        DoFogataFx
     End If
 Else
     If charlist(UserCharIndex).Heading <> E_Heading.SOUTH Then
@@ -495,12 +495,11 @@ End Sub
 
 Sub MoveWest()
 If Cartel Then Cartel = False
-If LegalPos(UserPos.X - 1, UserPos.Y) Then
+If MoveToLegalPos(UserPos.X - 1, UserPos.Y) Then
     Call SendData("M" & E_Heading.WEST)
     If Not UserDescansar And Not UserMeditar And Not UserParalizado Then
             MoveCharbyHead UserCharIndex, E_Heading.WEST
             MoveScreen E_Heading.WEST
-            DoFogataFx
     End If
 Else
     If charlist(UserCharIndex).Heading <> E_Heading.WEST Then
@@ -625,6 +624,7 @@ If Not (tX < MinXBorder Or tX > MaxXBorder Or tY < MinYBorder Or tY > MaxYBorder
     bTecho = IIf(MapData(UserPos.X, UserPos.Y).trigger = 1 Or _
             MapData(UserPos.X, UserPos.Y).trigger = 2 Or _
             MapData(UserPos.X, UserPos.Y).trigger = 4, True, False)
+    charlist(UserCharIndex).moved = True
 Exit Sub
 Stop
     '[CODE 001]:MatuX'
@@ -664,7 +664,6 @@ Stop
         End Select
     '[END]'
 
-    Call DoFogataFx
 End If
 
 End Sub
@@ -939,6 +938,7 @@ frmCargando.Refresh
 UserParalizado = False
 
 frmConnect.version = "v" & App.Major & "." & App.Minor & " Beta: 1"
+Form_Caption = "AOSpain v" & App.Major & "." & App.Minor & " Beta: 1"
 AddtoRichTextBox frmCargando.Status, "Buscando servidores de AOSpain....", 0, 0, 0, 0, 0, 1
 
 'frmMain.Inet1.URL = "http://www.caratula2000.net/power/poweraoiplist3.txt"
@@ -971,9 +971,9 @@ Ciudades(2) = "Arcadia"
 Ciudades(3) = "Banderbill"
 
 ReDim CityDesc(1 To NUMCIUDADES) As String
-CityDesc(1) = "Ullathorpe esta establecida en el medio de los grandes bosques de Argentum, es principalmente un pueblo de campesinos y leñadores. Su ubicacion hace de Ullathorpe un punto de paso obligado para todos los aventureros ya que se encuentra cerca de los lugares mas legendarios de este mundo."
+CityDesc(1) = "Ullathorpe esta establecida en el medio de los grandes bosques de Argentum, es principalmente un pueblo de campesinos y leï¿½adores. Su ubicacion hace de Ullathorpe un punto de paso obligado para todos los aventureros ya que se encuentra cerca de los lugares mas legendarios de este mundo."
 CityDesc(2) = "Arcadia es una gran ciudad. Edificada sobre la costa oeste del principal continente de Argentum."
-CityDesc(3) = "Banderbill se encuentra al norte de Ullathorpe y Arcadia, es una de las ciudades más importantes de todo el imperio."
+CityDesc(3) = "Banderbill se encuentra al norte de Ullathorpe y Arcadia, es una de las ciudades mï¿½s importantes de todo el imperio."
 
 ReDim ListaRazas(1 To NUMRAZAS) As String
 ListaRazas(1) = "Humano"
@@ -999,7 +999,7 @@ ListaClases(9) = "Paladin"
 ListaClases(10) = "Cazador"
 ListaClases(11) = "Pescador"
 ListaClases(12) = "Herrero"
-ListaClases(13) = "Leñador"
+ListaClases(13) = "Leï¿½ador"
 ListaClases(14) = "Minero"
 ListaClases(15) = "Carpintero"
 ListaClases(16) = "Pirata"
@@ -1017,7 +1017,7 @@ SkillsNames(3) = "Robar"
 SkillsNames(4) = "Tacticas de combate"
 SkillsNames(5) = "Combate con armas"
 SkillsNames(6) = "Meditar"
-SkillsNames(7) = "Apuñalar"
+SkillsNames(7) = "Apuï¿½alar"
 SkillsNames(8) = "Ocultarse"
 SkillsNames(9) = "Supervivencia"
 SkillsNames(10) = "Talar Arboles"
@@ -1048,7 +1048,22 @@ frmOldPersonaje.NameTxt.Text = Config_Inicio.Name
 frmOldPersonaje.PasswordTxt.Text = ""
 
 AddtoRichTextBox frmCargando.Status, "Hecho", , , , 1
+    'DX8: Opciones de audio derivadas de la configuracion del cliente (RenderMod)
+    Opciones.Audio = IIf(Fx = 1, 0, 1)
+    Opciones.FXVolume = -500
+    Opciones.sMusica = IIf(Musica = 1, CONST_DESHABILITADA, CONST_MP3)
+    Opciones.MusicVolume = -500
+    Opciones.Ambient = 1
+    Opciones.AmbientVol = -500
+    Opciones.InvertirSonido = 0
+    
     Set Sound = New clsSoundEngine  ' Inicializar motor audio DX8
+    
+    If Sound.Initialize_Engine(frmMain.hwnd, App.Path & "\Wav\", App.Path & "\Musica\", App.Path & "\Midi\", False, (Opciones.Audio > 0), (Opciones.sMusica <> CONST_DESHABILITADA), Opciones.FXVolume, False, Opciones.InvertirSonido) Then
+        'Motor de audio DX8 iniciado correctamente
+    Else
+        MsgBox "No se ha logrado iniciar el motor de DirectSound. No habra soporte de audio.", vbCritical, "Advertencia"
+    End If
 
 DirectXInit
 
@@ -1063,18 +1078,17 @@ ENDL = Chr(13) & Chr(10)
 ENDC = Chr(1)
 
 'Call InitTileEngine(frmMain.hwnd, 152, 7, 32, 32, 13, 17, 9)
-                                  
- If bNoResChange = False Then 'GS
-        Call InitTileEngine(frmMain.hwnd, frmMain.MainViewShp.Top + 23, frmMain.MainViewShp.Left + 3, 32, 32, Round(frmMain.MainViewShp.Height / 32), Round(frmMain.MainViewShp.Width / 32), 9) 'GS
+                                   
+     If bNoResChange = False Then 'GS
+        Call InitTileEngine(frmMain.renderer.hwnd, 149, 13, 32, 32, 13, 17, 11, 8, 8, 0.019)
     Else
-        Call InitTileEngine(frmMain.hwnd, frmMain.MainViewShp.Top + 1, frmMain.MainViewShp.Left + 1, 32, 32, 13, 17, 9)
+        Call InitTileEngine(frmMain.renderer.hwnd, 149, 13, 32, 32, 13, 17, 11, 8, 8, 0.019)
 
     End If
 'Call AddtoRichTextBox(frmCargando.Status, "Creando animaciones extras.", 2, 51, 223, 1, 1)
 Call AddtoRichTextBox(frmCargando.Status, "Creando animaciones extra....")
 
 
-Call CargarAnimsExtra
 Call CargarTips
 UserMap = 1
 Call CargarArrayLluvia
@@ -1082,16 +1096,17 @@ Call CargarAnimArmas
 Call CargarAnimEscudos
 
 
-AddtoRichTextBox frmCargando.Status, "                    ¡Bienvenido a Argentum Online!", , , , 1
+AddtoRichTextBox frmCargando.Status, "                    ï¿½Bienvenido a Argentum Online!", , , , 1
 
 
 Unload frmCargando
 
-LoopMidi = True
+    'DX8: LoopMidi = True  '-- eliminado, loop gestionado por clsSoundEngine
 
-If Musica = 0 Then
-    Call CargarMIDI(DirMidi & MIdi_Inicio & ".mid")
-    Play_Midi
+If Opciones.sMusica <> CONST_DESHABILITADA Then
+    Sound.NextMusic = MUS_Inicio
+    Sound.Fading = 350
+    Sound.Sound_Render
 End If
 
 'frmPres.Top = 0
@@ -1111,20 +1126,6 @@ Unload frmPres
 frmConnect.Visible = True
 
 'Loop principal!
-'[CODE]:MatuX'
-    MainViewRect.Left = MainViewLeft + 32 * RenderMod.iImageSize
-    MainViewRect.Top = MainViewTop + 32 * RenderMod.iImageSize
-    MainViewRect.Right = (MainViewRect.Left + MainViewWidth) - 32 * (RenderMod.iImageSize * 2)
-    MainViewRect.bottom = (MainViewRect.Top + MainViewHeight) - 32 * (RenderMod.iImageSize * 2)
-
-    MainDestRect.Left = ((TilePixelWidth * TileBufferSize) - TilePixelWidth) + 32 * RenderMod.iImageSize
-    MainDestRect.Top = ((TilePixelHeight * TileBufferSize) - TilePixelHeight) + 32 * RenderMod.iImageSize
-    MainDestRect.Right = (MainDestRect.Left + MainViewWidth) - 32 * (RenderMod.iImageSize * 2)
-    MainDestRect.bottom = (MainDestRect.Top + MainViewHeight) - 32 * (RenderMod.iImageSize * 2)
-
-    Dim OffsetCounterX As Integer
-    Dim OffsetCounterY As Integer
-'[END]'
 
 
 
@@ -1159,41 +1160,10 @@ Do While prgRun
         '[END]'
         
         
-                 If bNoResChange = False Then 'GS+~
-                    Call ShowNextFrame(frmMain.Top, frmMain.Left)   'GS+~
-                End If
-            'Call ShowNextFrame(frmMain.Top, frmMain.Left)
-            '****** Move screen Left, Right, Up and Down if needed ******
-            If AddtoUserPos.X <> 0 Then
-                OffsetCounterX = (OffsetCounterX - (8 * Sgn(AddtoUserPos.X)))
-                If Abs(OffsetCounterX) >= Abs(TilePixelWidth * AddtoUserPos.X) Then
-                    OffsetCounterX = 0
-                    AddtoUserPos.X = 0
-                    UserMoving = 0
-                End If
-            ElseIf AddtoUserPos.Y <> 0 Then
-                OffsetCounterY = OffsetCounterY - (8 * Sgn(AddtoUserPos.Y))
-                If Abs(OffsetCounterY) >= Abs(TilePixelHeight * AddtoUserPos.Y) Then
-                    OffsetCounterY = 0
-                    AddtoUserPos.Y = 0
-                    UserMoving = 0
-                End If
-            End If
-    
-            '****** Update screen ******
-            Call RenderScreen(UserPos.X - AddtoUserPos.X, UserPos.Y - AddtoUserPos.Y, OffsetCounterX, OffsetCounterY)
-            'Call DoNightFX
-            'Call DoLightFogata(UserPos.x - AddtoUserPos.x, UserPos.y - AddtoUserPos.y, OffsetCounterX, OffsetCounterY)
-            '[CODE 000]:MatuX
-                'Call MostrarFlags
-                If IScombate Then Call Dialogos.DrawText(260, 260, "MODO COMBATE", vbRed)
-                If Dialogos.CantidadDialogos <> 0 Then Call Dialogos.MostrarTexto
-                If Cartel Then Call DibujarCartel
-                If bInvMod Then DibujarInv
-    
-                Call DrawBackBufferSurface
+         Call ShowNextFrame(frmMain.Top, frmMain.Left, frmMain.MouseX, frmMain.MouseY)
                 
-                Call RenderSounds
+                'DX8: Render del motor de sonido (ambient, fuego, musica)
+                If (Opciones.Audio = 1 Or Opciones.sMusica <> CONST_DESHABILITADA) Then Call Sound.Sound_Render
                 
                 '[DO]:Inventario'
                 'Call DibujarInv(frmMain.picInv.hWnd, 0)
@@ -1250,20 +1220,6 @@ AddtoRichTextBox frmCargando.Status, "Liberando recursos...", 0, 0, 0, 0, 0, 1
 DeinitTileEngine
 
 
-If bNoResChange = False Then
-        Dim typDevM As typDevMODE
-        Dim lRes As Long
-    
-        lRes = EnumDisplaySettings(0, 0, typDevM)
-        With typDevM
-            .dmFields = DM_PELSWIDTH Or DM_PELSHEIGHT
-            .dmPelsWidth = oldResWidth
-           .dmPelsHeight = oldResHeight
-        End With
-lRes = ChangeDisplaySettings(typDevM, CDS_TEST)
-End If
-
-
 Call UnloadAllForms
 
 Config_Inicio.tip = tipf
@@ -1275,6 +1231,50 @@ ManejadorErrores:
     LogError "Contexto:" & Err.HelpContext & " Desc:" & Err.Description & " Fuente:" & Err.Source
     End
     
+End Sub
+
+Sub CargarTips()
+On Error Resume Next
+Dim n As Integer, i As Integer
+Dim NumTips As Integer
+
+n = FreeFile
+Open App.Path & "\init\Tips.ayu" For Binary Access Read As #n
+
+Get #n, , MiCabecera
+
+Get #n, , NumTips
+
+ReDim Tips(1 To NumTips) As String * 255
+
+For i = 1 To NumTips
+    Get #n, , Tips(i)
+Next i
+
+Close #n
+
+End Sub
+
+Sub CargarArrayLluvia()
+On Error Resume Next
+Dim n As Integer, i As Integer
+Dim Nu As Integer
+
+n = FreeFile
+Open App.Path & "\init\fk.ind" For Binary Access Read As #n
+
+Get #n, , MiCabecera
+
+Get #n, , Nu
+
+ReDim bLluvia(1 To Nu) As Byte
+
+For i = 1 To Nu
+    Get #n, , bLluvia(i)
+Next i
+
+Close #n
+
 End Sub
 
 
@@ -1358,7 +1358,64 @@ CMSValidateChar_ = IIf( _
 End Function
 
 
-Function HayAgua(X As Integer, Y As Integer) As Boolean
+Public Function ARGB(ByVal r As Long, ByVal g As Long, ByVal b As Long, ByVal A As Long) As Long
+        
+    Dim c As Long
+        
+    If A > 127 Then
+        A = A - 128
+        c = A * 2 ^ 24 Or &H80000000
+        c = c Or r * 2 ^ 16
+        c = c Or g * 2 ^ 8
+        c = c Or b
+    Else
+        c = A * 2 ^ 24
+        c = c Or r * 2 ^ 16
+        c = c Or g * 2 ^ 8
+        c = c Or b
+    End If
+    
+    ARGB = c
+
+End Function
+
+Public Function ColorToDX8(ByVal long_color As Long) As Long
+    ' DX8 engine
+    Dim temp_color As String
+    Dim red As Integer, blue As Integer, green As Integer
+    
+    temp_color = Hex$(long_color)
+    If Len(temp_color) < 6 Then
+        'Give is 6 digits for easy RGB conversion.
+        temp_color = String(6 - Len(temp_color), "0") + temp_color
+    End If
+    
+    red = CLng("&H" + mid$(temp_color, 1, 2))
+    green = CLng("&H" + mid$(temp_color, 3, 2))
+    blue = CLng("&H" + mid$(temp_color, 5, 2))
+    
+    ColorToDX8 = D3DColorXRGB(red, green, blue)
+
+End Function
+
+Public Function General_Distance_Get(ByVal x1 As Integer, ByVal y1 As Integer, ByVal x2 As Integer, ByVal y2 As Integer) As Integer
+
+General_Distance_Get = Abs(x1 - x2) + Abs(y1 - y2)
+
+End Function
+
+Public Sub Auto_Drag(ByVal hwnd As Long)
+    Call ReleaseCapture
+    Call SendMessage(hwnd, WM_NCLBUTTONDOWN, HTCAPTION, ByVal 0&)
+End Sub
+
+Public Sub CloseClient()
+On Error Resume Next
+    Call Sound.Engine_DeInitialize
+    End
+End Sub
+
+Function HayAgua(ByVal X As Integer, ByVal Y As Integer) As Boolean
 
 If MapData(X, Y).Graphic(1).GrhIndex >= 1505 And _
    MapData(X, Y).Graphic(1).GrhIndex <= 1520 And _
