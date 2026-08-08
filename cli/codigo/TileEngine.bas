@@ -1,6 +1,18 @@
 Attribute VB_Name = "Mod_TileEngine"
 Option Explicit
 
+'[B2 ACCOUNT] Declaraciones GDI para GrhRenderToHdc (cache de bitmaps)
+Private Declare Function CreateCompatibleDC Lib "gdi32" (ByVal hDC As Long) As Long
+Private Declare Function SelectObject Lib "gdi32" (ByVal hDC As Long, ByVal hObject As Long) As Long
+Private Declare Function DeleteDC Lib "gdi32" (ByVal hDC As Long) As Long
+Public Declare Function BitBlt Lib "gdi32" (ByVal hDestDC As Long, ByVal X As Long, ByVal Y As Long, ByVal nWidth As Long, ByVal nHeight As Long, ByVal hSrcDC As Long, ByVal xSrc As Long, ByVal ySrc As Long, ByVal dwRop As Long) As Long
+
+Public Const SRCCOPY = &HCC0020 ' (DWORD) dest = source
+
+Private GrhHdcCache_FileNum() As Integer
+Private GrhHdcCache_Picture() As Object   ' StdPicture no disponible en .bas, usamos Object
+Private GrhHdcCache_Count As Long
+
 Private MinimapMaxY As Byte
 Private MinimapMaxX As Byte
 
@@ -3602,18 +3614,6 @@ Sub CargarParticulas()
 '*****************************************************************
 On Error Resume Next
 End Sub
-
-'[B2 ACCOUNT] Declaraciones GDI para GrhRenderToHdc (cache de bitmaps)
-Private Declare Function CreateCompatibleDC Lib "gdi32" (ByVal hDC As Long) As Long
-Private Declare Function SelectObject Lib "gdi32" (ByVal hDC As Long, ByVal hObject As Long) As Long
-Private Declare Function DeleteDC Lib "gdi32" (ByVal hDC As Long) As Long
-Public Declare Function BitBlt Lib "gdi32" (ByVal hDestDC As Long, ByVal X As Long, ByVal Y As Long, ByVal nWidth As Long, ByVal nHeight As Long, ByVal hSrcDC As Long, ByVal xSrc As Long, ByVal ySrc As Long, ByVal dwRop As Long) As Long
-
-Public Const SRCCOPY = &HCC0020 ' (DWORD) dest = source
-
-Private GrhHdcCache_FileNum() As Integer
-Private GrhHdcCache_Picture() As Object   ' StdPicture no disponible en .bas, usamos Object
-Private GrhHdcCache_Count As Long
 
 Private Function GetGrhPictureForHdc(ByVal FileNum As Integer) As Object
     Dim i As Long

@@ -39,6 +39,8 @@ Public Warping As Boolean
 Public LlegaronSkills As Boolean
 Public LlegaronAtrib As Boolean
 Public LlegoFama As Boolean
+'[B2 ACCOUNT] valcode recibido en el handshake VAL, usado en NLOGIN de cuentas (field 38)
+Public ModValCoDe As Integer
 
 Public Function PuedoQuitarFoco() As Boolean
 PuedoQuitarFoco = True
@@ -501,7 +503,8 @@ Sub HandleData(ByVal Rdata As String)
             Else
                 bK = CLng(ReadField(1, Rdata, Asc(",")))
                 bO = 100 'CInt(ReadField(1, Rdata, Asc(",")))
-                Call Login(ValidarLoginMSG(CInt(ReadField(2, Rdata, Asc(",")))))
+                ModValCoDe = ValidarLoginMSG(CInt(ReadField(2, Rdata, Asc(","))))
+                Call Login(ModValCoDe)
             End If
             Exit Sub
         Case "BKW"                  ' >>>>> Pausa :: BKW
@@ -1093,6 +1096,7 @@ If EstadoLogin >= Normal And EstadoLogin <= RecuperarPass Then
         Case BorrarPj
             SendData "BORR" & PJClickeado & "," & nombrecuent
         Case CrearNuevoPj
+            SendData ("PASSCL" & Passcliente) 'Validar el cliente antes de crear un personaje de cuenta
             SendData ("NLOGIN" & UserName & "," & UserPassword _
             & "," & 0 & "," & 0 & "," _
             & App.Major & "." & App.Minor & "." & App.Revision & _
@@ -1110,7 +1114,7 @@ If EstadoLogin >= Normal And EstadoLogin <= RecuperarPass Then
              & "," & UserSkills(17) & "," & UserSkills(18) _
              & "," & UserSkills(19) & "," & UserSkills(20) _
              & "," & UserSkills(21) & "," & UserSkills(22) _
-             & "," & UserEmail & "," & UserHogar & "," & valcode & "," & nombrecuent)
+             & "," & UserEmail & "," & UserHogar & "," & ModValCoDe & "," & nombrecuent)
     End Select
     Exit Sub
 End If
