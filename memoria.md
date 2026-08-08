@@ -10,10 +10,9 @@
 - Los errores de VB6 pueden reportar línea con **desfase (+2 aprox)** respecto a la línea real.
 - VB6 reporta el PRIMER error del módulo y para → errores encadenados, corregir uno a uno.
 
-## ESTADO ACTUAL (corte de hoy) ✅ COMPILACIÓN COMPLETA
-- **`vb6 /make` EXITOSO (ExitCode 0)**: log = "La generación de 'aoscorpio2.exe' ha tenido éxito." y **`I:\AospainOri\cli\aoscorpio2.exe` generado** (884736 bytes, 05/08/2026).
-- Con ello quedaron resueltos en cadena: TileEngine.bas (bloque frmCuenta/Cuenta.pjs comentado en RenderConnect), clsDX8Font (ColorToDX8), clsTexManager (mD3D/device), clsBufferMan (CopyMem), clsSoundEngine (General_Distance_Get) y frmRenderConnect (PlayWaveDS + helpers).
-- Recordatorio: `frmCuenta.frm` NO existe en el proyecto; el preview de PJ en `RenderConnect` está comentado (código muerto DX8).
+## ESTADO ACTUAL (corte de hoy) ✅ COMPILACIÓN COMPLETA — B2 en curso (Task 1 hecha)
+- **`vb6 /make` EXITOSO (ExitCode 0)**: log = "La generación de 'aoscorpio2.exe' ha tenido éxito." y **`I:\AospainOri\cli\aoscorpio2.exe` regenerado** (tras `5437b74`, 08/08/2026).
+- B1 cerrado (migración DX7→DX8). B2 (sistema de cuentas): Task 1 (protocolo cliente) COMPLETA y revisada; quedan Task 2 (conexión/formularios) y Task 3 (server /SALIR) — ver sección PRÓXIMO PASO abajo.
 
 ## CORRECCIONES HECHAS (sesión de hoy y previas)
 1. `TCP.bas:397` `Case "CC"` → `Call MakeChar(..., 0)` (10º arg `Ataque` = 0, TileEngine.bas:613).
@@ -69,24 +68,26 @@
 - En activo: `Type MapInfo` (TileEngine.bas:200), `Position` (Declares.bas:364 X/Y As Long), `tHead` (Declares.bas:642), `tIndiceAtaque` (648 Body(1..4) As Long), `charlist.Body As BodyData` (TileEngine.bas:128).
 - `Client.vbp` sin `clsGraphicalInventory`, sin `Mod_Carga`/`clsIniReader`; forms actuales: frmCantidad, frmCargando, frmComerciar, frmConnect, frmMain, frmOldPersonaje, frmSkills3, frmRenderConnect, frmMSG, frmForo, FrmEstadisticas, frmtip, frmPres, frmMensaje, frmCrearPersonaje, frmBorrar, frmRecuperar, frmPasswd, frmEntrenador, frmSpawnList, ...
 
-## PRÓXIMO PASO (mañana) — B1 cerrado ✅, sigue B2
+## PRÓXIMO PASO (mañana) — B2 en curso
 
-### B1 COMPLETO (DX7→DX8, compilación limpia)
-- `aoscorpio2.exe` (884736 B) en `I:\AospainOri\cli`.
-- Pendiente de runtime (opcional): lanzar el cliente y verificar que carga (DX8: DirectXInit, InitTileEngine, loaders, texto, sonido). Si falla, revisar con depurador en VB6.
+### ESTADO B2 (corte 08/08/2026) — Task 1 COMPLETA + fixes post-review, compilación EXIT 0
+Commits en `main` desde BASE `159e7c5`:
+- `47ce97e` — Task 1: protocolo de cuentas en el cliente (cli/codigo/TCP.bas).
+- `5437b74` — fixes post-review: PASSCL orophin antes de NLOGIN de cuenta + field 38 = `ModValCoDe` (valcode real); bloque `[B2 ACCOUNT]` GDI de TileEngine.bas movido al tope del módulo.
 
-### B2 PENDIENTE — port del sistema de cuentas desde `I:\Aospain1.0-dx\Cliente_DX8`
-Estado actual de Ori: `E_MODO` ya existe (Declares.bas:563). NO existe aún: `EstadoLogin` global, `nombrecuent`, `PJClickeado`, `MD5HushYo`, `GrhRenderToHdc` (TileEngine), carpeta `codigo\Cuentas\`, dispatch por EstadoLogin, botón de cuentas en frmConnect.
+**Lección crítica (verificada contra el server Ori):** el NLOGIN de cuentas EXIGE `PASSCL=orophin` ANTES (Servidor TCP.bas:1715) y field 38 == `ValidarLoginMSG(ValCoDe)` del handshake VAL (1735). El server dx (referencia `I:\Aospain1.0-dx`) NO tiene esos gates — por eso el plan original ("SIN PASSCL", `Login(0)`) era incorrecto. El handler `VAL` del cli guarda ahora el valcode en el global `Public ModValCoDe As Integer` (cli TCP.bas, bloque 3-char) y `Case CrearNuevoPj` lo usa para field 38.
+**Benignos (NO arreglar):** ALOGIN field 4 truncado (ConnectAccount solo lee fields 1-2); VAL solo llega una vez.
 
-Plan B2 (pasos):
-1. **Portar `GrhRenderToHdc`** a `cli\codigo\TileEngine.bas` (referencia: `I:\Aospain1.0-dx\Cliente_DX8\codigo\TileEngine.bas`).
-2. **Copiar `codigo\Cuentas\` de 1.0-dx** a `cli\codigo\Cuentas\`: frmCuent.frm(+frx), frmCrearAccount.frm(+frx), frmBorrar.frm (es `frmCambiarPass`, OJO nombre interno)/frmRecuperar.frm(+frx), DrawPJenPicture.bas. Agregarlos al `Client.vbp` (con sus .frx).
-3. **Portar `Login()` / dispatch por EstadoLogin** y los Cases en el TCP.bas del cli: `INIAC` (dx TCP.bas:906), `ADDPJ` (917), `GENPAS`, `PEDPRE`, `BORROK`, `FINOK` (modo cuenta), `NACCNT`, `REPASS`, `RECCUU/REECUU`, `OOLOGI`. Importante: Ori usa `PASSCL`+`OLOGIN`/`NLOGIN` (formato propio), dx usa `ALOGIN`+`OOLOGI`. Mantener el `PASSCL` que ya manda el cli Ori actual si el server 1.0-dx no lo exige.
-4. **Añadir globales** en Declares.bas: `Public EstadoLogin As E_MODO`, `nombrecuent As String`, `PJClickeado As String`, `MD5HushYo As String`, `rcvName/rcvIndex/rcvHead/rcvBody/rcvWeapon/rcvShield/rcvCasco/rcvCrimi/rcvBaned/rcvLevel/rcvClase/rcvMuerto` (rcv* ya existen? verificar en Declares).
-5. **Añadir botón "acceso por cuenta"** en `frmConnect.frm` → EnviarLoginCuenta / abrir frmCrearAccount/frmRecuperar.
-6. Referencias de frmCuent a portar: `frmMensaje`, `frmCrearPersonaje` (ya existe), `frmCambiarPass` (nombre interno del frmBorrar copiado), `CurServer`/`ServersLst`/`IPdelServidor`/`PuertoDelServidor`/`Config_Inicio` (verificar cuáles existen en Ori; si no, adaptar el bloque de conexión de `EntrarAlMundo`).
-7. **Compilar** con `vb6 /make` (borrar log antes: `C:\Users\sonsc\AppData\Local\Temp\opencode\vb6err.txt`).
+### LO QUE FALTA DE B2 (mañana)
+1. **Task 2** (brief `I:\AospainOri\.superpowers\sdd\memoria.md\task-2-brief.md`):
+   - `frmAccLogin.cmdLogin_Click` → conectar socket antes de ALOGIN (`If Not frmMain.Socket1.Connected Then ... HostName=CurServerIp/RemotePort=CurServerPort/Connect`), mismo en cmdCrear_Click. OJO no conectar dos veces; orden: conectar → setear EstadoLogin.
+   - `frmCuent.EntrarAlMundo` (1281-1327) → solo desconectar+reconectar si `Not Connected`; si ya está conectado, mandar `OOLOGI` directo.
+   - `frmCrearPersonaje.boton_Click(0)` (975-1009) → rama cuenta: `If EstadoLogin = LoginAccount Or EstadoLogin = Dados Or frmCuent.Visible Then EstadoLogin = CrearNuevoPj: Call Login(0) (si Connected, si no frmMensaje)`; si no → `frmPasswd.Show vbModal` (clásico intacto).
+   - Verificar que `codigo\Cuentas\DrawPJenPicture.bas` está como Module en `cli\Client.vbp`.
+2. **Task 3** (server): `Case "/SALIR"` (2203-2210) → tras `FINOK`, si `UserList(...).Accounted <> ""` llamar `EnviarListaPJs(UserIndex, Accounted)` y NO cerrar socket.
+3. Compilar limpio final (`vb6 /make`, borrar log antes) y commit B2.
 
 ### Recordatorios
-- Confirmar que `ConsejoSeleccionado` no rompe nada (display comentado en RenderConnect), y revisar si `Form_Caption`/helpers añadidos interfieren.
-- Reference servers: `k:\Descargas\aaoo\dx\Cliente` (DX8), `ee\Cliente` (canónico).
+- Flujo clásico (PASSCL+OLOGIN/NLOGIN, frmOldPersonaje/frmPasswd/frmBorrar/frmRecuperar PASSRECO) debe quedar 100% intacto.
+- Compilar: borrar `C:\Users\sonsc\AppData\Local\Temp\opencode\vb6err.txt` antes de cada `vb6 /make`.
+- Reference servers: `k:\Descargas\aaoo\dx\Cliente` (DX8), `ee\Cliente` (canónico), `I:\Aospain1.0-dx\Cliente_DX8` (cuentas).
