@@ -160,6 +160,11 @@ MsgBox "�Completa todo!"
 Exit Sub
 End If
 
+If Not frmMain.Socket1.Connected Then
+    frmMain.Socket1.HostName = CurServerIp
+    frmMain.Socket1.RemotePort = CurServerPort
+    frmMain.Socket1.Connect
+End If
 Call SendData("RECCUU" & txtNombre & "," & txtMail)
 End Sub
 

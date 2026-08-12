@@ -538,7 +538,7 @@ End Sub
 
 Private Sub imgGetPass_Click()
     Call PlayWaveDS(SND_WAV_CLICK)
-    Call frmRecuperar.Show(vbModal, frmConnect)
+    Call frmRecuperarCuenta.Show(vbModal, frmConnect)
 End Sub
 
 'Private Sub imgServArgentina_Click()
