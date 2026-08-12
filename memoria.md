@@ -10,9 +10,9 @@
 - Los errores de VB6 pueden reportar línea con **desfase (+2 aprox)** respecto a la línea real.
 - VB6 reporta el PRIMER error del módulo y para → errores encadenados, corregir uno a uno.
 
-## ESTADO ACTUAL (corte de hoy) ✅ COMPILACIÓN COMPLETA — B2 en curso (Task 1 hecha)
-- **`vb6 /make` EXITOSO (ExitCode 0)**: log = "La generación de 'aoscorpio2.exe' ha tenido éxito." y **`I:\AospainOri\cli\aoscorpio2.exe` regenerado** (tras `5437b74`, 08/08/2026).
-- B1 cerrado (migración DX7→DX8). B2 (sistema de cuentas): Task 1 (protocolo cliente) COMPLETA y revisada; quedan Task 2 (conexión/formularios) y Task 3 (server /SALIR) — ver sección PRÓXIMO PASO abajo.
+## ESTADO ACTUAL (corte 12/08/2026) ✅ COMPILACIÓN COMPLETA — B2 (cuentas) COMPLETO
+- **`vb6 /make` EXITOSO** en cliente y servidor: `aoscorpio2.exe` (16:00:46) y `AOSpainServ1.0.4-.exe` (16:00:27) regenerados.
+- B1 (migración DX7→DX8) y B2 (sistema de cuentas: Tasks 1-3) cerrados. Siguiente: prueba de runtime end-to-end y exposición de `frmRecuperarCuenta` (opcionales).
 
 ## CORRECCIONES HECHAS (sesión de hoy y previas)
 1. `TCP.bas:397` `Case "CC"` → `Call MakeChar(..., 0)` (10º arg `Ataque` = 0, TileEngine.bas:613).
@@ -70,24 +70,28 @@
 
 ## PRÓXIMO PASO (mañana) — B2 en curso
 
-### ESTADO B2 (corte 08/08/2026) — Task 1 COMPLETA + fixes post-review, compilación EXIT 0
+### ESTADO B2 (corte 12/08/2026) — B2 COMPLETO ✅, ambas compilaciones limpias
 Commits en `main` desde BASE `159e7c5`:
-- `47ce97e` — Task 1: protocolo de cuentas en el cliente (cli/codigo/TCP.bas).
-- `5437b74` — fixes post-review: PASSCL orophin antes de NLOGIN de cuenta + field 38 = `ModValCoDe` (valcode real); bloque `[B2 ACCOUNT]` GDI de TileEngine.bas movido al tope del módulo.
+- `47ce97e` — Task 1: protocolo de cuentas en el cliente (cli/codigo/TCP.bas). Reviewed APPROVED.
+- `5437b74` — fixes post-review: PASSCL orophin antes de NLOGIN de cuenta + field 38 = `ModValCoDe`; bloque `[B2 ACCOUNT]` GDI de TileEngine.bas movido al tope.
+- `8a1fb51` — docs: memoria B2.
+- `25e307f` — Task 2: conexión y flujo de formularios de cuentas (frmAccLogin, frmCuent, frmCrearPersonaje). Reviewed APPROVED.
+- `40e4819` — Task 3: server `/SALIR` re-envía lista de personajes para cuentas (Servidor TCP.bas:2203-2210). Verificado.
+
+**Compilación final (controlador, 12/08/2026):**
+- Servidor `VB6 /make Servidor\SERVER.VBP` → "La generación de 'AOSpainServ1.0.4-.exe' ha tenido éxito." (exe 16:00:27).
+- Cliente `VB6 /make cli\Client.vbp` → "La generación de 'aoscorpio2.exe' ha tenido éxito." (exe 16:00:46). `git status` limpio (bump auto de RevisionVer en SERVER.VBP revertido).
 
 **Lección crítica (verificada contra el server Ori):** el NLOGIN de cuentas EXIGE `PASSCL=orophin` ANTES (Servidor TCP.bas:1715) y field 38 == `ValidarLoginMSG(ValCoDe)` del handshake VAL (1735). El server dx (referencia `I:\Aospain1.0-dx`) NO tiene esos gates — por eso el plan original ("SIN PASSCL", `Login(0)`) era incorrecto. El handler `VAL` del cli guarda ahora el valcode en el global `Public ModValCoDe As Integer` (cli TCP.bas, bloque 3-char) y `Case CrearNuevoPj` lo usa para field 38.
 **Benignos (NO arreglar):** ALOGIN field 4 truncado (ConnectAccount solo lee fields 1-2); VAL solo llega una vez.
 
-### LO QUE FALTA DE B2 (mañana)
-1. **Task 2** (brief `I:\AospainOri\.superpowers\sdd\memoria.md\task-2-brief.md`):
-   - `frmAccLogin.cmdLogin_Click` → conectar socket antes de ALOGIN (`If Not frmMain.Socket1.Connected Then ... HostName=CurServerIp/RemotePort=CurServerPort/Connect`), mismo en cmdCrear_Click. OJO no conectar dos veces; orden: conectar → setear EstadoLogin.
-   - `frmCuent.EntrarAlMundo` (1281-1327) → solo desconectar+reconectar si `Not Connected`; si ya está conectado, mandar `OOLOGI` directo.
-   - `frmCrearPersonaje.boton_Click(0)` (975-1009) → rama cuenta: `If EstadoLogin = LoginAccount Or EstadoLogin = Dados Or frmCuent.Visible Then EstadoLogin = CrearNuevoPj: Call Login(0) (si Connected, si no frmMensaje)`; si no → `frmPasswd.Show vbModal` (clásico intacto).
-   - Verificar que `codigo\Cuentas\DrawPJenPicture.bas` está como Module en `cli\Client.vbp`.
-2. **Task 3** (server): `Case "/SALIR"` (2203-2210) → tras `FINOK`, si `UserList(...).Accounted <> ""` llamar `EnviarListaPJs(UserIndex, Accounted)` y NO cerrar socket.
-3. Compilar limpio final (`vb6 /make`, borrar log antes) y commit B2.
+### PENDIENTES B2 (opcionales, no bloquean)
+1. **Recuperación de cuenta por UI**: `frmAccLogin` no tiene botón de recuperar; `frmConnect.imgGetPass_Click` (539-542) apunta a `frmRecuperar` (clásico por personaje), NO a `frmRecuperarCuenta`. Exponer acceso a `frmRecuperarCuenta` = tarea futura.
+2. **Prueba de runtime end-to-end** cliente↔servidor live (conexión ALOGIN → INIAC → entrar/crear/borrar PJ → /SALIR): no ejecutada; B2 validado por compilación + revisión de protocolo contra el server.
+3. **Skill "memory"** instalado global en `C:\Users\sonsc\.agents\skills\memory\SKILL.md` (via `npx skills add <local> -g -a opencode -y --copy`), probado con subagente fresh-context (OK). Detalles en progress.md.
 
 ### Recordatorios
-- Flujo clásico (PASSCL+OLOGIN/NLOGIN, frmOldPersonaje/frmPasswd/frmBorrar/frmRecuperar PASSRECO) debe quedar 100% intacto.
+- Flujo clásico (PASSCL+OLOGIN/NLOGIN, frmOldPersonaje/frmPasswd/frmBorrar/frmRecuperar PASSRECO) queda 100% intacto (verificado en reviews).
 - Compilar: borrar `C:\Users\sonsc\AppData\Local\Temp\opencode\vb6err.txt` antes de cada `vb6 /make`.
 - Reference servers: `k:\Descargas\aaoo\dx\Cliente` (DX8), `ee\Cliente` (canónico), `I:\Aospain1.0-dx\Cliente_DX8` (cuentas).
+- SDD ledger: `I:\AospainOri\.superpowers\sdd\memoria.md\progress.md`.
