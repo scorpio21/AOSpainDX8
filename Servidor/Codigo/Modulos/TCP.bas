@@ -2206,6 +2206,9 @@ Select Case UCase$(rdata)
             Exit Sub
         Else
             Call SendData(ToIndex, UserIndex, 0, "FINOK")
+            If UserList(UserIndex).Accounted <> "" Then
+                Call EnviarListaPJs(UserIndex, UserList(UserIndex).Accounted)
+            End If
         End If
         Exit Sub
     Case "/FUNDARCLAN"
