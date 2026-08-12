@@ -95,6 +95,12 @@ Option Explicit
 
 Private Sub cmdLogin_Click()
     If txtAccName.Text <> "" And txtPass.Text <> "" Then
+        ' Nos aseguramos de tener el socket conectado antes de enviar
+        If Not frmMain.Socket1.Connected Then
+            frmMain.Socket1.HostName = CurServerIp
+            frmMain.Socket1.RemotePort = CurServerPort
+            frmMain.Socket1.Connect
+        End If
         ' Llamamos a la nueva función de envío
         Call EnviarLoginCuenta(txtAccName.Text, txtPass.Text)
     Else
@@ -110,7 +116,13 @@ Private Sub cmdCrear_Click()
         cmdCrear.Caption = "CONFIRMAR REGISTRO"
     Else
         If txtAccName.Text <> "" And txtPass.Text <> "" And txtEmail.Text <> "" Then
-             Call EnviarCrearCuenta(txtAccName.Text, txtPass.Text, txtEmail.Text)
+            ' Nos aseguramos de tener el socket conectado antes de crear la cuenta
+            If Not frmMain.Socket1.Connected Then
+                frmMain.Socket1.HostName = CurServerIp
+                frmMain.Socket1.RemotePort = CurServerPort
+                frmMain.Socket1.Connect
+            End If
+            Call EnviarCrearCuenta(txtAccName.Text, txtPass.Text, txtEmail.Text)
         End If
     End If
 End Sub

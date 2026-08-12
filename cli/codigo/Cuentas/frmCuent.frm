@@ -1286,41 +1286,44 @@ Private Sub EntrarAlMundo()
         Exit Sub
     End If
 
-    ' Nos aseguramos de tener una conexion limpia
-    If frmMain.Socket1.Connected Then
-        frmMain.Socket1.Disconnect
-        frmMain.Socket1.Cleanup
-        DoEvents
-    End If
+    ' Si el socket ya esta conectado (ALOGIN) enviamos el OOLOGI directo
+    If Not frmMain.Socket1.Connected Then
+        ' Nos aseguramos de tener una conexion limpia
+        If frmMain.Socket1.Connected Then
+            frmMain.Socket1.Disconnect
+            frmMain.Socket1.Cleanup
+            DoEvents
+        End If
 
-    ' Configuramos el host y puerto
-    If CurServer <> 0 Then
-        frmMain.Socket1.HostAddress = ServersLst(CurServer).Ip
-        frmMain.Socket1.RemotePort = ServersLst(CurServer).Puerto
-    Else
-        If IPdelServidor <> "" Then
-            frmMain.Socket1.HostAddress = IPdelServidor
-            frmMain.Socket1.RemotePort = PuertoDelServidor
+        ' Configuramos el host y puerto
+        If CurServer <> 0 Then
+            frmMain.Socket1.HostAddress = ServersLst(CurServer).Ip
+            frmMain.Socket1.RemotePort = ServersLst(CurServer).Puerto
         Else
-            ' Fallback a localhost/config
-            frmMain.Socket1.HostAddress = "127.0.0.1"
-            frmMain.Socket1.RemotePort = Config_Inicio.Puerto
+            If IPdelServidor <> "" Then
+                frmMain.Socket1.HostAddress = IPdelServidor
+                frmMain.Socket1.RemotePort = PuertoDelServidor
+            Else
+                ' Fallback a localhost/config
+                frmMain.Socket1.HostAddress = "127.0.0.1"
+                frmMain.Socket1.RemotePort = Config_Inicio.Puerto
+            End If
         End If
+
+        ' Conectamos
+        frmMain.Socket1.Connect
+
+        ' Esperamos un momento a que conecte (max 3 segundos)
+        Dim lWait As Long
+        lWait = GetTickCount
+        Do While Not frmMain.Socket1.Connected
+            DoEvents
+            If GetTickCount - lWait > 3000 Then
+                MsgBox "No se ha podido establecer conexion con el servidor.", vbCritical
+                Exit Sub
+            End If
+        Loop
     End If
-
-    ' Conectamos
-    frmMain.Socket1.Connect
-
-    ' Esperamos un momento a que conecte (max 3 segundos)
-    Dim lWait As Long
-    lWait = GetTickCount
-    Do While Not frmMain.Socket1.Connected
-        DoEvents
-        If GetTickCount - lWait > 3000 Then
-            MsgBox "No se ha podido establecer conexion con el servidor.", vbCritical
-            Exit Sub
-        End If
-    Loop
      
     ' Enviamos paquete de entrada al mundo (Online Login)
     Call SendData("OOLOGI" & PJClickeado & "," & nombrecuent)

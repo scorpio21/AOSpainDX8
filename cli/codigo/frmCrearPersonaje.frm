@@ -1006,7 +1006,21 @@ Select Case Index
         
         UserHogar = lstHogar.List(lstHogar.ListIndex)
         
-        If CheckData() Then frmPasswd.Show vbModal
+        If CheckData() Then
+            If EstadoLogin = LoginAccount Or EstadoLogin = Dados Or frmCuent.Visible Then
+                ' modo cuenta: socket ya conectado desde ALOGIN
+                EstadoLogin = CrearNuevoPj
+                If frmMain.Socket1.Connected Then
+                    Call Login(0)  ' NLOGIN formato Ori + nombrecuent field 39
+                Else
+                    frmMensaje.Show
+                    frmMensaje.msg.Caption = "Se ha perdido la conexion con el servidor."
+                    Unload Me
+                End If
+            Else
+                frmPasswd.Show vbModal   ' flujo clásico intacto
+            End If
+        End If
         
     Case 1
         If Musica = 0 Then
