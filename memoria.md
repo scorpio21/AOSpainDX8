@@ -2,106 +2,67 @@
 
 ## IMPORTANTE (no olvidar)
 - **aospain NO usa compresión todavía.** NO implantar compresión por ahora. Existe material de referencia (modCompression, `GameIni tCabecera`, compresor AODrag) pero queda en reserva para futuro.
-- Objetivo actual: **compilar limpio** `vb6 /make` y obtener `I:\AospainOri\cli\aoscorpio2.exe`.
+- **ENCODING: los .frm/.bas son CP1252 + CRLF.** VB6 no carga archivos UTF-8/LF. Si se edita con herramientas que re-escriben el archivo, verificar bytes: acentos = 1 byte (E9=é, F3=ó, E1=á), saltos = `0D 0A`. Un diff que "toca" TODAS las líneas con acentos = corrupción de encoding.
+- Objetivo: mantener **compilación limpia** `vb6 /make` → `I:\AospainOri\cli\aoscorpio2.exe` y `I:\AospainOri\Servidor\AOSpainServ1.0.4-.exe`.
 
 ## Compilación (comando)
-- Borrar el log ANTES de cada run: `C:\Users\sonsc\AppData\Local\Temp\opencode\vb6err.txt`.
-- `& "C:\Program Files (x86)\Microsoft Visual Studio\VB98\VB6.EXE" /make I:\AospainOri\cli\Client.vbp /out C:\Users\sonsc\AppData\Local\Temp\opencode\vb6err.txt`
-- Los errores de VB6 pueden reportar línea con **desfase (+2 aprox)** respecto a la línea real.
-- VB6 reporta el PRIMER error del módulo y para → errores encadenados, corregir uno a uno.
+- Borrar el log ANTES de cada run. Cliente: `C:\Users\sonsc\AppData\Local\Temp\opencode\vb6err.txt`; servidor: `C:\Users\sonsc\AppData\Local\Temp\opencode\vb6srv.txt`.
+- `& "C:\Program Files (x86)\Microsoft Visual Studio\VB98\VB6.EXE" /make I:\AospainOri\cli\Client.vbp /out <log>` y lo mismo con `I:\AospainOri\Servidor\SERVER.VBP`.
+- Éxito = `La generación de '...' ha tenido éxito.` VB6 reporta PRIMER error del módulo y para; desfase de línea aprox ±2.
+- **OJO:** `SERVER.VBP` tiene `AutoIncrementVer=1` → cada compilación sube `RevisionVer` y deja el .vbp "modificado". Revertir con `git checkout -- Servidor/SERVER.VBP` si no queremos incluirlo.
+- **Para editar .frm/.bas de forma segura:** leer/escribir con `[System.Text.Encoding]::GetEncoding(1252)` desde PowerShell y usar `"`r`n"` como salto. NO usar el tool de edit/write sobre estos archivos (escribe UTF-8/LF).
 
-## ESTADO ACTUAL (corte 13/08/2026) 🚧 B3 EN CURSO — Replicar `frmConnect` del ref (Cliente_DX8) para login directo + 1 botón por acción
-- B1 (migración DX7→DX8) ✅ y B2 (sistema de cuentas: Tasks 1-3) ✅ CERRADOS y VERIFICADOS en runtime por el usuario (12/08/2026).
-- **Nueva tarea B3 (decidida por el usuario con pregunta):** reemplazar el `frmConnect` actual (menú `Image1(0-7)` + botón `cmdAccLogin` que abría `frmAccLogin` modal = bug 2) por el `frmConnect` del ref `I:\Aospain1.0-dx\Cliente_DX8\codigo\frmConnect.frm`:
-  1. **Login directo** (cuenta+pass en la pantalla de conexión).
-  2. **Un botón por acción**: Conectar / Crear Cuenta / Recuperar / Eliminar Cuenta.
-  3. **Servidor destino = el mío** (`I:\AospainOri\Servidor`), que ya tiene ALOGIN/NACCNT/INIAC/RECCUU/BRCU.
-- Idioma SIEMPRE en español.
+## ESTADO ACTUAL (corte 13/08/2026) ✅ B3 CERRADO y COMMITEADO
+- B1 (migración DX7→DX8) ✅ y B2 (account system Tasks 1-3) ✅ VERIFICADOS en runtime por el usuario.
+- **B3 COMPLETO** (frmConnect del ref: login directo + 1 botón por acción) — commit `cd9ae46`. Compila cliente y servidor. **PENDIENTE de verificación en runtime (probar cuenta nueva + HLQ, login directo MD5, recuperar, eliminar).**
 
-## HALLAZGOS DE LA INVESTIGACIÓN (13/08/2026, para ejecutar B3)
-### Fondo idéntico → coordenadas del ref válidas
-- `I:\AospainOri\cli\Graficos\Conectar.jpg` y `I:\Aospain1.0-dx\Cliente_DX8\Graficos\Conectar.jpg` → **mismo MD5 `94EB6E11B02D30DF81C767434B70AF99`** (263227 bytes). Se puede copiar el form ref tal cual visualmente.
+## LO QUE SE HIZO EN B3 (verificado, commit `cd9ae46`)
+- `cli\codigo\frmConnect.frm` + `frmConnect.frx` (408043 B, Picture frx:000C) copiados y reescritos del ref (escritos en UTF-8/LF → **corregidos a CP1252+CRLF** para que VB6 cargue).
+- `Conectar_Click(Index)` → valida, limpia socket previo (`Disconnect`+`Cleanup`+DoEvents), `nombrecuent/passcuent`, **`UserPassword=MD5String(passcuent)`, `MD5HushYo=UserPassword`**, `EstadoLogin=LoginAccount`, conecta a `CurServerIp/CurServerPort`. NO llama Login() (lo dispara VAL).
+- `CrearPersonaje_Click` → si no conectado: `EstadoLogin=CrearAccount`, conecta, `DoEvents`; luego `frmCrearAccount.Show vbModal, Me` (**fix 24038**, envío NACCNT con socket vivo).
+- `RecuperarCuenta_Click` → `frmRecuperarCuenta.Show vbModal, Me` (nota: ref usaba frmRecuperarpj, inexistente).
+- `EliminarCuenta_Click` → 4×InputBox (account, pass, mail, respuesta), espera conexión máx 3s (patrón GetTickCount de frmCuent:1316-1325), `SendData("BRCU" & sAccount & ",," & sPass & "," & sMail & "," & sRespuesta)` — **campo 2 (Nombre) VACÍO** (validado: CreateAccount server NO escribe "Nombre" en el .act → `GetVar("Nombre")=""` y `""=""` pasa, TCP.bas:1986).
+- `Form_KeyDown` ESC → `DeinitTileEngine` (LiberarObjetosDX no existe) + `SaveGameini` + `prgRun=False` + `UnloadAllForms`.
+- `Form_KeyUp` Ctrl+I togglea `PortTxt.Visible/IPTxt.Visible`. `Form_Load`: `EngineRun=False`, `PortTxt=Config_Inicio.Puerto`. `Form_Activate`: IP/port de `ServersLst(CurServer)` o `IPdelServidor`/`PuertoDelServidor`, `CargarLst`, MkDir Web.
+- **`TCP.bas` cliente añadió `Case "HLQ"`** (~724, antes de ERR): `MsgBox "La cuenta fue creada con éxito."` — confirmación REAL vía server.
+- **`frmCrearAccount.frm Image2_Click`**: ELIMINADO el MsgBox falso de éxito ("La cuenta fue creada con éxito."). Queda `SendData("NACCNT"...)` + `Unload Me`. (Al editarlo se corrompió `términos` EF BF BD → arreglado a E9).
+- **Server `CreateAccount`** (TCP.bas ~682-726): **fix del HLQ perdido** — `CloseSocket` ponía `ConnID=-1` (763) + `Cleanup`/`Unload Socket2`/`ResetUserSlot` antes del `SendData(ToIndex)` (que solo escribe si `ConnID>-1`, 913). Ahora: **`SendData("HLQ")` ANTES de cerrar** + espera 300ms (`GetTickCount` loop con DoEvents) + `CloseSocket`.
+- **`Declares.bas` servidor**: añadido `Public Declare Function GetTickCount Lib "kernel32" () As Long` (tras sndPlaySound, ~linea 1221).
+- **GOTCHA de encoding en servidor:** en sesión previa el `TCP.bas` del servidor quedó re-encodificado a UTF-8/`?` (237 líneas de diff falso, acentos→bytes 3F). Se RESTAURÓ con `git checkout` y se re-aplicó el fix con PowerShell en CP1252 → diff actual limpio (solo 11 líneas). **Los EF BF BD que queden (72 en TCP.bas cliente, 1 en server TCP.bas, 15 en Declares.bas) son preexistentes del repo, NO tocar.**
 
-### Ref `frmConnect.frm` (Cliente_DX8, 408 líneas, ScaleMode=0 User, ScaleWidth=799, ScaleHeight=471.094, Picture `frx:000C`)
-- Controles clave (twips): `NameTxt` (5055,3401), `PasswordTxt` (5055,4700, PasswordChar=*), `Conectar` Image Index=1 (6240,8040), `CrearPersonaje` Image (4320,7920), `RecuperarCuenta` Image (2280,8040), `EliminarCuenta` Image (8160,7920), `version` Label, `IPTxt`/`PortTxt`/`DescTxt` (ocultos, Ctrl+I los togglea), `lst_servers`, `Text1`/`Text2`.
-- **`Conectar_Click(Index)`**: si Index≠1 Exit; valida campos; limpia socket previo; `nombrecuent=NameTxt`, `passcuent=PasswordTxt`, `UserPassword=passcuent` (**texto plano — OJO, adaptar a MD5**); `EstadoLogin=LoginAccount`; `Me.MousePointer=99`; `Socket1.Connect`. **NO llama Login()** → lo hace el handler VAL.
-- **`CrearPersonaje_Click`** (crear cuenta, fix del 24038): si no conectado → `EstadoLogin=CrearAccount`, `Socket1.HostAddress=CurServerIp`, `RemotePort=CurServerPort`, `Socket1.Connect`, `DoEvents`; luego `frmCrearAccount.Show vbModal, Me`.
-- **`RecuperarCuenta_Click`**: `frmRecuperarpj.Show vbModal, Me` — **frmRecuperarpj NO existe en mi cliente** → usar `frmRecuperarCuenta.Show vbModal, Me`.
-- **`EliminarCuenta_Click`**: 2×InputBox (cuenta; luego "CONTRASEÑA, CORREO y RESPUESTA separados por comas") → conecta si no → `SendData("BRCU" & sAccount & "," & sConfirm)`. **FORMATO ref (2 campos) ≠ MI server (5 campos) → adaptar.**
-- `Form_KeyDown` ESC: usa `LiberarObjetosDX` (**no existe en mi cliente** → usar `DeinitTileEngine` como mi frmConnect actual) + `SaveGameini` + `prgRun=False` + `UnloadAllForms`.
-- `Form_KeyUp` Ctrl+I: toggle `PortTxt.Visible`/`IPTxt.Visible`.
-- `Form_Load`: `EngineRun=False`; `PortTxt=Config_Inicio.Puerto`.
-- `Form_Activate`: `CurServer<>0`→IP/port de `ServersLst(CurServer)`; si no de `IPdelServidor`/`PuertoDelServidor`; `MkDir Web`.
-- `lst_servers_Click`/`CargarLst`: setean CurServer y textos.
+## FLUJO DE LOGIN (mi cliente + mi server, NO tocar)
+- `Socket1_Connect` (frmMain.frm:1094-1123): envía `gIvEmEvAlcOde` (si frmCrearPersonaje.Visible o Not frmRecuperar.Visible) o `PASSRECO` (frmRecuperar.Visible). **MI server exige gIvEmEvAlcOde primero → NO copiar ramas E_MODO del ref.**
+- Server handshake (1643-1651): `gIvEmEvAlcOde` → `SendData("VAL" & RandKey & "," & ValCoDe)`.
+- Cliente `Case "VAL"` (TCP.bas:499-509): `bK=ReadField(1)`, `bO=100`, `ModValCoDe=ValidarLoginMSG(ReadField(2))`, `Login(ModValCoDe)`. (Si frmBorrar.Visible → BORR directo).
+- `TCP.bas Login()` (1090-1155): si `EstadoLogin` 1..7 → Select Case **Normal/LoginAccount/BorrarPj/CrearNuevoPj**; **CrearAccount (4) sin Case → Exit Sub sin enviar** (deseado: evita NACCNT prematuro). Si EstadoLogin fuera de rango (0) → cae a OLOGIN/NLOGIN según `SendNewChar` (❗ cuando BRCU conecta sin setear EstadoLogin, el VAL dispara `Login(0)` y envía OOLOGI/OLOGIN con UserName vacío → server responde ERR "no existe" pero NO cierra → BRCU igual se procesa. Es ruido benigno heredado del ref, no daña).
+- `ALOGIN` (field1=cuenta, field2=MD5) → `ConnectAccount` (626-638) compara contra `GetVar(.act,"password")` = MD5String → el cliente DEBE mandar MD5 (verificado B3).
+- `.act` se crea con: `password=MD5String`, `mail`, `Pregunta`, `Respuesta`, `ban=0`, `[PJS] NumPjs=0 + PJ1-8=""`, **sin clave "Nombre"**.
 
-### Mi cliente (estado actual)
-- `frmConnect.frm` actual (564 líneas): ScaleMode=3 Pixel 800x600, Picture cargada en Form_Load (`LoadPicture Graficos\Conectar.jpg`), menú `Image1(0-7)`, `cmdAccLogin_Click`→`frmAccLogin.Show vbModal` (**bug 2 a eliminar**), `imgGetPass_Click`→`frmRecuperarCuenta.Show vbModal`, `lst_servers`+`text1` (news), `Command1`, `imgServEspana/Argentina`.
-- **`TCP.bas` NO tiene `Case "HLQ"`** (falta éxito real de crear cuenta). El ref Cliente_DX8 SÍ lo tiene (TCP.bas:786-792 → `MsgBox "La cuenta fue creada con éxito..."`).
-- `TCP.bas Login()` (1086-1151): `If EstadoLogin >= Normal And EstadoLogin <= RecuperarPass Then` con Cases **Normal/LoginAccount/BorrarPj/CrearNuevoPj** (CrearNuevoPj manda PASSCL+NLOGIN con field38=`ModValCoDe`); si no, OLOGIN/NLOGIN según `SendNewChar`. **CrearAccount (4) NO tiene Case** → cae en el `Select` sin match → `Exit Sub` sin enviar (comportamiento deseado para evitar NACCNT prematuro con campos vacíos).
-- `TCP.bas EnviarLoginCuenta` (1062-1068): `nombrecuent=sNombre`; `UserPassword=MD5String(sPass)`; `MD5HushYo=UserPassword`; `EstadoLogin=LoginAccount`; `Login(0)`.
-- `TCP.bas EnviarCrearCuenta` (1070-1072): solo `frmCrearAccount.Show vbModal, frmAccLogin`.
-- `TCP.bas VAL` (499-509): `bK=ReadField(1)`; `bO=100`; `ModValCoDe=ValidarLoginMSG(ReadField(2))`; `Login(ModValCoDe)`. (Si `frmBorrar.Visible` → BORR directo).
-- `TCP.bas ERR` (724-730): MsgBox; `If Not frmCrearPersonaje.Visible And EstadoLogin<>LoginAccount And EstadoLogin<>Normal Then Socket1.Disconnect`.
-- `TCP.bas INIAC` (839-846) / `ADDPJ` (847-862): muestran frmCuent con lista de PJs.
-- `TCP.bas SendData` (1042-1060): `bK=GenCrC(bK,sdData)`; `bO=bO+1`; `~bK&ENDC`; `Socket1.Write`.
-- `frmMain.frm Socket1_Connect` (1094-1123): `MixedKey` desde IP; `Second.Enabled=True`; **si `frmCrearPersonaje.Visible` o `Not frmRecuperar.Visible` → `SendData("gIvEmEvAlcOde")`; si no → `PASSRECO` con frmRecuperar**. (No tiene ramas por EstadoLogin como el ref, pero MI server exige gIvEmEvAlcOde como primer paquete → **mantener este patrón**, NO copiar las ramas del ref que no envían gIvEmEvAlcOde).
-- `frmCrearAccount.frm` (mi cliente, Cuentas\, 278 líneas): controles `Nombre,Pass,RePass,Mail,Mail2,pregunta,respuesta,Check1,Image1,Image2`. `Image2_Click` valida y `SendData("NACCNT" & nombre & "," & Pass & "," & Mail & "," & pregunta & "," & respuesta)` + `Unload Me` + **`MsgBox` falso "La cuenta fue creada con éxito." (líneas 266-269, A ELIMINAR)**. El ref idéntico pero SIN el MsgBox falso.
-- `frmRecuperarCuenta.frm` (Cuentas\, 174 líneas): `Siguiente_Click` conecta (`HostName=CurServerIp, RemotePort=CurServerPort, Connect`) y `SendData("RECCUU" & txtNombre & "," & txtMail)`; `Recuperar_Click` → `"REECUU" & txtNombre & "," & txtRespuesta`.
-- `frmAccLogin.frm` (128 líneas): `cmdLogin` conecta si no y `EnviarLoginCuenta`; `cmdCrear` muestra email, conecta y `EnviarCrearCuenta`.
+## Next steps (próxima sesión)
+1. **Verificación runtime** por el usuario (arrancar server + cliente con `aoscorpio2.exe`):
+   - Crear cuenta nueva → esperar MsgBox REAL "La cuenta fue creada con éxito." (HLQ) y SIN MsgBox falso del form.
+   - Login directo con esa cuenta (ALOGIN con MD5) → debe entrar al alta de personaje (INIPJ flow).
+   - Recuperar cuenta (frmRecuperarCuenta RECCUU/REECUU).
+   - Eliminar cuenta (BRCU con campo2 vacío, pass por MD5).
+2. Si algo falla en runtime: revisar el flujo exacto indicado arriba; NO alterar Socket1_Connect ni el orden de handshake.
+3. Opcional pendiente de decidir: `TCP.bas EnviarCrearCuenta` (1070-1072) quedó huérfana (abre frmCrearAccount con owner frmAccLogin) — no molesta (frmAccLogin sigue en el vbp).
 
-### Mi servidor (Servidor\Codigo\Modulos\TCP.bas)
-- Handshake (1643-1651): `gIvEmEvAlcOde` → `ValCoDe=RandomNumber(20000,32000)`, `RandKey=RandomNumber(0,99999)`, `PrevCRC=RandKey`, `PacketNumber=100`, `SendData("VAL" & RandKey & "," & ValCoDe)`.
-- `ConnectAccount` (626-638): `Password <> GetVar(.act, name, "password")` → `ERR "Password incorrecto."` + CloseSocket. **El .act guarda `password=MD5String(Password)` (CreateAccount:697) → el cliente DEBE mandar el MD5 en ALOGIN field2.**
-- `EnviarListaPJs` (640-660): `INIAC[name],[numPjs+1]` si `TienePjs`, si no `INIAC0`; luego `ADDPJ` por PJ.
-- `CreateAccount` (682-726): crea `.act` (password=MD5String, mail, Pregunta, Respuesta, ban=0, [PJS] NumPjs=0, PJ1-8=""); `DoEvents`; **`CloseSocket(UserIndex)` (716); `SendData("HLQ")` (718) — HLQ DESPUÉS de cerrar (igual que ref server 461-463)**.
-- `ALOGIN` (1841-1854): valida AsciiValidos + CuentaExiste → `ConnectAccount(field1, field2)`.
-- `NACCNT` (1856-1864): 5 fields → `CreateAccount`.
-- `OOLOGI` (1825-1839): PersonajeExiste → BANCheck → `ConnectUser`.
-- `BRCU` (1967-2013): **5 campos `[cuenta],[Nombre],[Pass],[Mail],[Respuesta]`**; valida `bValidationData=UCase(GetVar("Nombre"))`, `MD5String(bPass)=realPass`, `bMail=realMail`, `bRespuesta=realRespuesta`; borra el último PJ del .act + su .chr.
-  - ⚠️ **OJO:** `CreateAccount` NO escribe "Nombre" en el .act → `GetVar("Nombre")` devuelve "" y el check de campo2 fallaría para cualquier nombre no vacío. **PENDIENTE DE CLARIFICAR/PROBAR con el usuario antes de dar por bueno el botón EliminarCuenta.**
-  - El ref server BRCU (2016-2069) usa OTRO formato ([cuenta]+[pass,mail,respuesta] juntos, sin MD5) → **no sirve de referencia para mi server; adaptar al formato de MI server.**
-
-## PLAN DE EJECUCIÓN B3 (decisión tomada en sesión 13/08/2026)
-1. **Copiar `frmConnect.frm` + `frmConnect.frx` del ref** (`I:\Aospain1.0-dx\Cliente_DX8\codigo\`) a `I:\AospainOri\cli\codigo\`, con adaptaciones en el código:
-   - `RecuperarCuenta_Click` → `frmRecuperarCuenta.Show vbModal, Me`.
-   - `Conectar_Click` → **`UserPassword = MD5String(passcuent)` y `MD5HushYo = UserPassword`** (mi server guarda MD5). No llamar Login() directo; que el VAL handler dispare ALOGIN (flujo ya probado en B2).
-   - `CrearPersonaje_Click` → mantener (conecta primero con `EstadoLogin=CrearAccount`, muestra `frmCrearAccount`).
-   - `EliminarCuenta_Click` → adaptar al formato de MI server (5 campos) — **revisar el tema "Nombre" del server antes/después**.
-   - `Form_KeyDown` ESC → `LiberarObjetosDX` → `DeinitTileEngine` (como mi frmConnect actual).
-   - `Form_KeyUp` Ctrl+I → mantener toggle.
-   - Cuidar `frmConnect.frx` ref (408043 B, contiene Picture+iconos+ItemData lst_servers) — copiarlo junto con el .frm (mi frx actual es de 36 B).
-2. **`TCP.bas`:** añadir `Case "HLQ"` (MsgBox "La cuenta fue creada con éxito." — éxito REAL vía server). **NO añadir Case CrearAccount a Login()** (evita NACCNT prematuro con campos vacíos; el envío lo hace `frmCrearAccount.Image2_Click`).
-3. **`frmCrearAccount.frm Image2_Click`:** eliminar el `MsgBox` falso de éxito (dejar `Unload Me`; la confirmación llega por HLQ/ERR).
-4. **`frmMain.frm Socket1_Connect`:** **NO copiar las ramas del ref** (mi server exige `gIvEmEvAlcOde` primero); mantener patrón actual. Verificar que para `EstadoLogin=CrearAccount` fluya bien (envía gIvEmEvAlcOde, VAL fija bK, luego Image2_Click envía NACCNT con socket ya conectado → **fix del 24038**).
-5. Compilar cliente (`vb6 /make`) y, si se toca, servidor. Verificar "ha tenido éxito".
-6. Commit.
-
-## Referencias externas a controles de frmConnect que DEBEN preservarse al copiar el form ref
-- `General.bas:860/871/881` → `frmConnect.PortTxt` / `frmConnect.IPTxt` (CInt). El ref los tiene como TextBox ✅.
-- `General.bas:940` → `frmConnect.version = "v" & ...` (ref tiene Label version ✅).
-- `frmSkills2.frm:297-298` → `frmConnect.IPTxt.Text` / `frmConnect.PortTxt.Text` (TextBox ✅).
-- `frmMain.frm:1132,1171,1184` → `frmConnect.Visible/MousePointer/Show`.
-- `frmCuent.frm:1344` → `frmConnect.Show`; `frmOldPersonaje.frm:155` → `frmConnect.MousePointer=11`.
-- `TCP.bas:134,137,845` → `frmConnect.Visible` / `Unload frmConnect`.
-- `frmCrearPersonaje.frm:1033` → `frmConnect.Picture = LoadPicture(...conectar.jpg)` ✅.
-- `frmCrearCaracter.frm:181` → `frmConnect.FONDO.Picture` ⚠️ **frmCrearCaracter NO está en Client.vbp** (no se compila) → ignorar.
-
-## FORMATO `Init\Graficos.ind` (CONFIRMADO por parseo, EOF exacto 180693 bytes)
-- `tCabecera` (263B) + 5×Int16 + registros: `Grh` Int16, `NumFrames` Int16; si `nf>1`: `nf×Int16` frames + Int16 speed; si no: FileNum Int16 + SX Int16 + SY Int16 + pixelWidth Int16 + pixelHeight Int16; lista termina con `Grh<=0`.
-- Resultado: 12597 registros, `maxGrh=19625`. Misma cabecera exacta que `k:\Descargas\aaoo\dx\Cliente\Init\Graficos.ind`.
-- `Cabezas.ind` (5465B) = 650 cabezas × 8B. `Personajes.ind` (3613B) = 279 cuerpos × 12B. `Fxs.ind` = 20 fxs. `Cascos.ind` = 38 cascos. Loaders usan Int16.
+## Work history (commits)
+- `cd9ae46` — B3: frmConnect login directo con MD5, confirmación HLQ real, fix HLQ antes de CloseSocket en servidor (6 archivos).
+- `6bf7a41` — docs: estado B3 + plan migración frmConnect.
+- `dcd0458` — feat: imgGetPass → frmRecuperarCuenta.
+- `97c5639` / `50a4587` — docs B2 verificado / cerrado.
+- `40e4819` — feat: servidor re-envía lista PJs tras /SALIR.
 
 ## REFERENCIAS EXTERNAS
-- `I:\Aospain1.0-dx\Cliente_DX8\codigo\frmConnect.frm` + `.frx` — **plantilla B3** (login directo, botones por acción, fix 24038).
-- `I:\Aospain1.0-dx\Cliente_DX8\codigo\frmMain.frm` 1077-1120 — `Socket1_Connect` con ramas E_MODO (NO copiar; solo informativo).
-- `I:\Aospain1.0-dx\Cliente_DX8\codigo\TCP.bas` 786-806 (`Case HLQ`, `Case ERR`), 1214-1217 (`Case CrearAccount`→NACCNT — NO usar en Login, ver plan).
-- `I:\Aospain1.0-dx\Cliente_DX8\codigo\Cuentas\frmCrearAccount.frm` — igual al mío pero sin MsgBox falso (267-269).
-- `I:\Aospain1.0-dx\Servidor\Codigo\Modulos\TCP.bas` 425-471 (CreateAccount HLQ), 2016-2069 (BRCU formato ref).
-- `k:\Descargas\aaoo\dx\Cliente` — cliente DX8 de referencia; `ee\Cliente\CODIGO` — canónico.
-- Backup DX7: `I:\AospainOri\cli_backup_dx7_20260728_1510\codigo\TCP.bas:426`.
+- `I:\Aospain1.0-dx\Cliente_DX8\codigo\frmConnect.frm` + `.frx` — plantilla B3 ya copiada/adaptada.
+- `I:\Aospain1.0-dx\Cliente_DX8\codigo\TCP.bas` 786-806 (HLQ/ERR), 1214-1217 (Case CrearAccount→NACCNT — NO usar en Login).
+- `I:\Aospain1.0-dx\Cliente_DX8\codigo\Cuentas\frmCrearAccount.frm` — igual al mío pero sin MsgBox falso.
+- `I:\Aospain1.0-dx\Servidor\Codigo\Modulos\TCP.bas` 425-471 (CreateAccount HLQ), 2016-2069 (BRCU formato ref, distinto del mío).
+- `k:\Descargas\aaoo\dx\Cliente` — cliente DX8 ref; `ee\Cliente\CODIGO` — canónico. Backup DX7: `I:\AospainOri\cli_backup_dx7_20260728_1510`.
 - SDD ledger: `I:\AospainOri\.superpowers\sdd\memoria.md\progress.md`.
 
 ## Recordatorios
-- Flujo clásico (PASSCL+OLOGIN/NLOGIN, frmOldPersonaje/frmPasswd/frmBorrar/frmRecuperar PASSRECO) queda intacto.
-- Compilar: borrar `C:\Users\sonsc\AppData\Local\Temp\opencode\vb6err.txt` antes de cada `vb6 /make`.
-- Skill "memory" instalado global en `C:\Users\sonsc\.agents\skills\memory\SKILL.md`.
+- Flujo clásico (PASSCL+OLOGIN/NLOGIN, frmOldPersonaje/frmPasswd/frmBorrar/frmRecuperar PASSRECO) intacto.
+- Compilar: borrar el log ANTES de cada `vb6 /make`.
+- Skill "memory" global en `C:\Users\sonsc\.agents\skills\memory\SKILL.md`.
