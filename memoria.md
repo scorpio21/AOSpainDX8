@@ -10,89 +10,98 @@
 - Los errores de VB6 pueden reportar línea con **desfase (+2 aprox)** respecto a la línea real.
 - VB6 reporta el PRIMER error del módulo y para → errores encadenados, corregir uno a uno.
 
-## ESTADO ACTUAL (corte 12/08/2026) ✅ B2 (cuentas) COMPLETO Y VERIFICADO EN RUNTIME
-- **`vb6 /make` EXITOSO** en cliente y servidor: `aoscorpio2.exe` (16:00:46) y `AOSpainServ1.0.4-.exe` (16:00:27) regenerados.
-- B1 (migración DX7→DX8) y B2 (sistema de cuentas: Tasks 1-3) **CERRADOS — usuario confirmó que el sistema de cuentas funciona 100% en runtime (12/08/2026)**. Pendiente opcional futuro: exponer `frmRecuperarCuenta` por UI.
+## ESTADO ACTUAL (corte 13/08/2026) 🚧 B3 EN CURSO — Replicar `frmConnect` del ref (Cliente_DX8) para login directo + 1 botón por acción
+- B1 (migración DX7→DX8) ✅ y B2 (sistema de cuentas: Tasks 1-3) ✅ CERRADOS y VERIFICADOS en runtime por el usuario (12/08/2026).
+- **Nueva tarea B3 (decidida por el usuario con pregunta):** reemplazar el `frmConnect` actual (menú `Image1(0-7)` + botón `cmdAccLogin` que abría `frmAccLogin` modal = bug 2) por el `frmConnect` del ref `I:\Aospain1.0-dx\Cliente_DX8\codigo\frmConnect.frm`:
+  1. **Login directo** (cuenta+pass en la pantalla de conexión).
+  2. **Un botón por acción**: Conectar / Crear Cuenta / Recuperar / Eliminar Cuenta.
+  3. **Servidor destino = el mío** (`I:\AospainOri\Servidor`), que ya tiene ALOGIN/NACCNT/INIAC/RECCUU/BRCU.
+- Idioma SIEMPRE en español.
 
-## CORRECCIONES HECHAS (sesión de hoy y previas)
-1. `TCP.bas:397` `Case "CC"` → `Call MakeChar(..., 0)` (10º arg `Ataque` = 0, TileEngine.bas:613).
-2. `TCP.bas:420-434` `Case "CP"` → `.Head = Val(...)`, `.Casco = tempint`, `.Body = BodyData(...)` (charlist.Head/.Casco son **Integer/IDs** en el activo, no HeadData).
-3. TileEngine.bas: añadidas `UserMaxAGU/UserMinAGU/UserMaxHAM/UserMinHAM` (usadas en TCP.bas:766 "EHYS"; antes solo existían en OLD).
-4. TileEngine.bas:677,847 → `Dialogos.RemoveDialog` → `Dialogos.QuitarDialogo` (método DX8 de `cDialogos.cls:270`).
-5. TileEngine.bas:849,2493 → `MinLimiteX/Y/MaxLimiteX/Y` (nunca definidas) → `XMinMapSize/XMaxMapSize/YMinMapSize/YMaxMapSize` (=1/200).
-6. Declares.bas (activo) → añadidas `Public Const CASPER_HEAD As Integer = 500` y `FRAGATA_FANTASMAL As Integer = 87` (valores de `ee\Cliente\CODIGO\Declares.bas:135-136`; usadas en TileEngine.bas:964).
-7. General.bas:1360 → `Function HayAgua(ByVal X As Integer, ByVal Y As Integer)` (antes ByRef; se llamaba con `UserPos.X` que es Long — Position en Declares.bas:364).
-8. TileEngine.bas `ActualizarMiniMapa` → eliminadas las líneas `frmMain.UserM.Left/Top` (**UserM no existe** en frmMain DX8); se conserva el cálculo de `MinimapMaxX/MaxY` (usado por DibujarMiniMapa:1102+).
-9. General.bas (activo) → añadida `Public Function ARGB(r,g,b,A)` copiada de `ee\Cliente\CODIGO\General.bas:1127-1146` (necesaria en TileEngine.bas:1211; los colores se usan como D3D AARRGGBB en Geometry_Create_Box).
-10. TileEngine.bas → añadido `battle_mode As Boolean` a `Type MapInfo` (200) y `MapDat.battle_mode` → `MapInfo.battle_mode` (linea ~1310). `MapDat` nunca existió (bug de referencia). battle_mode queda siempre False (no hay fuente de datos).
-11. TileEngine.bas → añadidos tipos y arrays vacíos para features muertas de Irongete (nunca declarados ni en preHeading):
-    - `Private Type tZona` (x1,x2,y1,y2,Grh) + `Private ZonaList(-1 To -1) As tZona` (usado ~1445).
-    - `Private Type tEfecto` (EfectoIndex, beneficioso, Grh) + `Private EfectoList(-1 To -1) As tEfecto` (usado ~1577).
-    - El bucle `For ... To UBound(...)` con array fijo vacío (-1) no itera → sin error de runtime.
-12. TileEngine.bas ~267 → `Public ColoresPJ(0 To 50) As Long` + `Public Sub InitColoresPJ()` (default vbWhite; 49 = RGB(0,255,255); 50 = RGB(255,0,0)) + `Call InitColoresPJ` al inicio de InitTileEngine (~2126). No existe `Colores.ini` en el activo ni en referencias ee/dx.
-13. TileEngine.bas ~262 → `Public Const OFFSET_HEAD As Integer = 34` (usado en línea 1799; no estaba definida).
-14. cDialogos.cls:197 → `Update_Dialog_Pos(ByVal X As Integer, ByVal Y As Integer, ByVal Index As Integer)` (antes ByRef; el llamador pasa expresiones Long). También TileEngine.bas:1799 `UpdateDialogPos` → `Update_Dialog_Pos` (nombre real).
-15. Declares.bas:476 → `Private Type tMapaConnect` → `Public Type tMapaConnect` + `Dim MapaConnect As tMapaConnect` local en `RenderConnect` (1835; nunca se asigna → (0,0,0)).
-16. TileEngine.bas `RenderConnect`: **comentados** el bloque preview `If Not frmCuenta.ListPJ.ListIndex < 0 Then With Cuenta.pjs(...)` (~1885-1891) y el bloque `If frmCuenta.Visible = True Then` de consejos (~1906-1909). `frmCuenta`/`Cuenta` no existen en el activo.
-17. TileEngine.bas: las 10 asignaciones `frmCargando.Status.Caption =` → `.Text =` (Status es **RichTextBox** RICHTX32; `.Caption` no existe). Líneas ~2176,2180,2184,2188,2192,2196,2200,2204,2208,2213.
-18. frmCargando.frm: añadido `Public Sub progresoConDelay(ByVal porcentaje As Integer)` (solo `DoEvents`; el formulario activo no tiene `imgProgress` — el de la referencia ee sí). El `progress` también.
-19. TileEngine.bas `DrawSpells` (2536): eliminada la llamada muerta `Spells.DrawSpells` (renderiza a `frmMain.picSpell`).
-20. General.bas: añadida `Public Function ColorToDX8(ByVal long_color As Long) As Long` (de `ee\Cliente\CODIGO\General.bas:1531-1548`; RGB hex → `D3DColorXRGB`). Necesaria en `clsDX8Font.cls:89` (`Text_Render_Special`).
-21. clsTexManager.cls:131: `D3DX.CreateTextureFromFileInMemoryEx(D3DDevice, ...)` → `mD3D.CreateTextureFromFileInMemoryEx(device, ...)` (privados del class; NO existen globals `D3DX`/`D3DDevice`).
-22. clsBufferMan.cls:432,453: `Call CopyMemory(...)` → `Call CopyMem(...)` (la clase declara `Private Declare Sub CopyMem ... Alias "RtlMoveMemory"` en la 74; `CopyMemory` solo es Private en clsDX8Font/Bass.bas → invisible).
-23. clsSoundEngine.cls:1067,1105: `General_Distance_Get` no existía en ningún sitio (ni en ee/Aodrag9). Añadida a General.bas (de `K:\Descargas\aaoo\Aodrag9\codigo\General.bas:1709-1718`, distancia Manhattan `Abs(x1-x2)+Abs(y1-y2)`).
-24. frmRenderConnect.frm: `Audio.General_Set_Wav(SND_WAV_CLICK)` → `PlayWaveDS(SND_WAV_CLICK)` (Mod_Wav está en el proyecto; `Audio` NO existe, el motor es `Sound`). btnConsejo_Click protegido: `If UBound(ListaConsejos) >= 1 Then ...`.
-25. Declares.bas: añadidas `Public Consejos(1 To 100) As String`, `Public ListaConsejos() As String`, `Public Form_Caption As String` (antes solo `ConsejoSeleccionado`).
-26. General.bas: añadidos `Public Sub Auto_Drag(ByVal hwnd As Long)` (ReleaseCapture + SendMessage WM_NCLBUTTONDOWN/HTCAPTION) y `Public Sub CloseClient()` (Sound.Engine_DeInitialize + End). `Form_Caption = "AOSpain v" & App.Major & "." & App.Minor & " Beta: 1"` fijado en `Sub Main` (junto a `frmConnect.version`).
-27. APIdeclaraciones.bas: añadidos `ReleaseCapture`, `SendMessage`, `WM_NCLBUTTONDOWN = &HA1`, `HTCAPTION = 2`.
+## HALLAZGOS DE LA INVESTIGACIÓN (13/08/2026, para ejecutar B3)
+### Fondo idéntico → coordenadas del ref válidas
+- `I:\AospainOri\cli\Graficos\Conectar.jpg` y `I:\Aospain1.0-dx\Cliente_DX8\Graficos\Conectar.jpg` → **mismo MD5 `94EB6E11B02D30DF81C767434B70AF99`** (263227 bytes). Se puede copiar el form ref tal cual visualmente.
 
-## LOADERS IMPLEMENTADOS (TileEngine.bas, sección «Loaders migrados» al final ~3380+)
-- `LoadGrhData` (doble pasada: halla maxGrh → dimensiona `GrhData(1..maxGrh)` → lee registros; estáticos rellenan FileNum/SX/SY/pixelW/H/TileW/H/Frames(1)), `CargarCuerpos`, `CargarCabezas`, `CargarCascos` (estos dos derivan `heads()/Cascos().Texture=FileNum,startX=SX,startY=SY` desde el grh 1), `CargarFxs`, `CargarAtaques` (tolera ausencia), `LoadMiniMap` (no-op), `CargarParticulas` (no-op).
-- `IniPath = App.Path & "\Init\"` añadido en InitTileEngine.
-- Declaraciones añadidas (~TileEngine.bas:535): `GrhCount`, `NumHeads`, `NumCascos`, `NumCuerpos`, `NumFxs`, `NumAtaques`, `heads() As tHead`, `Cascos() As tHead`.
-- Sin `Ataques.ind`/`minimap.dat`/`particulas.ini` en el cliente → CargarAtaques tolera ausencia; MiniMap/Particulas no-op.
+### Ref `frmConnect.frm` (Cliente_DX8, 408 líneas, ScaleMode=0 User, ScaleWidth=799, ScaleHeight=471.094, Picture `frx:000C`)
+- Controles clave (twips): `NameTxt` (5055,3401), `PasswordTxt` (5055,4700, PasswordChar=*), `Conectar` Image Index=1 (6240,8040), `CrearPersonaje` Image (4320,7920), `RecuperarCuenta` Image (2280,8040), `EliminarCuenta` Image (8160,7920), `version` Label, `IPTxt`/`PortTxt`/`DescTxt` (ocultos, Ctrl+I los togglea), `lst_servers`, `Text1`/`Text2`.
+- **`Conectar_Click(Index)`**: si Index≠1 Exit; valida campos; limpia socket previo; `nombrecuent=NameTxt`, `passcuent=PasswordTxt`, `UserPassword=passcuent` (**texto plano — OJO, adaptar a MD5**); `EstadoLogin=LoginAccount`; `Me.MousePointer=99`; `Socket1.Connect`. **NO llama Login()** → lo hace el handler VAL.
+- **`CrearPersonaje_Click`** (crear cuenta, fix del 24038): si no conectado → `EstadoLogin=CrearAccount`, `Socket1.HostAddress=CurServerIp`, `RemotePort=CurServerPort`, `Socket1.Connect`, `DoEvents`; luego `frmCrearAccount.Show vbModal, Me`.
+- **`RecuperarCuenta_Click`**: `frmRecuperarpj.Show vbModal, Me` — **frmRecuperarpj NO existe en mi cliente** → usar `frmRecuperarCuenta.Show vbModal, Me`.
+- **`EliminarCuenta_Click`**: 2×InputBox (cuenta; luego "CONTRASEÑA, CORREO y RESPUESTA separados por comas") → conecta si no → `SendData("BRCU" & sAccount & "," & sConfirm)`. **FORMATO ref (2 campos) ≠ MI server (5 campos) → adaptar.**
+- `Form_KeyDown` ESC: usa `LiberarObjetosDX` (**no existe en mi cliente** → usar `DeinitTileEngine` como mi frmConnect actual) + `SaveGameini` + `prgRun=False` + `UnloadAllForms`.
+- `Form_KeyUp` Ctrl+I: toggle `PortTxt.Visible`/`IPTxt.Visible`.
+- `Form_Load`: `EngineRun=False`; `PortTxt=Config_Inicio.Puerto`.
+- `Form_Activate`: `CurServer<>0`→IP/port de `ServersLst(CurServer)`; si no de `IPdelServidor`/`PuertoDelServidor`; `MkDir Web`.
+- `lst_servers_Click`/`CargarLst`: setean CurServer y textos.
+
+### Mi cliente (estado actual)
+- `frmConnect.frm` actual (564 líneas): ScaleMode=3 Pixel 800x600, Picture cargada en Form_Load (`LoadPicture Graficos\Conectar.jpg`), menú `Image1(0-7)`, `cmdAccLogin_Click`→`frmAccLogin.Show vbModal` (**bug 2 a eliminar**), `imgGetPass_Click`→`frmRecuperarCuenta.Show vbModal`, `lst_servers`+`text1` (news), `Command1`, `imgServEspana/Argentina`.
+- **`TCP.bas` NO tiene `Case "HLQ"`** (falta éxito real de crear cuenta). El ref Cliente_DX8 SÍ lo tiene (TCP.bas:786-792 → `MsgBox "La cuenta fue creada con éxito..."`).
+- `TCP.bas Login()` (1086-1151): `If EstadoLogin >= Normal And EstadoLogin <= RecuperarPass Then` con Cases **Normal/LoginAccount/BorrarPj/CrearNuevoPj** (CrearNuevoPj manda PASSCL+NLOGIN con field38=`ModValCoDe`); si no, OLOGIN/NLOGIN según `SendNewChar`. **CrearAccount (4) NO tiene Case** → cae en el `Select` sin match → `Exit Sub` sin enviar (comportamiento deseado para evitar NACCNT prematuro con campos vacíos).
+- `TCP.bas EnviarLoginCuenta` (1062-1068): `nombrecuent=sNombre`; `UserPassword=MD5String(sPass)`; `MD5HushYo=UserPassword`; `EstadoLogin=LoginAccount`; `Login(0)`.
+- `TCP.bas EnviarCrearCuenta` (1070-1072): solo `frmCrearAccount.Show vbModal, frmAccLogin`.
+- `TCP.bas VAL` (499-509): `bK=ReadField(1)`; `bO=100`; `ModValCoDe=ValidarLoginMSG(ReadField(2))`; `Login(ModValCoDe)`. (Si `frmBorrar.Visible` → BORR directo).
+- `TCP.bas ERR` (724-730): MsgBox; `If Not frmCrearPersonaje.Visible And EstadoLogin<>LoginAccount And EstadoLogin<>Normal Then Socket1.Disconnect`.
+- `TCP.bas INIAC` (839-846) / `ADDPJ` (847-862): muestran frmCuent con lista de PJs.
+- `TCP.bas SendData` (1042-1060): `bK=GenCrC(bK,sdData)`; `bO=bO+1`; `~bK&ENDC`; `Socket1.Write`.
+- `frmMain.frm Socket1_Connect` (1094-1123): `MixedKey` desde IP; `Second.Enabled=True`; **si `frmCrearPersonaje.Visible` o `Not frmRecuperar.Visible` → `SendData("gIvEmEvAlcOde")`; si no → `PASSRECO` con frmRecuperar**. (No tiene ramas por EstadoLogin como el ref, pero MI server exige gIvEmEvAlcOde como primer paquete → **mantener este patrón**, NO copiar las ramas del ref que no envían gIvEmEvAlcOde).
+- `frmCrearAccount.frm` (mi cliente, Cuentas\, 278 líneas): controles `Nombre,Pass,RePass,Mail,Mail2,pregunta,respuesta,Check1,Image1,Image2`. `Image2_Click` valida y `SendData("NACCNT" & nombre & "," & Pass & "," & Mail & "," & pregunta & "," & respuesta)` + `Unload Me` + **`MsgBox` falso "La cuenta fue creada con éxito." (líneas 266-269, A ELIMINAR)**. El ref idéntico pero SIN el MsgBox falso.
+- `frmRecuperarCuenta.frm` (Cuentas\, 174 líneas): `Siguiente_Click` conecta (`HostName=CurServerIp, RemotePort=CurServerPort, Connect`) y `SendData("RECCUU" & txtNombre & "," & txtMail)`; `Recuperar_Click` → `"REECUU" & txtNombre & "," & txtRespuesta`.
+- `frmAccLogin.frm` (128 líneas): `cmdLogin` conecta si no y `EnviarLoginCuenta`; `cmdCrear` muestra email, conecta y `EnviarCrearCuenta`.
+
+### Mi servidor (Servidor\Codigo\Modulos\TCP.bas)
+- Handshake (1643-1651): `gIvEmEvAlcOde` → `ValCoDe=RandomNumber(20000,32000)`, `RandKey=RandomNumber(0,99999)`, `PrevCRC=RandKey`, `PacketNumber=100`, `SendData("VAL" & RandKey & "," & ValCoDe)`.
+- `ConnectAccount` (626-638): `Password <> GetVar(.act, name, "password")` → `ERR "Password incorrecto."` + CloseSocket. **El .act guarda `password=MD5String(Password)` (CreateAccount:697) → el cliente DEBE mandar el MD5 en ALOGIN field2.**
+- `EnviarListaPJs` (640-660): `INIAC[name],[numPjs+1]` si `TienePjs`, si no `INIAC0`; luego `ADDPJ` por PJ.
+- `CreateAccount` (682-726): crea `.act` (password=MD5String, mail, Pregunta, Respuesta, ban=0, [PJS] NumPjs=0, PJ1-8=""); `DoEvents`; **`CloseSocket(UserIndex)` (716); `SendData("HLQ")` (718) — HLQ DESPUÉS de cerrar (igual que ref server 461-463)**.
+- `ALOGIN` (1841-1854): valida AsciiValidos + CuentaExiste → `ConnectAccount(field1, field2)`.
+- `NACCNT` (1856-1864): 5 fields → `CreateAccount`.
+- `OOLOGI` (1825-1839): PersonajeExiste → BANCheck → `ConnectUser`.
+- `BRCU` (1967-2013): **5 campos `[cuenta],[Nombre],[Pass],[Mail],[Respuesta]`**; valida `bValidationData=UCase(GetVar("Nombre"))`, `MD5String(bPass)=realPass`, `bMail=realMail`, `bRespuesta=realRespuesta`; borra el último PJ del .act + su .chr.
+  - ⚠️ **OJO:** `CreateAccount` NO escribe "Nombre" en el .act → `GetVar("Nombre")` devuelve "" y el check de campo2 fallaría para cualquier nombre no vacío. **PENDIENTE DE CLARIFICAR/PROBAR con el usuario antes de dar por bueno el botón EliminarCuenta.**
+  - El ref server BRCU (2016-2069) usa OTRO formato ([cuenta]+[pass,mail,respuesta] juntos, sin MD5) → **no sirve de referencia para mi server; adaptar al formato de MI server.**
+
+## PLAN DE EJECUCIÓN B3 (decisión tomada en sesión 13/08/2026)
+1. **Copiar `frmConnect.frm` + `frmConnect.frx` del ref** (`I:\Aospain1.0-dx\Cliente_DX8\codigo\`) a `I:\AospainOri\cli\codigo\`, con adaptaciones en el código:
+   - `RecuperarCuenta_Click` → `frmRecuperarCuenta.Show vbModal, Me`.
+   - `Conectar_Click` → **`UserPassword = MD5String(passcuent)` y `MD5HushYo = UserPassword`** (mi server guarda MD5). No llamar Login() directo; que el VAL handler dispare ALOGIN (flujo ya probado en B2).
+   - `CrearPersonaje_Click` → mantener (conecta primero con `EstadoLogin=CrearAccount`, muestra `frmCrearAccount`).
+   - `EliminarCuenta_Click` → adaptar al formato de MI server (5 campos) — **revisar el tema "Nombre" del server antes/después**.
+   - `Form_KeyDown` ESC → `LiberarObjetosDX` → `DeinitTileEngine` (como mi frmConnect actual).
+   - `Form_KeyUp` Ctrl+I → mantener toggle.
+   - Cuidar `frmConnect.frx` ref (408043 B, contiene Picture+iconos+ItemData lst_servers) — copiarlo junto con el .frm (mi frx actual es de 36 B).
+2. **`TCP.bas`:** añadir `Case "HLQ"` (MsgBox "La cuenta fue creada con éxito." — éxito REAL vía server). **NO añadir Case CrearAccount a Login()** (evita NACCNT prematuro con campos vacíos; el envío lo hace `frmCrearAccount.Image2_Click`).
+3. **`frmCrearAccount.frm Image2_Click`:** eliminar el `MsgBox` falso de éxito (dejar `Unload Me`; la confirmación llega por HLQ/ERR).
+4. **`frmMain.frm Socket1_Connect`:** **NO copiar las ramas del ref** (mi server exige `gIvEmEvAlcOde` primero); mantener patrón actual. Verificar que para `EstadoLogin=CrearAccount` fluya bien (envía gIvEmEvAlcOde, VAL fija bK, luego Image2_Click envía NACCNT con socket ya conectado → **fix del 24038**).
+5. Compilar cliente (`vb6 /make`) y, si se toca, servidor. Verificar "ha tenido éxito".
+6. Commit.
+
+## Referencias externas a controles de frmConnect que DEBEN preservarse al copiar el form ref
+- `General.bas:860/871/881` → `frmConnect.PortTxt` / `frmConnect.IPTxt` (CInt). El ref los tiene como TextBox ✅.
+- `General.bas:940` → `frmConnect.version = "v" & ...` (ref tiene Label version ✅).
+- `frmSkills2.frm:297-298` → `frmConnect.IPTxt.Text` / `frmConnect.PortTxt.Text` (TextBox ✅).
+- `frmMain.frm:1132,1171,1184` → `frmConnect.Visible/MousePointer/Show`.
+- `frmCuent.frm:1344` → `frmConnect.Show`; `frmOldPersonaje.frm:155` → `frmConnect.MousePointer=11`.
+- `TCP.bas:134,137,845` → `frmConnect.Visible` / `Unload frmConnect`.
+- `frmCrearPersonaje.frm:1033` → `frmConnect.Picture = LoadPicture(...conectar.jpg)` ✅.
+- `frmCrearCaracter.frm:181` → `frmConnect.FONDO.Picture` ⚠️ **frmCrearCaracter NO está en Client.vbp** (no se compila) → ignorar.
 
 ## FORMATO `Init\Graficos.ind` (CONFIRMADO por parseo, EOF exacto 180693 bytes)
 - `tCabecera` (263B) + 5×Int16 + registros: `Grh` Int16, `NumFrames` Int16; si `nf>1`: `nf×Int16` frames + Int16 speed; si no: FileNum Int16 + SX Int16 + SY Int16 + pixelWidth Int16 + pixelHeight Int16; lista termina con `Grh<=0`.
-- Resultado: 12597 registros, `maxGrh=19625`.
-- Misma cabecera exacta que `k:\Descargas\aaoo\dx\Cliente\Init\Graficos.ind` (`Argentum Online by Noland Studios...`, bytes 255-267 idénticos).
-- `Cabezas.ind` (5465B) = cabecera + 650 cabezas × 8B (tIndiceCabeza Integer×4). `Personajes.ind` (3613B) = 279 cuerpos × 12B. `Fxs.ind` = 20 fxs. `Cascos.ind` = 38 cascos.
-- Los loaders usan Int16 (NO el loader de dx que mezcla Long).
+- Resultado: 12597 registros, `maxGrh=19625`. Misma cabecera exacta que `k:\Descargas\aaoo\dx\Cliente\Init\Graficos.ind`.
+- `Cabezas.ind` (5465B) = 650 cabezas × 8B. `Personajes.ind` (3613B) = 279 cuerpos × 12B. `Fxs.ind` = 20 fxs. `Cascos.ind` = 38 cascos. Loaders usan Int16.
 
 ## REFERENCIAS EXTERNAS
-- `k:\Descargas\aaoo\dx\Cliente` — cliente DX8 de referencia (mismo formato); `dx\Cliente\codigo\TileEngine.bas:937` LoadGrhData (pero su lectura Long no alinea; usar Int16).
-- `k:\Descargas\aaoo\ee\Cliente\CODIGO\Mod_Carga.bas` — loaders canónicos con `MiCabecera` (CargarAtaques:30, CargarCascos:70, LoadGrhData:283).
-- `ee\Cliente\CODIGO\Declares.bas` — CASPER_HEAD/FRAGATA_FANTASMAL (135-136), `Public Cuenta As acc` (594).
-- `ee\Cliente\CODIGO\General.bas` — `Function ARGB` (1127-1146).
-- Backup DX7: `I:\AospainOri\cli_backup_dx7_20260728_1510\codigo\TCP.bas:426` (Case "CP" antiguo, HeadData).
-- En activo: `Type MapInfo` (TileEngine.bas:200), `Position` (Declares.bas:364 X/Y As Long), `tHead` (Declares.bas:642), `tIndiceAtaque` (648 Body(1..4) As Long), `charlist.Body As BodyData` (TileEngine.bas:128).
-- `Client.vbp` sin `clsGraphicalInventory`, sin `Mod_Carga`/`clsIniReader`; forms actuales: frmCantidad, frmCargando, frmComerciar, frmConnect, frmMain, frmOldPersonaje, frmSkills3, frmRenderConnect, frmMSG, frmForo, FrmEstadisticas, frmtip, frmPres, frmMensaje, frmCrearPersonaje, frmBorrar, frmRecuperar, frmPasswd, frmEntrenador, frmSpawnList, ...
-
-## PRÓXIMO PASO (mañana) — B2 en curso
-
-### ESTADO B2 (corte 12/08/2026) — B2 COMPLETO ✅, verificado en runtime al 100% por el usuario
-Commits en `main` desde BASE `159e7c5`:
-- `47ce97e` — Task 1: protocolo de cuentas en el cliente (cli/codigo/TCP.bas). Reviewed APPROVED.
-- `5437b74` — fixes post-review: PASSCL orophin antes de NLOGIN de cuenta + field 38 = `ModValCoDe`; bloque `[B2 ACCOUNT]` GDI de TileEngine.bas movido al tope.
-- `8a1fb51` — docs: memoria B2.
-- `25e307f` — Task 2: conexión y flujo de formularios de cuentas (frmAccLogin, frmCuent, frmCrearPersonaje). Reviewed APPROVED.
-- `40e4819` — Task 3: server `/SALIR` re-envía lista de personajes para cuentas (Servidor TCP.bas:2203-2210). Verificado.
-
-**Compilación final (controlador, 12/08/2026):**
-- Servidor `VB6 /make Servidor\SERVER.VBP` → "La generación de 'AOSpainServ1.0.4-.exe' ha tenido éxito." (exe 16:00:27).
-- Cliente `VB6 /make cli\Client.vbp` → "La generación de 'aoscorpio2.exe' ha tenido éxito." (exe 16:00:46). `git status` limpio (bump auto de RevisionVer en SERVER.VBP revertido).
-
-**✅ VERIFICADO EN RUNTIME POR EL USUARIO (12/08/2026):** "ya esta el sistema de cuenta funcionando 100%". B2 CERRADO de forma definitiva.
-
-**Lección crítica (verificada contra el server Ori):** el NLOGIN de cuentas EXIGE `PASSCL=orophin` ANTES (Servidor TCP.bas:1715) y field 38 == `ValidarLoginMSG(ValCoDe)` del handshake VAL (1735). El server dx (referencia `I:\Aospain1.0-dx`) NO tiene esos gates — por eso el plan original ("SIN PASSCL", `Login(0)`) era incorrecto. El handler `VAL` del cli guarda ahora el valcode en el global `Public ModValCoDe As Integer` (cli TCP.bas, bloque 3-char) y `Case CrearNuevoPj` lo usa para field 38.
-**Benignos (NO arreglar):** ALOGIN field 4 truncado (ConnectAccount solo lee fields 1-2); VAL solo llega una vez.
-
-### PENDIENTES (opcionales, no bloquean B2)
-1. **Recuperación de cuenta por UI**: `frmAccLogin` no tiene botón de recuperar; `frmConnect.imgGetPass_Click` (539-542) apunta a `frmRecuperar` (clásico por personaje), NO a `frmRecuperarCuenta`. Exponer acceso a `frmRecuperarCuenta` = tarea futura.
-2. **Skill "memory"** instalado global en `C:\Users\sonsc\.agents\skills\memory\SKILL.md` (via `npx skills add <local> -g -a opencode -y --copy`), probado con subagente fresh-context (OK). Detalles en progress.md.
-
-### Recordatorios
-- Flujo clásico (PASSCL+OLOGIN/NLOGIN, frmOldPersonaje/frmPasswd/frmBorrar/frmRecuperar PASSRECO) queda 100% intacto (verificado en reviews).
-- Compilar: borrar `C:\Users\sonsc\AppData\Local\Temp\opencode\vb6err.txt` antes de cada `vb6 /make`.
-- Reference servers: `k:\Descargas\aaoo\dx\Cliente` (DX8), `ee\Cliente` (canónico), `I:\Aospain1.0-dx\Cliente_DX8` (cuentas).
+- `I:\Aospain1.0-dx\Cliente_DX8\codigo\frmConnect.frm` + `.frx` — **plantilla B3** (login directo, botones por acción, fix 24038).
+- `I:\Aospain1.0-dx\Cliente_DX8\codigo\frmMain.frm` 1077-1120 — `Socket1_Connect` con ramas E_MODO (NO copiar; solo informativo).
+- `I:\Aospain1.0-dx\Cliente_DX8\codigo\TCP.bas` 786-806 (`Case HLQ`, `Case ERR`), 1214-1217 (`Case CrearAccount`→NACCNT — NO usar en Login, ver plan).
+- `I:\Aospain1.0-dx\Cliente_DX8\codigo\Cuentas\frmCrearAccount.frm` — igual al mío pero sin MsgBox falso (267-269).
+- `I:\Aospain1.0-dx\Servidor\Codigo\Modulos\TCP.bas` 425-471 (CreateAccount HLQ), 2016-2069 (BRCU formato ref).
+- `k:\Descargas\aaoo\dx\Cliente` — cliente DX8 de referencia; `ee\Cliente\CODIGO` — canónico.
+- Backup DX7: `I:\AospainOri\cli_backup_dx7_20260728_1510\codigo\TCP.bas:426`.
 - SDD ledger: `I:\AospainOri\.superpowers\sdd\memoria.md\progress.md`.
+
+## Recordatorios
+- Flujo clásico (PASSCL+OLOGIN/NLOGIN, frmOldPersonaje/frmPasswd/frmBorrar/frmRecuperar PASSRECO) queda intacto.
+- Compilar: borrar `C:\Users\sonsc\AppData\Local\Temp\opencode\vb6err.txt` antes de cada `vb6 /make`.
+- Skill "memory" instalado global en `C:\Users\sonsc\.agents\skills\memory\SKILL.md`.
