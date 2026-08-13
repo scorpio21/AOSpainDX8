@@ -266,7 +266,6 @@ End If
 Call SendData("NACCNT" & nombre & "," & Pass & "," & Mail & "," & pregunta & "," & respuesta)
 
 Unload Me
-MsgBox "La cuenta fue creada con éxito."
 End Sub
 
 Private Sub Image2_MouseDown(Button As Integer, Shift As Integer, x As Single, Y As Single)

@@ -713,9 +713,16 @@ Close n
 
 DoEvents
 
-Call CloseSocket(UserIndex)
-
 Call SendData(ToIndex, UserIndex, 0, "HLQ")
+
+Dim HLQDelay As Long
+HLQDelay = GetTickCount()
+
+Do While GetTickCount() - HLQDelay < 300
+    DoEvents
+Loop
+
+Call CloseSocket(UserIndex)
 
 Exit Sub
 

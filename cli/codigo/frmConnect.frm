@@ -1,13 +1,13 @@
 VERSION 5.00
 Begin VB.Form frmConnect 
    AutoRedraw      =   -1  'True
-   BackColor       =   &H00E0E0E0&
+   BackColor       =   &H00FFFFFF&
    BorderStyle     =   0  'None
    Caption         =   "Argentum Online"
    ClientHeight    =   9000
    ClientLeft      =   0
    ClientTop       =   0
-   ClientWidth     =   12000
+   ClientWidth     =   11985
    ClipControls    =   0   'False
    FillColor       =   &H00000040&
    Icon            =   "frmConnect.frx":0000
@@ -16,10 +16,10 @@ Begin VB.Form frmConnect
    MaxButton       =   0   'False
    MinButton       =   0   'False
    Moveable        =   0   'False
-   ScaleHeight     =   600
-   ScaleMode       =   3  'Pixel
-   ScaleWidth      =   800
-   ShowInTaskbar   =   0   'False
+   Picture         =   "frmConnect.frx":000C
+   ScaleHeight     =   471.094
+   ScaleMode       =   0  'User
+   ScaleWidth      =   799
    StartUpPosition =   2  'CenterScreen
    Visible         =   0   'False
    Begin VB.TextBox Text2 
@@ -38,11 +38,38 @@ Begin VB.Form frmConnect
       EndProperty
       ForeColor       =   &H0000FF00&
       Height          =   225
-      Left            =   3840
+      Left            =   8640
       Locked          =   -1  'True
-      TabIndex        =   7
-      Top             =   8640
+      TabIndex        =   8
+      Top             =   4320
+      Visible         =   0   'False
       Width           =   2895
+   End
+   Begin VB.ListBox lst_servers 
+      BackColor       =   &H00000000&
+      ForeColor       =   &H0000FF00&
+      Height          =   450
+      ItemData        =   "frmConnect.frx":639D3
+      Left            =   10560
+      List            =   "frmConnect.frx":639DA
+      TabIndex        =   7
+      Top             =   1680
+      Visible         =   0   'False
+      Width           =   975
+   End
+   Begin VB.TextBox Text1 
+      BackColor       =   &H00000000&
+      ForeColor       =   &H0000FF00&
+      Height          =   555
+      Left            =   9240
+      Locked          =   -1  'True
+      MultiLine       =   -1  'True
+      ScrollBars      =   2  'Vertical
+      TabIndex        =   6
+      TabStop         =   0   'False
+      Top             =   840
+      Visible         =   0   'False
+      Width           =   2295
    End
    Begin VB.TextBox DescTxt 
       Alignment       =   2  'Center
@@ -60,69 +87,13 @@ Begin VB.Form frmConnect
       EndProperty
       ForeColor       =   &H0000FF00&
       Height          =   225
-      Left            =   3720
+      Left            =   8640
       Locked          =   -1  'True
-      TabIndex        =   6
-      Text            =   "AOSpain Primario"
-      Top             =   1980
-      Width           =   2895
-   End
-   Begin VB.TextBox Text1 
-      BackColor       =   &H00000000&
-      ForeColor       =   &H0000FF00&
-      Height          =   5715
-      Left            =   1350
-      Locked          =   -1  'True
-      MultiLine       =   -1  'True
-      ScrollBars      =   2  'Vertical
-      TabIndex        =   5
-      TabStop         =   0   'False
-      Top             =   2700
-      Width           =   7575
-   End
-   Begin VB.CommandButton Command1 
-      Caption         =   "Este Server ->"
-      Height          =   375
-      Left            =   600
-      TabIndex        =   4
-      Top             =   1860
-      Visible         =   0   'False
-      Width           =   1185
-   End
-   Begin VB.ListBox lst_servers 
-      BackColor       =   &H00000000&
-      ForeColor       =   &H0000FF00&
-      Height          =   5715
-      ItemData        =   "frmConnect.frx":000C
-      Left            =   1350
-      List            =   "frmConnect.frx":0013
       TabIndex        =   3
-      Top             =   2700
+      Text            =   "AOSpain Primario"
+      Top             =   3120
       Visible         =   0   'False
-      Width           =   7575
-   End
-   Begin VB.TextBox PortTxt 
-      Alignment       =   2  'Center
-      Appearance      =   0  'Flat
-      BackColor       =   &H00000000&
-      BorderStyle     =   0  'None
-      BeginProperty Font 
-         Name            =   "Tahoma"
-         Size            =   8.25
-         Charset         =   0
-         Weight          =   700
-         Underline       =   0   'False
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
-      ForeColor       =   &H0000FF00&
-      Height          =   225
-      Left            =   1695
-      TabIndex        =   0
-      Text            =   "7666"
-      Top             =   1950
-      Visible         =   0   'False
-      Width           =   1875
+      Width           =   2895
    End
    Begin VB.TextBox IPTxt 
       Alignment       =   2  'Center
@@ -140,74 +111,108 @@ Begin VB.Form frmConnect
       EndProperty
       ForeColor       =   &H0000FF00&
       Height          =   225
-      Left            =   3720
-      TabIndex        =   2
+      Left            =   8640
+      TabIndex        =   5
       Text            =   "localhost"
-      Top             =   2010
+      Top             =   3720
       Visible         =   0   'False
       Width           =   2895
    End
-   Begin VB.Image Image1 
-      Height          =   615
-      Index           =   6
-      Left            =   9435
-      MousePointer    =   99  'Custom
-      Top             =   2010
-      Width           =   2205
+   Begin VB.TextBox PortTxt 
+      Alignment       =   2  'Center
+      Appearance      =   0  'Flat
+      BackColor       =   &H00000000&
+      BorderStyle     =   0  'None
+      BeginProperty Font 
+         Name            =   "Tahoma"
+         Size            =   8.25
+         Charset         =   0
+         Weight          =   700
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      ForeColor       =   &H0000FF00&
+      Height          =   225
+      Left            =   8640
+      TabIndex        =   4
+      Text            =   "7666"
+      Top             =   2760
+      Visible         =   0   'False
+      Width           =   1875
    End
-   Begin VB.Image Image1 
-      Height          =   615
-      Index           =   5
-      Left            =   9435
-      MousePointer    =   99  'Custom
-      Top             =   2850
-      Width           =   2205
+   Begin VB.TextBox PasswordTxt 
+      Alignment       =   2  'Center
+      Appearance      =   0  'Flat
+      BackColor       =   &H00000000&
+      BorderStyle     =   0  'None
+      BeginProperty Font 
+         Name            =   "Georgia"
+         Size            =   8.25
+         Charset         =   0
+         Weight          =   700
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      ForeColor       =   &H00FFFFFF&
+      Height          =   248
+      IMEMode         =   3  'DISABLE
+      Left            =   5055
+      PasswordChar    =   "*"
+      TabIndex        =   2
+      Top             =   4700
+      Width           =   1725
    End
-   Begin VB.Image Image1 
-      Height          =   615
-      Index           =   4
-      Left            =   9420
-      MousePointer    =   99  'Custom
-      Top             =   3720
-      Width           =   2205
+   Begin VB.TextBox NameTxt 
+      Alignment       =   2  'Center
+      Appearance      =   0  'Flat
+      BackColor       =   &H00000000&
+      BorderStyle     =   0  'None
+      BeginProperty Font 
+         Name            =   "Georgia"
+         Size            =   8.25
+         Charset         =   0
+         Weight          =   700
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      ForeColor       =   &H00FFFFFF&
+      Height          =   248
+      Left            =   5055
+      TabIndex        =   1
+      Top             =   3401
+      Width           =   1725
    End
-   Begin VB.Image Image1 
-      Height          =   615
-      Index           =   3
-      Left            =   9435
-      MousePointer    =   99  'Custom
-      Top             =   4485
-      Width           =   2205
+   Begin VB.Image EliminarCuenta 
+      Height          =   495
+      Left            =   8160
+      Top             =   7920
+      Width           =   1455
    End
-   Begin VB.Image imgServEspana 
-      Height          =   435
-      Left            =   4560
+   Begin VB.Image RecuperarCuenta 
+      Height          =   255
+      Left            =   2280
       MousePointer    =   99  'Custom
-      Top             =   5220
-      Width           =   2475
+      Top             =   8040
+      Width           =   1125
    End
-   Begin VB.Image imgServArgentina 
-      Height          =   795
-      Left            =   4500
+   Begin VB.Image Conectar 
+      Height          =   405
+      Index           =   1
+      Left            =   6240
       MousePointer    =   99  'Custom
-      Top             =   3720
-      Width           =   2595
+      Top             =   8040
+      Width           =   1245
    End
-    Begin VB.CommandButton cmdAccLogin 
-       Caption         =   "CUENTA"
-       Height          =   360
-       Left            =   9390
-       TabIndex        =   8
-       Top             =   8490
-       Width           =   2370
-    End
-    Begin VB.Image imgGetPass 
-       Height          =   480
-       Left            =   9390
-       MousePointer    =   99  'Custom
-       Top             =   7935
-       Width           =   2370
-    End
+   Begin VB.Image CrearPersonaje 
+      Height          =   315
+      Left            =   4320
+      MousePointer    =   99  'Custom
+      Top             =   7920
+      Width           =   1005
+   End
    Begin VB.Label version 
       AutoSize        =   -1  'True
       BackStyle       =   0  'Transparent
@@ -223,34 +228,10 @@ Begin VB.Form frmConnect
       EndProperty
       ForeColor       =   &H000000FF&
       Height          =   195
-      Left            =   120
-      TabIndex        =   1
-      Top             =   120
+      Left            =   180
+      TabIndex        =   0
+      Top             =   191
       Width           =   555
-   End
-   Begin VB.Image Image1 
-      Height          =   615
-      Index           =   0
-      Left            =   9420
-      MousePointer    =   99  'Custom
-      Top             =   6225
-      Width           =   2205
-   End
-   Begin VB.Image Image1 
-      Height          =   615
-      Index           =   1
-      Left            =   9435
-      MousePointer    =   99  'Custom
-      Top             =   5400
-      Width           =   2205
-   End
-   Begin VB.Image Image1 
-      Height          =   615
-      Index           =   2
-      Left            =   9420
-      MousePointer    =   99  'Custom
-      Top             =   7065
-      Width           =   2205
    End
 End
 Attribute VB_Name = "frmConnect"
@@ -258,307 +239,186 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
-'Argentum Online 0.9.0.9
-'
-'Copyright (C) 2002 Marquez Pablo Ignacio
-'Copyright (C) 2002 Otto Perez
-'Copyright (C) 2002 Aaron Perkins
-'Copyright (C) 2002 Matias Fernando Pequeï¿½o
-'
-'This program is free software; you can redistribute it and/or modify
-'it under the terms of the GNU General Public License as published by
-'the Free Software Foundation; either version 2 of the License, or
-'any later version.
-'
-'This program is distributed in the hope that it will be useful,
-'but WITHOUT ANY WARRANTY; without even the implied warranty of
-'MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-'GNU General Public License for more details.
-'
-'You should have received a copy of the GNU General Public License
-'along with this program; if not, write to the Free Software
-'Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-'
-'Argentum Online is based on Baronsoft's VB6 Online RPG
-'You can contact the original creator of ORE at aaron@baronsoft.com
-'for more information about ORE please visit http://www.baronsoft.com/
-'
-'
-'You can contact me at:
-'morgolock@speedy.com.ar
-'www.geocities.com/gmorgolock
-'Calle 3 numero 983 piso 7 dto A
-'La Plata - Pcia, Buenos Aires - Republica Argentina
-'Codigo Postal 1900
-'Pablo Ignacio Marquez
-'
-'Matias Fernando Pequeï¿½o
-'matux@fibertel.com.ar
-'www.noland-studios.com.ar
-'Acoyte 678 Piso 17 Dto B
-'Capital Federal, Buenos Aires - Republica Argentina
-'Codigo Postal 1405
 
 Option Explicit
 
+' --- CARGA DE SERVIDORES (Opcional si se usa lista) ---
 Public Sub CargarLst()
-
-Dim i As Integer
-
-lst_servers.Clear
-
-For i = 1 To UBound(ServersLst)
-    lst_servers.AddItem ServersLst(i).Desc
-Next i
-
+    Dim i As Integer
+    lst_servers.Clear
+    For i = 1 To UBound(ServersLst)
+        lst_servers.AddItem ServersLst(i).desc
+    Next i
 End Sub
 
-Private Sub Command1_Click()
-CurServer = 0
-IPdelServidor = IPTxt
-PuertoDelServidor = PortTxt
-End Sub
-
-
+' --- ACTIVACION DEL FORMULARIO ---
 Private Sub Form_Activate()
-Dim nDirectorio As String
-If CurServer <> 0 Then
-    IPTxt = ServersLst(CurServer).Ip
-    PortTxt = ServersLst(CurServer).Puerto
-Else
-    IPTxt = IPdelServidor
-    PortTxt = PuertoDelServidor
-End If
+    Dim nDirectorio As String
+    
+    ' Configuracion de IP/Puerto segun seleccion o configuración inicial
+    If CurServer <> 0 Then
+        IPTxt = ServersLst(CurServer).Ip
+        PortTxt = ServersLst(CurServer).Puerto
+    Else
+        IPTxt = IPdelServidor
+        PortTxt = PuertoDelServidor
+    End If
 
-Call CargarLst
-DescTxt.Text = ServersLst(CurServer).Desc
-nDirectorio = Dir(App.Path & "\Web", vbDirectory)
-If nDirectorio <> "Web" Then MkDir (App.Path & "\Web")
+    Call CargarLst
+    DescTxt.Text = ServersLst(CurServer).Desc
 
+    ' Aseguramos que el directorio Web existe para logs locales si fuera necesario
+    nDirectorio = Dir(App.Path & "\Web", vbDirectory)
+    If nDirectorio <> "Web" Then MkDir (App.Path & "\Web")
 End Sub
 
-
+' --- CERRAR JUEGO CON ESC ---
 Private Sub Form_KeyDown(KeyCode As Integer, Shift As Integer)
-If KeyCode = 27 Then
+    If KeyCode = 27 Then ' ESC
         frmCargando.Show
         frmCargando.Refresh
-        AddtoRichTextBox frmCargando.Status, "Cerrando Argentum Online.", 0, 0, 0, 1, 0, 1
+        AddtoRichTextBox frmCargando.status, "Cerrando Argentum Online.", 0, 0, 0, 1, 0, 1
         
         Call SaveGameini
         frmConnect.MousePointer = 1
         frmMain.MousePointer = 1
         prgRun = False
         
-        AddtoRichTextBox frmCargando.Status, "Liberando recursos..."
+        AddtoRichTextBox frmCargando.status, "Liberando recursos..."
         frmCargando.Refresh
         DeinitTileEngine
-        AddtoRichTextBox frmCargando.Status, "Hecho", 0, 0, 0, 1, 0, 1
-        AddtoRichTextBox frmCargando.Status, "ï¿½ï¿½ï¿½Gracias por jugar Argentum Online!!", 0, 0, 0, 1, 0, 1
+        AddtoRichTextBox frmCargando.status, "Hecho", 0, 0, 0, 1, 0, 1
+        AddtoRichTextBox frmCargando.status, "Gracias por jugar Argentum Online!!", 0, 0, 0, 1, 0, 1
         frmCargando.Refresh
         Call UnloadAllForms
-End If
+    End If
 End Sub
 
+' --- ATAJO PARA VER IP/PUERTO (DEBUG) ---
 Private Sub Form_KeyUp(KeyCode As Integer, Shift As Integer)
-
-'Make Server IP and Port box visible
-If KeyCode = vbKeyI And Shift = vbCtrlMask Then
-    
-    'Port
-    PortTxt.Visible = True
-    'Label4.Visible = True
-    
-    'Server IP
-    IPTxt.Text = "localhost"
-    IPTxt.Visible = True
-    'Label5.Visible = True
-    
-    KeyCode = 0
-    Exit Sub
-End If
-
+    If KeyCode = vbKeyI And Shift = vbCtrlMask Then
+        PortTxt.Visible = Not PortTxt.Visible
+        IPTxt.Visible = Not IPTxt.Visible
+        KeyCode = 0
+    End If
 End Sub
 
+' --- CARGA INICIAL ---
 Private Sub Form_Load()
-    '[CODE 002]:MatuX
     EngineRun = False
-    '[END]
-Dim d As Integer
-Dim j
-For Each j In Image1()
-   j.Tag = "0"
-Next
-PortTxt.Text = Config_Inicio.Puerto
- 
-frmConnect.Picture = LoadPicture(App.Path & "\Graficos\Conectar.jpg")
-'[Efestos]
-Do While d <> 5
-DescargarTxt(d) = True
-d = d + 1
-Loop
-'[Efestos]
- '[CODE]:MatuX
- '
- '  El Codigo para mostrar la versiï¿½n se genera acï¿½ para
- ' evitar que por X razones luego desaparezca, como suele
- ' pasar a veces :)
-    version.Caption = "v" & App.Major & "." & App.Minor & " Beta: 1"
- '[END]'
-
+    
+    ' Seteamos el puerto por defecto
+    PortTxt.Text = Config_Inicio.Puerto
 End Sub
 
+' --- BOTON: CREAR CUENTA ---
+Private Sub CrearPersonaje_Click()
+    Call PlayWaveDS(SND_CLICK)
+    
+    ' [FIX] Conectarse al servidor antes de mostrar el form de creacion.
+    ' El form envia NACCNT via SendData -- si no hay conexion activa
+    ' da error 24038 (Invalid socket descriptor).
+    If Not frmMain.Socket1.Connected Then
+        EstadoLogin = CrearAccount
+        frmMain.Socket1.HostAddress = CurServerIp
+        frmMain.Socket1.RemotePort = CurServerPort
+        frmMain.Socket1.Connect
+        DoEvents
+    End If
+    
+    frmCrearAccount.Show vbModal, Me
+End Sub
 
+' --- BOTON PRINCIPAL: CONECTAR A CUENTA ---
+Private Sub Conectar_Click(Index As Integer)
+    ' Solo procesamos el botón Index 1 (Conectar)
+    If Index <> 1 Then Exit Sub
 
-Private Sub Image1_Click(Index As Integer)
+    Call PlayWaveDS(SND_CLICK)
 
-Dim Archivo As String
-Dim cadena As String
-Dim nArchivo As String
-Dim eArchivo As String
-
-If Not IsIp(IPTxt) And CurServer <> 0 Then
-    If MsgBox("Atencion, esta intentando conectarse a un servidor no oficial, NoLand Studios no se hace responsable de los posibles problemas que estos servidores presenten. ï¿½Desea continuar?", vbYesNo) = vbNo Then
-        If CurServer <> 0 Then
-            IPTxt = ServersLst(CurServer).Ip
-            PortTxt = ServersLst(CurServer).Puerto
-        Else
-            IPTxt = IPdelServidor
-            PortTxt = PuertoDelServidor
-        End If
+    ' Validación de campos
+    If NameTxt.Text = "" Or PasswordTxt.Text = "" Then
+        MsgBox "Ingrese Nombre de Cuenta y Contraseña.", vbExclamation
         Exit Sub
     End If
-    CurServer = 0
-    IPdelServidor = IPTxt
-    PuertoDelServidor = PortTxt
-End If
 
+    ' Limpieza de socket previo
+    If frmMain.Socket1.Connected Then
+        frmMain.Socket1.Disconnect
+        frmMain.Socket1.Cleanup
+        DoEvents
+    End If
+    
+    ' Guardamos datos de sesión
+    nombrecuent = NameTxt.Text
+    passcuent = PasswordTxt.Text
+    
+    ' El servidor guarda la password con MD5, por lo que enviamos el hash
+    UserPassword = MD5String(passcuent)
+    MD5HushYo = UserPassword
 
-Call PlayWaveDS(SND_WAV_CLICK)
+    ' Intentamos Loguear la Cuenta
+    EstadoLogin = LoginAccount
+    frmMain.Socket1.HostAddress = CurServerIp
+    frmMain.Socket1.RemotePort = CurServerPort
+    frmMain.Socket1.Connect
+End Sub
 
-Select Case Index
-    Case 0
+' --- BOTON: RECUPERAR CUENTA ---
+Private Sub RecuperarCuenta_Click()
+    Call PlayWaveDS(SND_CLICK)
+    frmRecuperarCuenta.Show vbModal, Me
+End Sub
+
+' --- BOTON: ELIMINAR CUENTA (SEGURIDAD CRITICA) ---
+Private Sub EliminarCuenta_Click()
+    Call PlayWaveDS(SND_CLICK)
+    
+    Dim sAccount As String
+    sAccount = InputBox("Ingrese el nombre de la CUENTA que desea eliminar permanentemente:", "ELIMINAR CUENTA")
+    
+    If sAccount = "" Then Exit Sub
+    
+    Dim sPass As String
+    sPass = InputBox("Para borrar la cuenta " & sAccount & " escriba su CONTRASEÑA:", "VALIDACION DE SEGURIDAD")
+    If sPass = "" Then Exit Sub
+    
+    Dim sMail As String
+    sMail = InputBox("Escriba el CORREO registrado en la cuenta " & sAccount & ":", "VALIDACION DE SEGURIDAD")
+    If sMail = "" Then Exit Sub
+    
+    Dim sRespuesta As String
+    sRespuesta = InputBox("Escriba la RESPUESTA SECRETA de la cuenta " & sAccount & ":", "VALIDACION DE SEGURIDAD")
+    If sRespuesta = "" Then Exit Sub
+    
+    ' Si el socket no está conectado, intentamos conectar para enviar el paquete
+    If Not frmMain.Socket1.Connected Then
+        frmMain.Socket1.HostAddress = CurServerIp
+        frmMain.Socket1.RemotePort = CurServerPort
+        frmMain.Socket1.Connect
         
-        If Musica = 0 Then
-            CurMidi = DirMidi & "7.mid"
-    'DX8: LoopMidi = 1  '-- LoopMidi eliminado (loop gestionado por clsSoundEngine)
-            Call CargarMIDI(CurMidi)
-            Call Play_Midi
-        End If
-        
-        frmCrearPersonaje.Show vbModal
-    Case 1
-        frmOldPersonaje.Show vbModal
-    Case 2
-        frmBorrar.Show vbModal
-    Case 3
-        lst_servers.Visible = True
-        text1.Visible = False
-    Case 4
-        lst_servers.Visible = False
-        text1.Visible = True
-        text1.Text = ""
-        eArchivo = Dir(App.Path & "\Web\soynuevo.txt")
-        If eArchivo <> "soynuevo.txt" Or DescargarTxt(1) = True Then
-            Text2.Text = "Descargando Reglamento..."
-            frmMain.Inet1.URL = "http://www.caratula2000.net/power/soynuevo.txt"
-            Archivo = frmMain.Inet1.OpenURL
-            nArchivo = App.Path & "/Web/soynuevo.txt"
-            Open nArchivo For Output As #1
-                Print #1, Archivo
-            Close
-            Text2.Text = "Descarga Finalizada"
-            DescargarTxt(1) = False
-        End If
-        eArchivo = App.Path & "\Web\soynuevo.txt"
-        Open eArchivo For Input As #1
-            While Not EOF(1)
-                Line Input #1, cadena
-                text1.Text = text1.Text + cadena + vbCrLf
-            Wend
-        Close
-        text1.SetFocus
-    Case 5
-        lst_servers.Visible = False
-        text1.Visible = True
-        text1.Text = ""
-        eArchivo = Dir(App.Path & "\Web\reglamento.txt")
-        If eArchivo <> "reglamento.txt" Or DescargarTxt(2) = True Then
-            Text2.Text = "Descargando Reglamento..."
-            frmMain.Inet1.URL = "http://www.caratula2000.net/power/reglamento.txt"
-            Archivo = frmMain.Inet1.OpenURL
-            nArchivo = App.Path & "/Web/reglamento.txt"
-            Open nArchivo For Output As #1
-                Print #1, Archivo
-            Close
-            Text2.Text = "Descarga Finalizada"
-            DescargarTxt(2) = False
-        End If
-        eArchivo = App.Path & "\Web\reglamento.txt"
-        Open eArchivo For Input As #1
-            While Not EOF(1)
-                Line Input #1, cadena
-                text1.Text = text1.Text + cadena + vbCrLf
-            Wend
-        Close
-        text1.SetFocus
-    Case 6
-        lst_servers.Visible = False
-        text1.Visible = True
-        text1.Text = ""
-        eArchivo = Dir(App.Path & "\Web\historia.txt")
-        If eArchivo <> "historia.txt" Or DescargarTxt(3) = True Then
-            Text2.Text = "Descargando Historia..."
-            frmMain.Inet1.URL = "http://www.caratula2000.net/power/historia.txt"
-            Archivo = frmMain.Inet1.OpenURL
-            nArchivo = App.Path & "/Web/historia.txt"
-            Open nArchivo For Output As #1
-                Print #1, Archivo
-            Close
-            Text2.Text = "Descarga Finalizada"
-            DescargarTxt(3) = False
-        End If
-        eArchivo = App.Path & "\Web\historia.txt"
-        Open eArchivo For Input As #1
-            While Not EOF(1)
-                Line Input #1, cadena
-                text1.Text = text1.Text + cadena + vbCrLf
-            Wend
-        Close
-        text1.SetFocus
-    Case 7
-        'abre la pagina de AOSpain.com
-        ShellExecute frmMain.hwnd, vbNullString, "http://www.caratula2000.net", vbNullString, vbNullString, vbNormalFocus
-End Select
+        ' Esperamos un momento a que conecte (max 3 segundos)
+        Dim lWait As Long
+        lWait = GetTickCount
+        Do While Not frmMain.Socket1.Connected
+            DoEvents
+            If GetTickCount - lWait > 3000 Then
+                MsgBox "No se ha podido establecer conexion con el servidor.", vbCritical
+                Exit Sub
+            End If
+        Loop
+    End If
+    
+    ' Enviamos la solicitud: BRCU [Cuenta],[Nombre],[Pass],[Mail],[Respuesta]
+    ' El servidor valida: campo Nombre contra GetVar("Nombre") (vacio), la pass
+    ' comparada con MD5String(bPass) contra la guardada, mail y respuesta en claro.
+    Call SendData("BRCU" & sAccount & ",," & sPass & "," & sMail & "," & sRespuesta)
 End Sub
 
-Private Sub cmdAccLogin_Click()
-    Call PlayWaveDS(SND_WAV_CLICK)
-    Call frmAccLogin.Show(vbModal, frmConnect)
-End Sub
-
-Private Sub imgGetPass_Click()
-    Call PlayWaveDS(SND_WAV_CLICK)
-    Call frmRecuperarCuenta.Show(vbModal, frmConnect)
-End Sub
-
-'Private Sub imgServArgentina_Click()
-'    Call PlayWaveDS(SND_WAV_CLICK)
-'    IPTxt.Text = IPdelServidor
-'    PortTxt.Text = PuertoDelServidor
-'End Sub
-
-'Private Sub imgServEspana_Click()
-'    Call PlayWaveDS(SND_WAV_CLICK)
-'    IPTxt.Text = "62.42.193.233"
-'    PortTxt.Text = "7666"
-'End Sub
-
-
-
+' --- LOGICA DE LISTA DE SERVIDORES (SI SE USA) ---
 Private Sub lst_servers_Click()
-CurServer = lst_servers.ListIndex + 1
-DescTxt = ServersLst(CurServer).Desc
-IPTxt = ServersLst(CurServer).Ip
-PortTxt = ServersLst(CurServer).Puerto
+    CurServer = lst_servers.ListIndex + 1
+    DescTxt = ServersLst(CurServer).desc
+    IPTxt = ServersLst(CurServer).Ip
+    PortTxt = ServersLst(CurServer).Puerto
 End Sub
-

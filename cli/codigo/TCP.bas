@@ -721,6 +721,10 @@ Sub HandleData(ByVal Rdata As String)
             Next i
             frmSpawnList.Show
             Exit Sub
+        Case "HLQ"                  ' >>>>> Cuenta creada con exito :: HLQ
+            ' El servidor confirma la creacion de la cuenta (esta cuenta ya esta logueada)
+            MsgBox "La cuenta fue creada con éxito.", vbInformation + vbOKOnly, "Creación de cuenta"
+            Exit Sub
         Case "ERR"
             Rdata = Right$(Rdata, Len(Rdata) - 3)
             frmOldPersonaje.MousePointer = 1
