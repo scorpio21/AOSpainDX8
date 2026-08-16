@@ -21,6 +21,7 @@ Module=DibujarInventario; CODIGO\Modulo_DibujarInventario.bas
 Module=MoD_MIDI; CODIGO\MoDuLo_MIDI.bas
 Module=Mod_TCP; CODIGO\TCP.bas
 Module=Mod_TileEngine; CODIGO\TileEngine.bas
+Module=CargasInit; CODIGO\CargasInit.bas
 Class=clsDX8Font; CODIGO\clsDX8Font.cls
 Class=clsSurfaceManDyn; CODIGO\clsSurfaceManDyn.cls
 Class=clsSurfaceManager; CODIGO\clsSurfaceManager.cls

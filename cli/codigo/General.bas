@@ -1058,6 +1058,7 @@ frmOldPersonaje.PasswordTxt.Text = ""
 AddtoRichTextBox frmCargando.Status, "Hecho", , , , 1
     'DX8: Opciones de audio derivadas de la configuracion del cliente (RenderMod)
     Opciones.Audio = IIf(Fx = 1, 0, 1)
+    Opciones.NamePlayers = 1  ' [FIX] Mostrar nombres de personajes
     Opciones.FXVolume = -500
     Opciones.sMusica = IIf(Musica = 1, CONST_DESHABILITADA, CONST_MP3)
     Opciones.MusicVolume = -500
@@ -1088,9 +1089,9 @@ ENDC = Chr(1)
 'Call InitTileEngine(frmMain.hwnd, 152, 7, 32, 32, 13, 17, 9)
                                    
      If bNoResChange = False Then 'GS
-        Call InitTileEngine(frmMain.renderer.hwnd, 149, 13, 32, 32, 13, 17, 11, 8, 8, 0.019)
+        Call InitTileEngine(frmMain.renderer.hwnd, 149, 13, 32, 32, 13, 17, 11, 8, 8, 0.009)
     Else
-        Call InitTileEngine(frmMain.renderer.hwnd, 149, 13, 32, 32, 13, 17, 11, 8, 8, 0.019)
+        Call InitTileEngine(frmMain.renderer.hwnd, 149, 13, 32, 32, 13, 17, 11, 8, 8, 0.009)
 
     End If
 'Call AddtoRichTextBox(frmCargando.Status, "Creando animaciones extras.", 2, 51, 223, 1, 1)

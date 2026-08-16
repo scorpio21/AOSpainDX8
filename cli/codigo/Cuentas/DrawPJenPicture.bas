@@ -30,7 +30,7 @@ If Grh.FrameCounter > GrhData(Grh.GrhIndex).NumFrames Then Grh.FrameCounter = 1
 
 iGrhIndex = GrhData(Grh.GrhIndex).Frames(Grh.FrameCounter)
 
-Call GrhRenderToHdc(iGrhIndex, frmCuent.PJ(Index).Hdc, X, Y, True)
+Call GrhRenderToHdc(iGrhIndex, frmCuent.PJ(Index).hDC, X, Y, True)
 
 frmCuent.PJ(Index).Refresh
 
@@ -45,7 +45,7 @@ Sub RenderizarPJsCuentas()
     ' Color de resaltado (Dorado para seleccion)
     rColor = RGB(255, 215, 0)
 
-    ' Recorremos los 10 slots oficiales (Estandarizado Fase 2)
+    ' Recorremos los 10 slots (Estandarizado Fase 2)
     For i = 0 To 9
         ' Limpiamos siempre el fondo para evitar rastro
         frmCuent.PJ(i).Cls
@@ -57,22 +57,20 @@ Sub RenderizarPJsCuentas()
             ' Dibujamos el personaje (Cuerpo + Cabeza + Equipo)
             Call ActualizarDibujoPJ(i)
 
-            ' Si este personaje es el seleccionado, dibujamos un borde resaltado
+            ' Si este personaje es el seleccionado, borde dorado
             If frmCuent.nombre(i).Caption = PJClickeado And PJClickeado <> "" Then
-                ' Dibujamos un rectangulo dorado alrededor del PictureBox
                 frmCuent.PJ(i).Line (0, 0)-(frmCuent.PJ(i).ScaleWidth - 1, frmCuent.PJ(i).ScaleHeight - 1), rColor, B
-                ' Dibujamos un segundo borde interno para que sea mas notorio
                 frmCuent.PJ(i).Line (1, 1)-(frmCuent.PJ(i).ScaleWidth - 2, frmCuent.PJ(i).ScaleHeight - 2), rColor, B
             End If
         Else
-            ' Si el slot esta vacio, aseguramos que se vea el Label "Crear Personaje"
+            ' Slot vacio: mostrar "Crear Personaje"
             frmCuent.CP(i).Visible = True
         End If
     Next i
 End Sub
 
 Public Sub LimpiarPJsCuentas()
-    ' [CODE] - Limpieza centralizada de slots (Fase 2: 10 slots)
+    ' [CODE] - Limpieza centralizada de slots (10 slots)
     Dim i As Integer
     For i = 0 To 9
         PJs(i).Active = False
@@ -91,7 +89,6 @@ Public Sub LimpiarPJsCuentas()
         frmCuent.PJ(i).Cls
     Next i
 
-    ' Reseteamos el PJ clickeado
     PJClickeado = ""
 End Sub
 
@@ -122,52 +119,62 @@ Private Sub ActualizarDibujoPJ(ByVal Index As Integer)
         BBody = 35
     End If
 
-    ' Cuerpo
-    Grh = BodyData(Body).Walk(3)
-    Grh.FrameCounter = (PJs(Index).FrameIndex Mod GrhData(Grh.GrhIndex).NumFrames) + 1
-    Call DibujaPJ(Grh, XBody, YBody, Index)
+    ' Cuerpo (heading 3 = Sur, orientacion por defecto)
+    If Body > 0 And Body <= UBound(BodyData) Then
+        Grh = BodyData(Body).Walk(3)
+        If Grh.GrhIndex > 0 Then
+            Grh.FrameCounter = (PJs(Index).FrameIndex Mod GrhData(Grh.GrhIndex).NumFrames) + 1
+            Call DibujaPJ(Grh, XBody, YBody, Index)
+        End If
+    End If
 
-    If Muerto = 0 Then YYY = BodyData(Body).HeadOffset.Y
+    If Muerto = 0 And Body > 0 And Body <= UBound(BodyData) Then
+        YYY = BodyData(Body).HeadOffset.Y
+    End If
     If Muerto = 1 Then YYY = -9
 
     Pos = YYY + GrhData(GrhData(Grh.GrhIndex).Frames(Grh.FrameCounter)).pixelHeight
     
     ' Cabeza
-    Grh = HeadData(Head).Head(3)
-    ' Las cabezas suelen ser estaticas (1 frame), pero por si acaso:
-    Grh.FrameCounter = 1 
-    
-    If Baned = 1 Then
-        Call dibujaban(Index, vbBlack)
-        Call dibujaban(Index, vbRed)
+    If Head > 0 And Head <= UBound(HeadData) Then
+        Grh = HeadData(Head).Head(3)
+        If Grh.GrhIndex > 0 Then
+            Grh.FrameCounter = 1
+            If Baned = 1 Then
+                Call dibujaban(Index, vbBlack)
+                Call dibujaban(Index, vbRed)
+            End If
+            Call DibujaPJ(Grh, BBody, Pos + 2, Index)
+        End If
     End If
-
-    Call DibujaPJ(Grh, BBody, Pos + 2, Index)
         
     ' Casco
-    If Casco <> 2 And Casco > 0 Then
+    If Casco > 0 And Casco <> 2 And Casco <= UBound(CascoAnimData) Then
         Grh = CascoAnimData(Casco).Head(3)
-        Call DibujaPJ(Grh, BBody, Pos + 2, Index)
+        If Grh.GrhIndex > 0 Then Call DibujaPJ(Grh, BBody, Pos + 2, Index)
     End If
 
     ' Arma
-    If Weapon <> 2 And Weapon > 0 Then
+    If Weapon > 0 And Weapon <> 2 And Weapon <= UBound(WeaponAnimData) Then
         Grh = WeaponAnimData(Weapon).WeaponWalk(3)
-        Grh.FrameCounter = (PJs(Index).FrameIndex Mod GrhData(Grh.GrhIndex).NumFrames) + 1
-        Call DibujaPJ(Grh, XBody, YBody, Index)
+        If Grh.GrhIndex > 0 Then
+            Grh.FrameCounter = (PJs(Index).FrameIndex Mod GrhData(Grh.GrhIndex).NumFrames) + 1
+            Call DibujaPJ(Grh, XBody, YBody, Index)
+        End If
     End If
 
     ' Escudo
-    If Shield <> 2 And Shield > 0 Then
+    If Shield > 0 And Shield <> 2 And Shield <= UBound(ShieldAnimData) Then
         Grh = ShieldAnimData(Shield).ShieldWalk(3)
-        Grh.FrameCounter = (PJs(Index).FrameIndex Mod GrhData(Grh.GrhIndex).NumFrames) + 1
-        Call DibujaPJ(Grh, XBody + 4, BBody - 13, Index)
+        If Grh.GrhIndex > 0 Then
+            Grh.FrameCounter = (PJs(Index).FrameIndex Mod GrhData(Grh.GrhIndex).NumFrames) + 1
+            Call DibujaPJ(Grh, XBody + 4, BBody - 13, Index)
+        End If
     End If
 End Sub
 
-Sub DibujarTodo(ByVal Index As Integer, Body As Long, Head As Long, Casco As Long, Shield As Long, Weapon As Long, Baned As Long, nombre As String, LVL As Integer, Clase As String, Muerto As Integer)
+Public Sub DibujarTodo(ByVal Index As Integer, Body As Long, Head As Long, Casco As Long, Shield As Long, Weapon As Long, Baned As Long, nombre As String, LVL As Integer, Clase As String, Muerto As Integer)
 
-    ' Guardamos los datos en el array para el renderizador continuo
     With PJs(Index)
         .Body = Body
         .Head = Head
@@ -200,27 +207,7 @@ Sub DibujarTodo(ByVal Index As Integer, Body As Long, Head As Long, Casco As Lon
 
 End Sub
 
-
-
 Sub dibujaban(Index As Integer, Color As Long)
-
-Dim r2 As RECT, auxr As RECT
-
-With r2
-   .Left = 0
-   .Top = 0
-   .Right = 20
-   .Bottom = 20
-End With
-
-With auxr
-    .Left = 0
-  .Top = 0
-   .Right = 150
-  .Bottom = 150
-End With
-
-
-
+    ' Dibuja un rectangulo de color sobre la cabeza (baneado)
+    frmCuent.PJ(Index).Line (27, 0)-(55, 50), Color, BF
 End Sub
-
