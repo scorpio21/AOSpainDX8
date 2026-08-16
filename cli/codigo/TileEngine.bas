@@ -1729,11 +1729,11 @@ Private Sub CharRender(ByVal CharIndex As Long, ByVal PixelOffsetX As Integer, B
                 
             'Dibujamos la Cabeza
             If .Head Then
-                Call DrawHead(PixelOffsetX + .Body.HeadOffset.X, PixelOffsetY + .Body.HeadOffset.Y, True, Light, charlist(CharIndex).Heading, charlist(CharIndex).Head)
+                Call DDrawTransGrhtoSurface(HeadData(.Head).Head(.Heading), PixelOffsetX + .Body.HeadOffset.X, PixelOffsetY + .Body.HeadOffset.Y, 1, 0, Light, .Estainvi)
 
                 'Draw Helmet
                 If .Casco Then _
-                    Call DrawHead(PixelOffsetX + .Body.HeadOffset.X, PixelOffsetY + .Body.HeadOffset.Y, False, Light, charlist(CharIndex).Heading, charlist(CharIndex).Casco)
+                    Call DDrawTransGrhtoSurface(CascoAnimData(.Casco).Head(.Heading), PixelOffsetX + .Body.HeadOffset.X, PixelOffsetY + .Body.HeadOffset.Y, 1, 0, Light, .Estainvi)
                              
                 If UserMontando = False Then
                     'Dibujamos el arma
