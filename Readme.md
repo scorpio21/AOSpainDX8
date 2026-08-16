@@ -113,3 +113,5 @@ Copyright (C) 2002 Marquez Pablo Ignacio, Otto Perez, Aaron Perkins.
 ## 📬 Contacto
 
 Repositorio: [https://github.com/scorpio21/AOSpainDX8](https://github.com/scorpio21/AOSpainDX8)
+
+deepwiki: [https://deepwiki.com/scorpio21/AOSpainDX8](https://deepwiki.com/scorpio21/AOSpainDX8)
