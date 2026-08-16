@@ -71,6 +71,7 @@ Form=CODIGO\frmCommet.frm
 Form=CODIGO\frmOpciones.frm
 Module=MD5; CODIGO\MD5.bas
 Module=PrivateCrcFunction; CODIGO\PrivateCrcFunction.bas
+Module=Mod_Cripto; codigo\Mod_Cripto.bas
 Form=CODIGO\frmComerciarUsu.frm
 Form=CODIGO\frmBancoObj.frm
 Form=codigo\frmayuda.frm

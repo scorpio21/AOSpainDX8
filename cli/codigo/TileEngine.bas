@@ -52,6 +52,10 @@ Type BITMAPINFOHEADER
     biClrImportant As Long
 End Type
 
+Private Declare Function StretchDIBits Lib "gdi32" (ByVal hdc As Long, ByVal X As Long, ByVal Y As Long, ByVal dx As Long, ByVal dy As Long, ByVal SrcX As Long, ByVal SrcY As Long, ByVal srcWidth As Long, ByVal srcHeight As Long, ByVal lpBits As Any, ByVal lpBitsInfo As Any, ByVal wUsage As Long, ByVal dwRop As Long) As Long
+
+Private Declare Sub CopyMemory Lib "kernel32" Alias "RtlMoveMemory" (Destination As Any, Source As Any, ByVal Length As Long)
+
 'Posicion en un mapa
 'Public Type Position  '-- Movido a Declares.bas
 '    X As Long
@@ -1040,43 +1044,58 @@ Function HayUserAbajo(ByVal X As Integer, ByVal Y As Integer, ByVal GrhIndex As 
 End Function
 
 Private Sub DrawHead(ByVal X As Integer, ByVal Y As Integer, ByVal EsCabeza As Boolean, Light() As Long, ByVal Heading As Byte, ByVal Head As Integer)
-    Dim Cabezoide As Grh
     Dim textureX1 As Integer
-    Dim textureX2 As Integer
+    Dim textureW As Integer
     Dim textureY1 As Integer
-    Dim textureY2 As Integer
+    Dim textureH As Integer
     Dim offsetX As Integer
     Dim offsetY As Integer
     Dim SourceRect As RECT
     Dim Texture As Long
+    Dim headGrh As Long
     
+    If Head <= 0 Or Head > UBound(heads) Then
+        LogError "DrawHead: OOB Head=" & Head
+        Exit Sub
+    End If
+    
+    Static logCount As Long
+    logCount = logCount + 1
+    If logCount <= 5 Then
+        LogError "DrawHead: Head=" & Head & " Texture=" & heads(Head).Texture & " startX=" & heads(Head).startX & " startY=" & heads(Head).startY & " EsCabeza=" & EsCabeza
+    End If
+        
         If EsCabeza = True Then
             If heads(Head).Texture <= 0 Then Exit Sub
             Texture = heads(Head).Texture
+            headGrh = HeadData(Head).Head(Heading).GrhIndex
         Else
             If Cascos(Head).Texture <= 0 Then Exit Sub
             Texture = Cascos(Head).Texture
+            headGrh = CascoAnimData(Head).Head(Heading).GrhIndex
         End If
         
-        textureX2 = 27
-        textureY2 = 32
- 
-        If EsCabeza = True Then
-            textureX1 = heads(Head).startX
-            textureY1 = ((Heading - 1) * textureY2) + heads(Head).startY
+        ' Use GRH dimensions directly - each heading has its own GRH with correct SX/SY/PW/PH
+        If headGrh > 0 And headGrh <= GrhCount And GrhData(headGrh).Active Then
+            textureX1 = GrhData(headGrh).SX
+            textureY1 = GrhData(headGrh).SY
+            textureW = GrhData(headGrh).pixelWidth
+            textureH = GrhData(headGrh).pixelHeight
         Else
-            textureX1 = Cascos(Head).startX
-            textureY1 = ((Heading - 1) * textureY2) + Cascos(Head).startY
+            textureX1 = heads(Head).startX
+            textureY1 = heads(Head).startY
+            textureW = 32
+            textureH = 32
         End If
- 
-        offsetX = (textureX2) - 30
-        offsetY = (textureY2) - 35
+        
+        offsetX = (textureW) \ 2 - 16
+        offsetY = 0
         
         With SourceRect
             .Left = textureX1
             .Top = textureY1
-            .Right = (textureX2 + .Left)
-            .bottom = (textureY2 + .Top)
+            .Right = textureX1 + textureW
+            .bottom = textureY1 + textureH
         End With
         
         Device_Textured_Render X - offsetX, Y - offsetY, _
@@ -1386,13 +1405,14 @@ Sub RenderScreen(ByVal tilex As Integer, ByVal tiley As Integer, ByVal PixelOffs
     Dim minXOffset          As Integer
     Dim minYOffset          As Integer
     Dim PixelOffsetXTemp    As Integer 'For centering grhs
+    Debug.Print "RenderScreen: UserPos.X=" & UserPos.X & " UserPos.Y=" & UserPos.Y & " GrhCount=" & GrhCount
     Dim PixelOffsetYTemp    As Integer 'For centering grhs
     Dim CurrentGrhIndex     As Integer
     Dim offx                As Integer
     Dim offy                As Integer
     Dim i As Long
     
-On Error Resume Next
+On Error GoTo RenderErr
     'Figure out Ends and Starts of screen
     screenminY = tiley - HalfWindowTileHeight
     screenmaxY = tiley + HalfWindowTileHeight
@@ -1441,8 +1461,9 @@ On Error Resume Next
     'Lorwik> Con esto evitamos que tire error al entrar en el borde del mapa:
     If screenmaxX > XMaxMapSize Then screenmaxX = XMaxMapSize
     If screenmaxY > YMaxMapSize Then screenmaxY = YMaxMapSize
-    If screenminX < XMinMapSize Then screenmaxX = XMinMapSize
-    If screenminY < YMinMapSize Then screenmaxY = YMinMapSize
+    If screenminX < XMinMapSize Then screenminX = XMinMapSize
+    Debug.Print "Bounds: minXY=" & screenminX & "," & screenminY & " maxXY=" & screenmaxX & "," & screenmaxY
+    If screenminY < YMinMapSize Then screenminY = YMinMapSize
     
     '=============================================================================================================
     'Comenzamos a dibujar las capas. Aquellas capas que esten por debajo de las demas, se van a mostrar arriba.
@@ -1571,7 +1592,7 @@ On Error Resume Next
     For Y = minY To maxY
         ScreenX = minXOffset - TileBufferSize
         For X = minX To maxX
-            If Not MapData(X, Y).Graphic(4).GrhIndex Then
+            If MapData(X, Y).Graphic(4).GrhIndex Then
                 'Draw
                 Call DDrawTransGrhtoSurface(MapData(X, Y).Graphic(4), _
                     ScreenX * TilePixelWidth + PixelOffsetX, _
@@ -1611,6 +1632,10 @@ On Error Resume Next
       End If
     Next
  
+Exit Sub
+RenderErr:
+    LogError "RenderScreen: Err=" & Err.Number & " Desc=" & Err.Description
+    Resume Next
 End Sub
 
 Private Sub CharRender(ByVal CharIndex As Long, ByVal PixelOffsetX As Integer, ByVal PixelOffsetY As Integer, ByVal X As Byte, ByVal Y As Byte, Light() As Long)
@@ -1715,13 +1740,13 @@ Private Sub CharRender(ByVal CharIndex As Long, ByVal PixelOffsetX As Integer, B
             If .Body.Walk(.Heading).GrhIndex Then _
                 Call DDrawTransGrhtoSurface(.Body.Walk(.Heading), PixelOffsetX, PixelOffsetY, 1, 1, Light, .Estainvi)
                 
-            'Dibujamos la Cabeza
+            'Dibujamos la Cabeza (como en DX7: DDrawTransGrhtoSurface directo)
             If .Head Then
-                Call DrawHead(PixelOffsetX + .Body.HeadOffset.X, PixelOffsetY + .Body.HeadOffset.Y, True, Light, charlist(CharIndex).Heading, charlist(CharIndex).Head)
+                Call DDrawTransGrhtoSurface(HeadData(.Head).Head(.Heading), PixelOffsetX + .Body.HeadOffset.X, PixelOffsetY + .Body.HeadOffset.Y, 1, 0, Light, .Estainvi)
 
                 'Draw Helmet
                 If .Casco Then _
-                    Call DrawHead(PixelOffsetX + .Body.HeadOffset.X, PixelOffsetY + .Body.HeadOffset.Y, False, Light, charlist(CharIndex).Heading, charlist(CharIndex).Casco)
+                    Call DDrawTransGrhtoSurface(CascoAnimData(.Casco).Head(.Heading), PixelOffsetX + .Body.HeadOffset.X, PixelOffsetY + .Body.HeadOffset.Y, 1, 0, Light, .Estainvi)
                              
                 If UserMontando = False Then
                     'Dibujamos el arma
@@ -1968,8 +1993,12 @@ On Error GoTo Error
         
     If Grh.GrhIndex = 0 Then Exit Sub
         
+    If Grh.GrhIndex < 0 Or Grh.GrhIndex > GrhCount Then Exit Sub
+    If Grh.GrhIndex > UBound(GrhData) Then LogError "OOB: Gi=" & Grh.GrhIndex & " UB=" & UBound(GrhData): Exit Sub
+    If Not GrhData(Grh.GrhIndex).Active Then LogError "INACT Gi=" & Grh.GrhIndex & " NF=" & GrhData(Grh.GrhIndex).NumFrames: Exit Sub
     If Animate Then
         If Grh.Started = 1 Then
+            If Grh.Speed = 0 Then Grh.Speed = 1
             Grh.FrameCounter = Grh.FrameCounter + (timerElapsedTime * GrhData(Grh.GrhIndex).NumFrames / Grh.Speed)
             If Grh.FrameCounter > GrhData(Grh.GrhIndex).NumFrames Then
                 Grh.FrameCounter = (Grh.FrameCounter Mod GrhData(Grh.GrhIndex).NumFrames) + 1
@@ -2011,13 +2040,17 @@ On Error GoTo Error
 Exit Sub
 
 Error:
-    If Err.Number = 9 And Grh.FrameCounter < 1 Then
-        Grh.FrameCounter = 1
-        Resume
+    If Err.Number = 9 Then
+        LogError "Error9: GrhIndex=" & Grh.GrhIndex & " Frame=" & Grh.FrameCounter & " GrhCount=" & GrhCount & " Desc=" & Err.Description
+        If Grh.FrameCounter < 1 Then
+            Grh.FrameCounter = 1
+            Resume
+        Else
+            Exit Sub
+        End If
     Else
-        MsgBox "Ocurrio un error inesperado, por favor comuniquelo a los administradores del juego." & vbCrLf & "Descripcion del error: " & _
-        vbCrLf & Err.Description, vbExclamation, "[ " & Err.Number & " ] Error"
-        End
+        LogError "DDrawTransGrhtoSurface: Err=" & Err.Number & " Desc=" & Err.Description
+        Exit Sub
     End If
 End Sub
 
@@ -2056,9 +2089,12 @@ Sub DDrawTransGrhtoSurface(ByRef Grh As Grh, ByVal X As Integer, ByVal Y As Inte
 'On Error GoTo error
     On Error Resume Next
     If Grh.GrhIndex = 0 Then Exit Sub
+    If Grh.GrhIndex < 0 Or Grh.GrhIndex > GrhCount Then Exit Sub
+    If Not GrhData(Grh.GrhIndex).Active Then Exit Sub
     
     If Animate Then
         If Grh.Started = 1 Then
+            If Grh.Speed = 0 Then Grh.Speed = 1
             Grh.FrameCounter = Grh.FrameCounter + (timerElapsedTime * GrhData(Grh.GrhIndex).NumFrames / Grh.Speed) * movSpeed
             
             If Grh.FrameCounter > GrhData(Grh.GrhIndex).NumFrames Then
@@ -2108,9 +2144,8 @@ Error:
         Grh.FrameCounter = 1
         Resume
     Else
-        MsgBox "Ocurrio un error inesperado, por favor comuniquelo a los administradores del juego." & vbCrLf & "Descripcion del error: " & _
-        vbCrLf & Err.Description, vbExclamation, "[ " & Err.Number & " ] Error"
-        End
+        LogError "DDrawGrhtoSurface: Err=" & Err.Number & " Desc=" & Err.Description
+        Exit Sub
     End If
 End Sub
 
@@ -2228,6 +2263,7 @@ On Error GoTo 0
     Call Texto.Engine_Init_FontSettings
     Call Texto.Engine_Init_FontTextures
     
+    Set SurfaceDB = New clsSurfaceManDyn
     Call SurfaceDB.Initialize(DirectD3D8, True, "", 80)
     
     InitTileEngine = True
@@ -2774,7 +2810,7 @@ Next i
 
 Char_Particle_Group_Find = -1
 ErrorHandler:
-Debug.Print "Char_Particle_Group_Find Error"
+LogError "Char_Particle_Group_Find Error"
 End Function
 Public Function Particle_Get_Type(ByVal particle_group_index As Long) As Byte
 On Error GoTo ErrorHandler:
@@ -3308,14 +3344,118 @@ End Function
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
 
-'=== DrawGrhtoHdc - Stub DX8 ===
-'En DX7 dibujaba un GRH al HDC de una PictureBox via DirectDraw.
-'En DX8 el render de inventario se hace via clsGraphicalInventory/Direct3D.
-'Este stub permite compilar los formularios que aun llaman a la funcion.
 Public Sub DrawGrhtoHdc(ByVal hwnd As Long, ByVal Hdc As Long, ByVal GrhIdx As Integer, _
                         SourceRect As RECT, destRect As RECT)
-    'DX8: TODO - implementar render de GRH en PictureBox via D3D texture
-    'Por ahora no-op para permitir compilacion
+    On Error GoTo ErrHandler
+    
+    Static callCount As Long
+    callCount = callCount + 1
+    
+    If GrhIdx <= 0 Or GrhIdx > GrhCount Then
+        If callCount <= 5 Then LogError "DrawGrhtoHdc: FAIL GrhIdx=" & GrhIdx & " GrhCount=" & GrhCount
+        Exit Sub
+    End If
+    If Not GrhData(GrhIdx).Active Then
+        If callCount <= 5 Then LogError "DrawGrhtoHdc: FAIL NotActive GrhIdx=" & GrhIdx
+        Exit Sub
+    End If
+    
+    Dim GrhIndex As Long
+    GrhIndex = GrhData(GrhIdx).Frames(1)
+    If GrhIndex <= 0 Or GrhIndex > GrhCount Then
+        If callCount <= 5 Then LogError "DrawGrhtoHdc: FAIL FrameIdx=" & GrhIndex
+        Exit Sub
+    End If
+    If Not GrhData(GrhIndex).Active Then
+        If callCount <= 5 Then LogError "DrawGrhtoHdc: FAIL FrameNotActive idx=" & GrhIndex
+        Exit Sub
+    End If
+    
+    Dim FileNum As Integer
+    Dim FileSize As Long
+    Dim Buffer() As Byte
+    Dim BmpFile As String
+    
+    FileNum = GrhData(GrhIndex).FileNum
+    BmpFile = App.Path & "\Graficos\" & FileNum & ".bmp"
+    
+    If Dir(BmpFile) = "" Then
+        If callCount <= 5 Then LogError "DrawGrhtoHdc: FAIL NoFile " & BmpFile
+        Exit Sub
+    End If
+    
+    Dim fNum As Integer
+    fNum = FreeFile
+    Open BmpFile For Binary Access Read As #fNum
+    FileSize = LOF(fNum)
+    If FileSize <= 0 Then Close #fNum: Exit Sub
+    
+    ReDim Buffer(0 To FileSize - 1)
+    Get #fNum, , Buffer
+    Close #fNum
+    
+    Dim BiWidth As Long
+    Dim BiHeight As Long
+    Dim BiBitCount As Integer
+    
+    CopyMemory BiWidth, Buffer(18), 4
+    CopyMemory BiHeight, Buffer(22), 4
+    CopyMemory BiBitCount, Buffer(28), 2
+    
+    Dim sx As Long, sy As Long, pw As Long, ph As Long
+    sx = GrhData(GrhIndex).SX
+    sy = GrhData(GrhIndex).SY
+    pw = GrhData(GrhIndex).pixelWidth
+    ph = GrhData(GrhIndex).pixelHeight
+    
+    If sx + pw > BiWidth Then pw = BiWidth - sx
+    If sy + ph > BiHeight Then ph = BiHeight - sy
+    If pw <= 0 Or ph <= 0 Then
+        If callCount <= 5 Then LogError "DrawGrhtoHdc: FAIL BadDim pw=" & pw & " ph=" & ph
+        Exit Sub
+    End If
+    
+    Dim dstW As Long, dstH As Long
+    dstW = destRect.Right - destRect.Left
+    dstH = destRect.bottom - destRect.Top
+    If dstW <= 0 Then dstW = pw
+    If dstH <= 0 Then dstH = ph
+    
+    Dim PixelDataOffset As Long
+    CopyMemory PixelDataOffset, Buffer(10), 4
+    
+    ' BITMAPINFOHEADER starts at offset 14 in BMP file, not offset 2
+    ' BITMAPINFO = BITMAPINFOHEADER (40) + ColorTable (up to 1024 for 8-bit)
+    Dim colorTableSize As Long
+    If BiBitCount <= 8 Then
+        colorTableSize = CLng(4) * (CLng(2) ^ BiBitCount)
+    Else
+        colorTableSize = 0
+    End If
+    
+    Dim BmInfo() As Byte
+    ReDim BmInfo(0 To 40 + colorTableSize - 1)
+    CopyMemory BmInfo(0), Buffer(14), 40
+    If colorTableSize > 0 Then
+        CopyMemory BmInfo(40), Buffer(54), colorTableSize
+    End If
+    
+    If callCount <= 5 Then
+        LogError "DrawGrhtoHdc: OK GrhIdx=" & GrhIdx & " FileNum=" & FileNum & " sx=" & sx & " sy=" & sy & " pw=" & pw & " ph=" & ph & " dstW=" & dstW & " dstH=" & dstH & " BmpW=" & BiWidth & " BmpH=" & BiHeight & " Bits=" & BiBitCount & " hdc=" & Hdc
+    End If
+    
+    Dim result As Long
+    result = StretchDIBits(Hdc, destRect.Left, destRect.Top, dstW, dstH, _
+                  sx, sy, pw, ph, _
+                  ByVal VarPtr(Buffer(PixelDataOffset)), ByVal VarPtr(BmInfo(0)), 0, vbSrcCopy)
+    
+    If callCount <= 5 Then
+        LogError "DrawGrhtoHdc: StretchDIBits result=" & result & " GrhIdx=" & GrhIdx
+    End If
+    
+Exit Sub
+ErrHandler:
+    LogError "DrawGrhtoHdc: Err=" & Err.Number & " Desc=" & Err.Description & " GrhIdx=" & GrhIdx
 End Sub
 
 '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
@@ -3336,7 +3476,7 @@ On Error Resume Next
     Dim i As Long
     Dim tempint As Integer
     Dim maxGrh As Long
-    Dim grhIdx As Long
+    Dim grhIdx As Integer
     Dim nf As Integer
     Dim fileNum As Integer
     Dim sx As Integer
@@ -3429,6 +3569,18 @@ On Error Resume Next
     Close #Handle
 
     GrhCount = maxGrh
+    LogError "LoadGrhData: maxGrh=" & maxGrh & " GrhCount=" & GrhCount
+    If maxGrh <= 0 Then LogError "LoadGrhData: WARNING - no GRH entries!"
+    
+    ' Diagnostic: dump first 10 GRH records
+    Dim diag As Long
+    For diag = 1 To 10
+        If GrhData(diag).Active Then
+            LogError "GRH " & diag & ": Active=" & GrhData(diag).Active & " FileNum=" & GrhData(diag).FileNum & " SX=" & GrhData(diag).SX & " SY=" & GrhData(diag).SY & " PW=" & GrhData(diag).pixelWidth & " PH=" & GrhData(diag).pixelHeight & " Frames=" & GrhData(diag).NumFrames & " Speed=" & GrhData(diag).Speed
+        Else
+            LogError "GRH " & diag & ": INACTIVE"
+        End If
+    Next diag
 End Sub
 
 Sub CargarCuerpos()
@@ -3451,6 +3603,8 @@ On Error Resume Next
     ReDim BodyData(0 To NumCuerpos + 1) As BodyData
     ReDim MisCuerpos(0 To NumCuerpos + 1) As tIndiceCuerpo
 
+    LogError "CargarCuerpos: NumCuerpos=" & NumCuerpos
+
     For i = 1 To NumCuerpos
         Get #n, , MisCuerpos(i)
         For j = 1 To 4
@@ -3458,6 +3612,9 @@ On Error Resume Next
         Next j
         BodyData(i).HeadOffset.X = MisCuerpos(i).HeadOffsetX
         BodyData(i).HeadOffset.Y = MisCuerpos(i).HeadOffsetY
+        If i <= 5 Then
+            LogError "Body " & i & ": grhIdx=" & MisCuerpos(i).Body(1) & " HeadOffsetX=" & MisCuerpos(i).HeadOffsetX & " HeadOffsetY=" & MisCuerpos(i).HeadOffsetY
+        End If
     Next i
 
     Close #n
@@ -3486,6 +3643,8 @@ On Error Resume Next
     ReDim Miscabezas(0 To NumHeads + 1) As tIndiceCabeza
     ReDim heads(0 To NumHeads + 1) As tHead
 
+    LogError "CargarCabezas: NumHeads=" & NumHeads
+
     For i = 1 To NumHeads
         Get #n, , Miscabezas(i)
         For j = 1 To 4
@@ -3496,6 +3655,9 @@ On Error Resume Next
             heads(i).Texture = GrhData(grhIndex).FileNum
             heads(i).startX = GrhData(grhIndex).SX
             heads(i).startY = GrhData(grhIndex).SY
+        End If
+        If i <= 5 Then
+            LogError "Head " & i & ": grhIdx=" & grhIndex & " FileNum=" & heads(i).Texture & " startX=" & heads(i).startX & " startY=" & heads(i).startY
         End If
     Next i
 

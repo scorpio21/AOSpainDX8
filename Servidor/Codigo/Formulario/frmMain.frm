@@ -399,7 +399,10 @@ MinsSocketReset = MinsSocketReset + 1
 If MinsSocketReset > 1 Then
     MinsSocketReset = 0
     For i = 1 To MaxUsers
-        If UserList(i).ConnID <> -1 And Not UserList(i).Flags.UserLogged Then Call CloseSocket(i)
+        '[FIX] No cerrar sockets de cuentas logueadas sin personaje (estan creando personaje o en la lista).
+        'Estando en frmCuent/frmCrearPersonaje el usuario NO tiene UserLogged=True y este bloque lo
+        'desconectaba cada ~2 min, provocando error 401 en el cliente (form no modal con modal abierto).
+        If UserList(i).ConnID <> -1 And Not UserList(i).Flags.UserLogged And UserList(i).Accounted = "" Then Call CloseSocket(i)
     Next i
     Call ReloadSokcet
 End If

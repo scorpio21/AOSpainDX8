@@ -507,7 +507,6 @@ Begin VB.Form frmMain
       _ExtentY        =   2646
       _Version        =   393217
       BackColor       =   0
-      Enabled         =   -1  'True
       ReadOnly        =   -1  'True
       ScrollBars      =   2
       TextRTF         =   $"frmMain.frx":2CF54
@@ -521,14 +520,7 @@ Begin VB.Form frmMain
          Strikethrough   =   0   'False
       EndProperty
    End
-   Begin VB.Shape MainViewShp 
-      BorderColor     =   &H000000C0&
-      Height          =   6165
-      Left            =   75
-      Top             =   1995
-      Width           =   8205
-   End
-   Begin VB.PictureBox picSpell
+   Begin VB.PictureBox picSpell 
       Appearance      =   0  'Flat
       AutoRedraw      =   -1  'True
       BackColor       =   &H00000000&
@@ -542,7 +534,7 @@ Begin VB.Form frmMain
       Visible         =   0   'False
       Width           =   3870
    End
-   Begin VB.PictureBox Minimap
+   Begin VB.PictureBox Minimap 
       AutoRedraw      =   -1  'True
       BackColor       =   &H00000000&
       BorderStyle     =   0  'None
@@ -556,17 +548,24 @@ Begin VB.Form frmMain
       Visible         =   0   'False
       Width           =   1530
    End
-   Begin VB.PictureBox renderer
+   Begin VB.PictureBox renderer 
       BackColor       =   &H00000000&
       BorderStyle     =   0  'None
-      Height          =   8055
-      Left            =   0
-      ScaleHeight     =   537
+      Height          =   6135
+      Left            =   120
+      ScaleHeight     =   409
       ScaleMode       =   3  'Pixel
-      ScaleWidth      =   695
+      ScaleWidth      =   537
       TabIndex        =   16
-      Top             =   0
-      Width           =   10425
+      Top             =   1920
+      Width           =   8055
+   End
+   Begin VB.Shape MainViewShp 
+      BorderColor     =   &H000000C0&
+      Height          =   6165
+      Left            =   75
+      Top             =   1995
+      Width           =   8205
    End
    Begin VB.Menu mnuObj 
       Caption         =   "Objeto"
@@ -888,7 +887,9 @@ Private Sub Form_Load()
     
    
 End Sub
-
+Private Sub renderer_Click()
+    Form_Click
+End Sub
 Private Sub Form_MouseMove(Button As Integer, Shift As Integer, X As Single, Y As Single)
     MouseX = X
     MouseY = Y
@@ -958,10 +959,10 @@ End Sub
 Private Sub Label1_Click()
     Dim i As Integer
     For i = 1 To NUMSKILLS
-        frmSkills3.text1(i).Caption = UserSkills(i)
+        frmSkills3.Text1(i).Caption = UserSkills(i)
     Next i
     Alocados = SkillPoints
-    frmSkills3.puntos.Caption = "Puntos:" & SkillPoints
+    frmSkills3.Puntos.Caption = "Puntos:" & SkillPoints
     frmSkills3.Show
 End Sub
 
@@ -1128,7 +1129,18 @@ Private Sub Socket1_Disconnect()
     logged = False
     Connected = False
     
-        
+    '[FIX] Si hay un formulario modal abierto (frmCrearPersonaje, frmCuent, frmRaza,
+    'frmClase, etc.) no se puede mostrar frmConnect (no modal) => error 401.
+    'Descargamos todos los forms excepto frmMain y frmConnect (patron del ref Cliente_DX8).
+    On Local Error Resume Next
+    Dim i As Integer
+    For i = 0 To Forms.count - 1
+        If Forms(i).Name <> Me.Name And Forms(i).Name <> "frmConnect" Then
+            Unload Forms(i)
+        End If
+    Next i
+    On Local Error GoTo 0
+    
     frmConnect.Visible = True
     
     frmMain.Visible = False
@@ -1142,7 +1154,6 @@ Private Sub Socket1_Disconnect()
     UserEmail = ""
     bO = 100
     
-    Dim i As Integer
     For i = 1 To NUMSKILLS
         UserSkills(i) = 0
     Next i

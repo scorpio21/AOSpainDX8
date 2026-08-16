@@ -694,6 +694,7 @@ Dim loopc As Integer
 Dim Y As Integer
 Dim X As Integer
 Dim tempint As Integer
+Dim gIdx As Integer
       
 
 Open DirMapas & "Mapa" & Map & ".map" For Binary As #1
@@ -714,7 +715,8 @@ For Y = YMinMapSize To YMaxMapSize
         '.dat file
         Get #1, , MapData(X, Y).blocked
         For loopc = 1 To 4
-            Get #1, , MapData(X, Y).Graphic(loopc).GrhIndex
+            Get #1, , gIdx
+            MapData(X, Y).Graphic(loopc).GrhIndex = gIdx
             
             'Set up GRH
             If MapData(X, Y).Graphic(loopc).GrhIndex > 0 Then
@@ -745,6 +747,12 @@ MapInfo.Name = ""
 MapInfo.Music = ""
 
 CurMap = Map
+
+' Diagnostic: dump map tile GrhIndex values for sample tiles
+LogError "SwitchMap: Map " & Map & " loaded"
+LogError "Tile(1,1): L1=" & MapData(1, 1).Graphic(1).GrhIndex & " L2=" & MapData(1, 1).Graphic(2).GrhIndex & " L3=" & MapData(1, 1).Graphic(3).GrhIndex & " L4=" & MapData(1, 1).Graphic(4).GrhIndex
+LogError "Tile(50,50): L1=" & MapData(50, 50).Graphic(1).GrhIndex & " L2=" & MapData(50, 50).Graphic(2).GrhIndex & " L3=" & MapData(50, 50).Graphic(3).GrhIndex & " L4=" & MapData(50, 50).Graphic(4).GrhIndex
+LogError "Tile(100,100): L1=" & MapData(100, 100).Graphic(1).GrhIndex & " L2=" & MapData(100, 100).Graphic(2).GrhIndex & " L3=" & MapData(100, 100).Graphic(3).GrhIndex & " L4=" & MapData(100, 100).Graphic(4).GrhIndex
 
 End Sub
 
@@ -1166,9 +1174,7 @@ Do While prgRun
                 If (Opciones.Audio = 1 Or Opciones.sMusica <> CONST_DESHABILITADA) Then Call Sound.Sound_Render
                 
                 '[DO]:Inventario'
-                'Call DibujarInv(frmMain.picInv.hWnd, 0)
-                'If bInvMod Then DibujarInv  'lo mov� arriba para
-                '                             que est� mas ordenadito
+                If bInvMod Then DibujarInv
                 '[END]'
     
             '[END]'

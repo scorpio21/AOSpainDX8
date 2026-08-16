@@ -52,6 +52,7 @@ Sub DibujarInv()
 Dim iX As Integer
 Dim rSource As RECT
 Dim rDest As RECT
+Dim itemCount As Integer
 
 frmMain.picInv.Cls
 
@@ -62,8 +63,26 @@ With rDest
     .Bottom = 32
 End With
 
+itemCount = 0
+
 For iX = OffsetDelInv + 1 To UBound(UserInventory)
     If UserInventory(iX).GrhIndex > 0 Then
+        itemCount = itemCount + 1
+        Dim grh As Long
+        grh = UserInventory(iX).GrhIndex
+        If grh > 0 And grh <= GrhCount And GrhData(grh).Active Then
+            Dim frameGrh As Long
+            frameGrh = GrhData(grh).Frames(1)
+            If frameGrh > 0 And frameGrh <= GrhCount And GrhData(frameGrh).Active Then
+                With rSource
+                    .Left = GrhData(frameGrh).SX
+                    .Top = GrhData(frameGrh).SY
+                    .Right = .Left + GrhData(frameGrh).pixelWidth
+                    .bottom = .Top + GrhData(frameGrh).pixelHeight
+                End With
+            End If
+        End If
+        
         Call DrawGrhtoHdc(frmMain.picInv.hwnd, frmMain.picInv.Hdc, UserInventory(iX).GrhIndex, rSource, rDest)
 
         frmMain.picInv.CurrentX = rDest.Left
@@ -87,6 +106,8 @@ For iX = OffsetDelInv + 1 To UBound(UserInventory)
         rDest.Bottom = rDest.Bottom + 32
     End If
 Next iX
+
+LogError "DibujarInv: items=" & itemCount & " bInvMod was True"
 
 frmMain.picInv.Refresh
 

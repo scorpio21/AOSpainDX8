@@ -206,6 +206,25 @@ Begin VB.Form frmConnect
       Top             =   8040
       Width           =   1245
    End
+   Begin VB.CheckBox Check1 
+      BackColor       =   &H00FFFFFF&
+      Caption         =   "Recordar cuenta"
+      BeginProperty Font 
+         Name            =   "Tahoma"
+         Size            =   8.25
+         Charset         =   0
+         Weight          =   400
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      ForeColor       =   &H00000000&
+      Height          =   255
+      Left            =   5055
+      TabIndex        =   9
+      Top             =   5040
+      Width           =   1725
+   End
    Begin VB.Image CrearPersonaje 
       Height          =   315
       Left            =   4320
@@ -242,6 +261,8 @@ Attribute VB_Exposed = False
 
 Option Explicit
 
+Private bLoadingRecordar As Boolean
+
 ' --- CARGA DE SERVIDORES (Opcional si se usa lista) ---
 Public Sub CargarLst()
     Dim i As Integer
@@ -255,7 +276,7 @@ End Sub
 Private Sub Form_Activate()
     Dim nDirectorio As String
     
-    ' Configuracion de IP/Puerto segun seleccion o configuración inicial
+    ' Configuracion de IP/Puerto segun seleccion o configuraciï¿½n inicial
     If CurServer <> 0 Then
         IPTxt = ServersLst(CurServer).Ip
         PortTxt = ServersLst(CurServer).Puerto
@@ -309,6 +330,26 @@ Private Sub Form_Load()
     
     ' Seteamos el puerto por defecto
     PortTxt.Text = Config_Inicio.Puerto
+    
+    ' Recordar Cuenta By scorpio
+    Dim sFile As String
+    sFile = App.Path & "\LIBS\Recordar.dat"
+    
+    bLoadingRecordar = True
+    
+    If Dir(sFile) <> "" Then
+        If Val(GetVar(sFile, "Recordar", "Check")) = 1 Then
+            NameTxt.Text = GetVar(sFile, "Recordar", "Nombre")
+            PasswordTxt.Text = DecryptINI$(GetVar(sFile, "Recordar", "Password"), "aopass")
+            Check1.Value = 1
+        Else
+            Check1.Value = 0
+        End If
+    Else
+        Check1.Value = 0
+    End If
+    
+    bLoadingRecordar = False
 End Sub
 
 ' --- BOTON: CREAR CUENTA ---
@@ -331,14 +372,14 @@ End Sub
 
 ' --- BOTON PRINCIPAL: CONECTAR A CUENTA ---
 Private Sub Conectar_Click(Index As Integer)
-    ' Solo procesamos el botón Index 1 (Conectar)
+    ' Solo procesamos el botï¿½n Index 1 (Conectar)
     If Index <> 1 Then Exit Sub
 
     Call PlayWaveDS(SND_CLICK)
 
-    ' Validación de campos
+    ' Validaciï¿½n de campos
     If NameTxt.Text = "" Or PasswordTxt.Text = "" Then
-        MsgBox "Ingrese Nombre de Cuenta y Contraseña.", vbExclamation
+        MsgBox "Ingrese Nombre de Cuenta y Contraseï¿½a.", vbExclamation
         Exit Sub
     End If
 
@@ -349,9 +390,18 @@ Private Sub Conectar_Click(Index As Integer)
         DoEvents
     End If
     
-    ' Guardamos datos de sesión
+    ' Guardamos datos de sesiï¿½n
     nombrecuent = NameTxt.Text
     passcuent = PasswordTxt.Text
+    
+    ' Si "Recordar cuenta" estï¿½ activo, guardamos los datos
+    If Check1.Value = 1 Then
+        Dim sFile As String
+        sFile = App.Path & "\LIBS\Recordar.dat"
+        Call WriteVar(sFile, "Recordar", "Nombre", nombrecuent)
+        Call WriteVar(sFile, "Recordar", "Password", EncryptINI$(passcuent, "aopass"))
+        Call WriteVar(sFile, "Recordar", "Check", "1")
+    End If
     
     ' El servidor guarda la password con MD5, por lo que enviamos el hash
     UserPassword = MD5String(passcuent)
@@ -380,7 +430,7 @@ Private Sub EliminarCuenta_Click()
     If sAccount = "" Then Exit Sub
     
     Dim sPass As String
-    sPass = InputBox("Para borrar la cuenta " & sAccount & " escriba su CONTRASEÑA:", "VALIDACION DE SEGURIDAD")
+    sPass = InputBox("Para borrar la cuenta " & sAccount & " escriba su CONTRASEï¿½A:", "VALIDACION DE SEGURIDAD")
     If sPass = "" Then Exit Sub
     
     Dim sMail As String
@@ -391,7 +441,7 @@ Private Sub EliminarCuenta_Click()
     sRespuesta = InputBox("Escriba la RESPUESTA SECRETA de la cuenta " & sAccount & ":", "VALIDACION DE SEGURIDAD")
     If sRespuesta = "" Then Exit Sub
     
-    ' Si el socket no está conectado, intentamos conectar para enviar el paquete
+    ' Si el socket no estï¿½ conectado, intentamos conectar para enviar el paquete
     If Not frmMain.Socket1.Connected Then
         frmMain.Socket1.HostAddress = CurServerIp
         frmMain.Socket1.RemotePort = CurServerPort
@@ -413,6 +463,26 @@ Private Sub EliminarCuenta_Click()
     ' El servidor valida: campo Nombre contra GetVar("Nombre") (vacio), la pass
     ' comparada con MD5String(bPass) contra la guardada, mail y respuesta en claro.
     Call SendData("BRCU" & sAccount & ",," & sPass & "," & sMail & "," & sRespuesta)
+End Sub
+
+' --- CHECK: RECORDAR CUENTA ---
+Private Sub Check1_Click()
+    If bLoadingRecordar Then Exit Sub
+    
+    Dim sFile As String
+    sFile = App.Path & "\LIBS\Recordar.dat"
+    
+    If Check1.Value = 0 Then
+        ' Desactivar recordar - borrar archivo
+        If Dir(sFile) <> "" Then Kill sFile
+        NameTxt.Text = ""
+        PasswordTxt.Text = ""
+    Else
+        ' Activar recordar - guardar lo que haya en los campos
+        Call WriteVar(sFile, "Recordar", "Nombre", NameTxt.Text)
+        Call WriteVar(sFile, "Recordar", "Password", EncryptINI$(PasswordTxt.Text, "aopass"))
+        Call WriteVar(sFile, "Recordar", "Check", "1")
+    End If
 End Sub
 
 ' --- LOGICA DE LISTA DE SERVIDORES (SI SE USA) ---

@@ -338,22 +338,24 @@ ValidateSkills = True
 
 End Function
 
-Sub ConnectNewUser(UserIndex As Integer, Name As String, Password As String, Body As Integer, Head As Integer, UserRaza As String, UserSexo As String, UserClase As String, _
+Function ConnectNewUser(UserIndex As Integer, Name As String, Password As String, Body As Integer, Head As Integer, UserRaza As String, UserSexo As String, UserClase As String, _
 UA1 As String, UA2 As String, UA3 As String, UA4 As String, UA5 As String, _
 US1 As String, US2 As String, US3 As String, US4 As String, US5 As String, _
 US6 As String, US7 As String, US8 As String, US9 As String, US10 As String, _
 US11 As String, US12 As String, US13 As String, US14 As String, US15 As String, _
 US16 As String, US17 As String, US18 As String, US19 As String, US20 As String, _
-US21 As String, US22 As String, UserEmail As String, Hogar As String, Optional Cuenta As String = "")
+US21 As String, US22 As String, UserEmail As String, Hogar As String, Optional Cuenta As String = "") As Boolean
 
 If Not NombrePermitido(Name) Then
     Call SendData(ToIndex, UserIndex, 0, "ERRLos nombres de los personajes deben pertencer a la fantasia, el nombre indicado es invalido.")
-    Exit Sub
+    ConnectNewUser = False
+    Exit Function
 End If
 
 If Not AsciiValidos(Name) Then
     Call SendData(ToIndex, UserIndex, 0, "ERRNombre invalido.")
-    Exit Sub
+    ConnectNewUser = False
+    Exit Function
 End If
 
 Dim LoopC As Integer
@@ -362,7 +364,8 @@ Dim totalskpts As Long
 '¿Existe el personaje?
 If FileExist(CharPath & UCase$(Name) & ".chr", vbNormal) = True Then
     Call SendData(ToIndex, UserIndex, 0, "ERRYa existe el personaje.")
-    Exit Sub
+    ConnectNewUser = False
+    Exit Function
 End If
 
 UserList(UserIndex).Flags.Muerto = 0
@@ -400,7 +403,8 @@ UserList(UserIndex).Stats.UserAtributos(Constitucion) = Abs(CInt(UA5))
 '%%%%%%%%%%%%% PREVENIR HACKEO DE LOS ATRIBUTOS %%%%%%%%%%%%%
 If Not ValidateAtrib(UserIndex) Then
         Call SendData(ToIndex, UserIndex, 0, "ERRAtributos invalidos.")
-        Exit Sub
+        ConnectNewUser = False
+        Exit Function
 End If
 '%%%%%%%%%%%%% PREVENIR HACKEO DE LOS ATRIBUTOS %%%%%%%%%%%%%
 
@@ -478,7 +482,8 @@ If totalskpts > 10 Then
     Call LogHackAttemp(UserList(UserIndex).Name & " intento hackear los skills.")
     Call BorrarUsuario(UserList(UserIndex).Name)
     Call CloseSocket(UserIndex)
-    Exit Sub
+    ConnectNewUser = False
+    Exit Function
 End If
 '%%%%%%%%%%%%% PREVENIR HACKEO DE LOS SKILLS %%%%%%%%%%%%%
 
@@ -599,12 +604,16 @@ UserList(UserIndex).Invent.WeaponEqpSlot = 3
 
 
 
+  
 Call SaveUser(UserIndex, CharPath & UCase$(Name) & ".chr")
+'Open User (en modo cuenta no se conecta al mundo: NLOGIN vuelve al panel de cuentas)
+If Cuenta = "" Then
+    Call ConnectUser(UserIndex, Name, Password, Cuenta)
+End If
   
-'Open User
-Call ConnectUser(UserIndex, Name, Password, Cuenta)
+ConnectNewUser = True
   
-End Sub
+End Function
 
 Public Function IsYourChr(ByVal Account As String, ByVal PJ As String)
 
@@ -1572,7 +1581,7 @@ Sub HandleData(ByVal UserIndex As Integer, ByVal rdata As String)
 
 'Call LogTarea("Sub HandleData :" & Rdata & " " & UserList(UserIndex).name)
 
-'On Error GoTo ErrorHandler:
+On Error GoTo ErrorHandler:
 
 
 
@@ -1745,13 +1754,17 @@ If UserList(UserIndex).Flags.UserLogged Then UserList(UserIndex).Counters.IdleCo
                          Exit Sub
                      End If
                      
-                     Call ConnectNewUser(UserIndex, ReadField(1, rdata, 44), ReadField(2, rdata, 44), val(ReadField(3, rdata, 44)), ReadField(4, rdata, 44), ReadField(6, rdata, 44), ReadField(7, rdata, 44), _
+                     If ConnectNewUser(UserIndex, ReadField(1, rdata, 44), ReadField(2, rdata, 44), val(ReadField(3, rdata, 44)), ReadField(4, rdata, 44), ReadField(6, rdata, 44), ReadField(7, rdata, 44), _
                      ReadField(8, rdata, 44), ReadField(9, rdata, 44), ReadField(10, rdata, 44), ReadField(11, rdata, 44), ReadField(12, rdata, 44), ReadField(13, rdata, 44), _
                      ReadField(14, rdata, 44), ReadField(15, rdata, 44), ReadField(16, rdata, 44), ReadField(17, rdata, 44), ReadField(18, rdata, 44), ReadField(19, rdata, 44), _
                      ReadField(20, rdata, 44), ReadField(21, rdata, 44), ReadField(22, rdata, 44), ReadField(23, rdata, 44), ReadField(24, rdata, 44), ReadField(25, rdata, 44), _
                      ReadField(26, rdata, 44), ReadField(27, rdata, 44), ReadField(28, rdata, 44), ReadField(29, rdata, 44), ReadField(30, rdata, 44), ReadField(31, rdata, 44), _
-                     ReadField(32, rdata, 44), ReadField(33, rdata, 44), ReadField(34, rdata, 44), ReadField(35, rdata, 44), ReadField(36, rdata, 44), ReadField(37, rdata, 44), ReadField(39, rdata, 44))
-                     If ReadField(39, rdata, 44) <> "" Then Call ChrToAccount(ReadField(39, rdata, 44), ReadField(1, rdata, 44))
+                     ReadField(32, rdata, 44), ReadField(33, rdata, 44), ReadField(34, rdata, 44), ReadField(35, rdata, 44), ReadField(36, rdata, 44), ReadField(37, rdata, 44), ReadField(39, rdata, 44)) Then
+                     If ReadField(39, rdata, 44) <> "" Then
+                         Call ChrToAccount(ReadField(39, rdata, 44), ReadField(1, rdata, 44))
+                         Call EnviarListaPJs(UserIndex, ReadField(39, rdata, 44))
+                     End If
+                     End If
                 Else
                      Call SendData(ToIndex, UserIndex, 0, "!!Esta version del juego es obsoleta, la version correcta es " & ULTIMAVERSION & ". La misma se encuentra disponible en nuestra pagina.")
                      Exit Sub
@@ -4395,9 +4408,9 @@ End If
 Exit Sub
 
 
-'ErrorHandler:
-' Call LogError("HandleData. CadOri:" & CadenaOriginal & " Nom:" & UserList(UserIndex).Name & "UI:" & UserIndex & " N: " & Err.Number & " D: " & Err.Description)
-' Call CloseSocket(UserIndex)
+ErrorHandler:
+Call LogError("HandleData. CadOri:" & CadenaOriginal & " Nom:" & UserList(UserIndex).Name & "UI:" & UserIndex & " N: " & Err.Number & " D: " & Err.Description)
+Call CloseSocket(UserIndex)
  
  
 
@@ -4416,5 +4429,3 @@ errhandler:
     Call LogError("Error en CheckSocketState," & Err.Description)
 
 End Sub
-
-
