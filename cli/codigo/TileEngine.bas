@@ -1045,61 +1045,47 @@ End Function
 
 Private Sub DrawHead(ByVal X As Integer, ByVal Y As Integer, ByVal EsCabeza As Boolean, Light() As Long, ByVal Heading As Byte, ByVal Head As Integer)
     Dim textureX1 As Integer
-    Dim textureW As Integer
+    Dim textureX2 As Integer
     Dim textureY1 As Integer
-    Dim textureH As Integer
+    Dim textureY2 As Integer
     Dim offsetX As Integer
     Dim offsetY As Integer
     Dim SourceRect As RECT
     Dim Texture As Long
-    Dim headGrh As Long
     
-    If Head <= 0 Or Head > UBound(heads) Then
-        LogError "DrawHead: OOB Head=" & Head
-        Exit Sub
+    If Head <= 0 Or Head > UBound(heads) Then Exit Sub
+    
+    If EsCabeza = True Then
+        If heads(Head).Texture <= 0 Then Exit Sub
+        Texture = heads(Head).Texture
+    Else
+        If Cascos(Head).Texture <= 0 Then Exit Sub
+        Texture = Cascos(Head).Texture
     End If
     
-    Static logCount As Long
-    logCount = logCount + 1
-    If logCount <= 5 Then
-        LogError "DrawHead: Head=" & Head & " Texture=" & heads(Head).Texture & " startX=" & heads(Head).startX & " startY=" & heads(Head).startY & " EsCabeza=" & EsCabeza
+    textureX2 = 27
+    textureY2 = 32
+
+    If EsCabeza = True Then
+        textureX1 = heads(Head).startX
+        textureY1 = ((Heading - 1) * textureY2) + heads(Head).startY
+    Else
+        textureX1 = Cascos(Head).startX
+        textureY1 = ((Heading - 1) * textureY2) + Cascos(Head).startY
     End If
-        
-        If EsCabeza = True Then
-            If heads(Head).Texture <= 0 Then Exit Sub
-            Texture = heads(Head).Texture
-            headGrh = HeadData(Head).Head(Heading).GrhIndex
-        Else
-            If Cascos(Head).Texture <= 0 Then Exit Sub
-            Texture = Cascos(Head).Texture
-            headGrh = CascoAnimData(Head).Head(Heading).GrhIndex
-        End If
-        
-        ' Use GRH dimensions directly - each heading has its own GRH with correct SX/SY/PW/PH
-        If headGrh > 0 And headGrh <= GrhCount And GrhData(headGrh).Active Then
-            textureX1 = GrhData(headGrh).SX
-            textureY1 = GrhData(headGrh).SY
-            textureW = GrhData(headGrh).pixelWidth
-            textureH = GrhData(headGrh).pixelHeight
-        Else
-            textureX1 = heads(Head).startX
-            textureY1 = heads(Head).startY
-            textureW = 32
-            textureH = 32
-        End If
-        
-        offsetX = (textureW) \ 2 - 16
-        offsetY = 0
-        
-        With SourceRect
-            .Left = textureX1
-            .Top = textureY1
-            .Right = textureX1 + textureW
-            .bottom = textureY1 + textureH
-        End With
-        
-        Device_Textured_Render X - offsetX, Y - offsetY, _
-        SurfaceDB.Surface(Texture), SourceRect, Light
+
+    offsetX = (textureX2) - 30
+    offsetY = (textureY2) - 35
+    
+    With SourceRect
+        .Left = textureX1
+        .Top = textureY1
+        .Right = (textureX2 + .Left)
+        .bottom = (textureY2 + .Top)
+    End With
+    
+    Device_Textured_Render X - offsetX, Y - offsetY, _
+    SurfaceDB.Surface(Texture), SourceRect, Light
 
 End Sub
 
@@ -1412,7 +1398,7 @@ Sub RenderScreen(ByVal tilex As Integer, ByVal tiley As Integer, ByVal PixelOffs
     Dim offy                As Integer
     Dim i As Long
     
-On Error GoTo RenderErr
+On Error Resume Next
     'Figure out Ends and Starts of screen
     screenminY = tiley - HalfWindowTileHeight
     screenmaxY = tiley + HalfWindowTileHeight
@@ -1644,6 +1630,7 @@ Private Sub CharRender(ByVal CharIndex As Long, ByVal PixelOffsetX As Integer, B
 'Dibuja todo aquello que tenga cuerpo (por asi decirlo)
 'Bichos y PJ
 '*******************************************************
+    On Error GoTo CharErr
     Dim moved As Boolean
     Dim Pos As Integer
     Dim line As String
@@ -1740,13 +1727,13 @@ Private Sub CharRender(ByVal CharIndex As Long, ByVal PixelOffsetX As Integer, B
             If .Body.Walk(.Heading).GrhIndex Then _
                 Call DDrawTransGrhtoSurface(.Body.Walk(.Heading), PixelOffsetX, PixelOffsetY, 1, 1, Light, .Estainvi)
                 
-            'Dibujamos la Cabeza (como en DX7: DDrawTransGrhtoSurface directo)
+            'Dibujamos la Cabeza
             If .Head Then
-                Call DDrawTransGrhtoSurface(HeadData(.Head).Head(.Heading), PixelOffsetX + .Body.HeadOffset.X, PixelOffsetY + .Body.HeadOffset.Y, 1, 0, Light, .Estainvi)
+                Call DrawHead(PixelOffsetX + .Body.HeadOffset.X, PixelOffsetY + .Body.HeadOffset.Y, True, Light, charlist(CharIndex).Heading, charlist(CharIndex).Head)
 
                 'Draw Helmet
                 If .Casco Then _
-                    Call DDrawTransGrhtoSurface(CascoAnimData(.Casco).Head(.Heading), PixelOffsetX + .Body.HeadOffset.X, PixelOffsetY + .Body.HeadOffset.Y, 1, 0, Light, .Estainvi)
+                    Call DrawHead(PixelOffsetX + .Body.HeadOffset.X, PixelOffsetY + .Body.HeadOffset.Y, False, Light, charlist(CharIndex).Heading, charlist(CharIndex).Casco)
                              
                 If UserMontando = False Then
                     'Dibujamos el arma
@@ -1867,6 +1854,10 @@ Private Sub CharRender(ByVal CharIndex As Long, ByVal PixelOffsetX As Integer, B
         End If
         
     End With
+Exit Sub
+CharErr:
+    LogError "CharRender: Err=" & Err.Number & " Desc=" & Err.Description & " CharIndex=" & CharIndex
+    Resume Next
 End Sub
 
 Public Sub RenderConnect()
