@@ -71,7 +71,7 @@ Begin VB.Form frmCuent
          Index           =   9
          Left            =   0
          TabIndex        =   51
-         Top             =   720
+         Top             =   50
          Visible         =   0   'False
          Width           =   1268
       End
@@ -183,7 +183,7 @@ Begin VB.Form frmCuent
          Index           =   8
          Left            =   0
          TabIndex        =   46
-         Top             =   720
+         Top             =   50
          Visible         =   0   'False
          Width           =   1268
       End
@@ -295,7 +295,7 @@ Begin VB.Form frmCuent
          Index           =   7
          Left            =   0
          TabIndex        =   41
-         Top             =   720
+         Top             =   50
          Visible         =   0   'False
          Width           =   1268
       End
@@ -472,7 +472,7 @@ Begin VB.Form frmCuent
          Index           =   6
          Left            =   0
          TabIndex        =   33
-         Top             =   720
+         Top             =   50
          Visible         =   0   'False
          Width           =   1268
       End
@@ -564,7 +564,7 @@ Begin VB.Form frmCuent
          Left            =   0
          TabIndex        =   29
          Top             =   600
-         Width           =   1268
+         Width           =   1275
       End
       Begin VB.Label GM 
          Alignment       =   2  'Center
@@ -584,7 +584,7 @@ Begin VB.Form frmCuent
          Index           =   5
          Left            =   0
          TabIndex        =   28
-         Top             =   720
+         Top             =   50
          Visible         =   0   'False
          Width           =   1268
       End
@@ -696,7 +696,7 @@ Begin VB.Form frmCuent
          Index           =   4
          Left            =   0
          TabIndex        =   23
-         Top             =   720
+         Top             =   50
          Visible         =   0   'False
          Width           =   1268
       End
@@ -808,7 +808,7 @@ Begin VB.Form frmCuent
          Index           =   3
          Left            =   0
          TabIndex        =   18
-         Top             =   720
+         Top             =   50
          Visible         =   0   'False
          Width           =   1238
       End
@@ -920,7 +920,7 @@ Begin VB.Form frmCuent
          Index           =   2
          Left            =   0
          TabIndex        =   13
-         Top             =   720
+         Top             =   50
          Visible         =   0   'False
          Width           =   1268
       End
@@ -1032,7 +1032,7 @@ Begin VB.Form frmCuent
          Index           =   1
          Left            =   0
          TabIndex        =   8
-         Top             =   720
+         Top             =   50
          Visible         =   0   'False
          Width           =   1268
       End
@@ -1079,7 +1079,7 @@ Begin VB.Form frmCuent
          Index           =   0
          Left            =   0
          TabIndex        =   6
-         Top             =   720
+         Top             =   50
          Visible         =   0   'False
          Width           =   1268
       End
@@ -1226,7 +1226,7 @@ If CP(Index).Visible = True Then
     Call PlayWaveDS(SND_CLICK)
 
 ' Estandarizado a 10 slots (Revision Fase 2)
-If nombre(9).Caption <> "Nada" Then
+If Nombre(9).Caption <> "Nada" Then
     MsgBox "Tu cuenta ha llegado al maximo de personajes (10).", vbInformation
     Exit Sub
 End If
@@ -1253,7 +1253,7 @@ Private Sub Form_MouseMove(Button As Integer, Shift As Integer, X As Single, Y A
     Dim asd As Integer
     ' Estandarizado a 10 slots (Fase 2 - Revision)
     For asd = 0 To 9
-        nombre(asd).ForeColor = vbWhite
+        Nombre(asd).ForeColor = vbWhite
         Label2(asd).ForeColor = vbWhite
     Next asd
 End Sub
@@ -1357,19 +1357,19 @@ End Sub
 Private Sub Label2_Click(Index As Integer)
     If Index > 9 Then Exit Sub ' Límite de 10 slots
     Call PlayWaveDS(SND_CLICK)
-    PJClickeado = nombre(Index)
+    PJClickeado = Nombre(Index)
 End Sub
 
 Private Sub Label2_MouseMove(Index As Integer, Button As Integer, Shift As Integer, X As Single, Y As Single)
     If Index > 9 Then Exit Sub
-    nombre(Index).ForeColor = vbYellow
+    Nombre(Index).ForeColor = vbYellow
     Label2(Index).ForeColor = vbYellow
 End Sub
 
 Private Sub nombre_Click(Index As Integer)
     If Index > 9 Then Exit Sub
     Call PlayWaveDS(SND_CLICK)
-    PJClickeado = nombre(Index)
+    PJClickeado = Nombre(Index)
 End Sub
 
 Private Sub nombre_dblClick(Index As Integer)
@@ -1381,7 +1381,7 @@ End Sub
 
 Private Sub nombre_MouseMove(Index As Integer, Button As Integer, Shift As Integer, X As Single, Y As Single)
     If Index > 9 Then Exit Sub
-    nombre(Index).ForeColor = vbYellow
+    Nombre(Index).ForeColor = vbYellow
     Label2(Index).ForeColor = vbYellow
 End Sub
 
@@ -1392,8 +1392,8 @@ Private Sub PJ_Click(Index As Integer)
         Call PlayWaveDS(SND_CLICK)
         
         ' Verificar si ya tenemos el máximo de personajes (10)
-        If nombre(9).Caption <> "Nada" Then
-            MsgBox "Tu cuenta ha llegado al máximo de personajes (10).", vbInformation
+        If Nombre(9).Caption <> "Nada" Then
+            MsgBox "Tu cuenta ha llegado al maximo de personajes (10).", vbInformation
             Exit Sub
         End If
 
@@ -1403,7 +1403,7 @@ Private Sub PJ_Click(Index As Integer)
         Exit Sub
     End If
     
-    PJClickeado = nombre(Index)
+    PJClickeado = Nombre(Index)
 End Sub
 
 Private Sub PJ_dblClick(Index As Integer)
@@ -1421,7 +1421,7 @@ Private Sub PJ_MouseMove(Index As Integer, Button As Integer, Shift As Integer, 
     If Index > 9 Then Exit Sub
     Dim asd As Integer
     For asd = 0 To 9
-        nombre(asd).ForeColor = vbWhite
+        Nombre(asd).ForeColor = vbWhite
         Label2(asd).ForeColor = vbWhite
     Next asd
 End Sub

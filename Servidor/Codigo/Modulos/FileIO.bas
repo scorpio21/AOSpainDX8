@@ -800,10 +800,20 @@ End Sub
 
 
 Sub LoadUserAccount(ByVal PJinit As String)
-On Error Resume Next
-PJEnCuenta = GetVar(CharPath & "\" & PJinit, "INIT", "Head") & "," & GetVar(CharPath & "\" & PJinit, "INIT", "Body") & "," & _
-GetVar(CharPath & "\" & PJinit, "INIT", "Arma") & "," & GetVar(CharPath & "\" & PJinit, "INIT", "Escudo") & ","
-PJEnCuentaB = GetVar(CharPath & "\" & PJinit, "INIT", "Casco") & "," & UserAccountEsCrimi(PJinit) & "," & GetVar(CharPath & "\" & PJinit, "FLAGS", "Ban") & "," & GetVar(CharPath & "\" & PJinit, "STATS", "ELV") & "," & GetVar(CharPath & "\" & PJinit, "INIT", "Clase") & "," & GetVar(CharPath & "\" & PJinit, "FLAGS", "Muerto")
+    On Error Resume Next
+
+    PJEnCuenta = GetVar(CharPath & "\" & PJinit, "INIT", "Head") & "," & _
+                 GetVar(CharPath & "\" & PJinit, "INIT", "Body") & "," & _
+                 GetVar(CharPath & "\" & PJinit, "INIT", "Arma") & "," & _
+                 GetVar(CharPath & "\" & PJinit, "INIT", "Escudo") & ","
+
+    PJEnCuentaB = GetVar(CharPath & "\" & PJinit, "INIT", "Casco") & "," & _
+                  UserAccountEsCrimi(PJinit) & "," & _
+                  GetVar(CharPath & "\" & PJinit, "FLAGS", "Ban") & "," & _
+                  GetVar(CharPath & "\" & PJinit, "STATS", "ELV") & "," & _
+                  GetVar(CharPath & "\" & PJinit, "INIT", "Clase") & "," & _
+                  GetVar(CharPath & "\" & PJinit, "FLAGS", "Muerto") & "," & _
+                  IIf(EsDios(PJinit), "1", "0")
 End Sub
 
 Function UserAccountEsCrimi(ByVal PJinit As String) As Integer
@@ -1688,6 +1698,11 @@ Call WriteVar(UserFile, "FLAGS", "Hambre", val(UserList(UserIndex).Flags.Hambre)
 Call WriteVar(UserFile, "FLAGS", "Sed", val(UserList(UserIndex).Flags.Sed))
 Call WriteVar(UserFile, "FLAGS", "Desnudo", val(UserList(UserIndex).Flags.Desnudo))
 Call WriteVar(UserFile, "FLAGS", "Ban", val(UserList(UserIndex).Flags.Ban))
+If EsDios(UserList(UserIndex).Name) Then
+    Call WriteVar(UserFile, "FLAGS", "Dios", 1)
+Else
+    Call WriteVar(UserFile, "FLAGS", "Dios", 0)
+End If
 Call WriteVar(UserFile, "FLAGS", "Navegando", val(UserList(UserIndex).Flags.Navegando))
 '[Efestos]
 Call WriteVar(UserFile, "FLAGS", "Cabalgando", val(UserList(UserIndex).Flags.Cabalgando))

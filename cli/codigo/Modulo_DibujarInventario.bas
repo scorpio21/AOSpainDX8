@@ -68,17 +68,17 @@ itemCount = 0
 For iX = OffsetDelInv + 1 To UBound(UserInventory)
     If UserInventory(iX).GrhIndex > 0 Then
         itemCount = itemCount + 1
-        Dim grh As Long
-        grh = UserInventory(iX).GrhIndex
-        If grh > 0 And grh <= GrhCount And GrhData(grh).Active Then
+        Dim Grh As Long
+        Grh = UserInventory(iX).GrhIndex
+        If Grh > 0 And Grh <= GrhCount And GrhData(Grh).Active Then
             Dim frameGrh As Long
-            frameGrh = GrhData(grh).Frames(1)
+            frameGrh = GrhData(Grh).Frames(1)
             If frameGrh > 0 And frameGrh <= GrhCount And GrhData(frameGrh).Active Then
                 With rSource
-                    .Left = GrhData(frameGrh).SX
-                    .Top = GrhData(frameGrh).SY
+                    .Left = GrhData(frameGrh).sx
+                    .Top = GrhData(frameGrh).sy
                     .Right = .Left + GrhData(frameGrh).pixelWidth
-                    .bottom = .Top + GrhData(frameGrh).pixelHeight
+                    .Bottom = .Top + GrhData(frameGrh).pixelHeight
                 End With
             End If
         End If
@@ -106,8 +106,6 @@ For iX = OffsetDelInv + 1 To UBound(UserInventory)
         rDest.Bottom = rDest.Bottom + 32
     End If
 Next iX
-
-LogError "DibujarInv: items=" & itemCount & " bInvMod was True"
 
 frmMain.picInv.Refresh
 

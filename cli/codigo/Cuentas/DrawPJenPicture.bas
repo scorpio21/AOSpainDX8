@@ -7,10 +7,11 @@ Private Type tPJCuentas
     Shield As Long
     Weapon As Long
     Baned As Long
-    nombre As String
+    Nombre As String
     LVL As Integer
     Clase As String
     Muerto As Integer
+    GM As Long
     Active As Boolean
     
     ' Animacion
@@ -20,53 +21,122 @@ End Type
 Private PJs(0 To 9) As tPJCuentas
 
 Sub DibujaPJ(Grh As Grh, ByVal X As Integer, ByVal Y As Integer, Index As Integer)
-On Error Resume Next
-Dim iGrhIndex As Long
-If Grh.GrhIndex <= 0 Then Exit Sub
 
-' Aseguramos que el frame sea valido
-If Grh.FrameCounter <= 0 Then Grh.FrameCounter = 1
-If Grh.FrameCounter > GrhData(Grh.GrhIndex).NumFrames Then Grh.FrameCounter = 1
+    On Error GoTo ErrorHandler
 
-iGrhIndex = GrhData(Grh.GrhIndex).Frames(Grh.FrameCounter)
+    Dim iGrhIndex As Long
 
-Call GrhRenderToHdc(iGrhIndex, frmCuent.PJ(Index).hDC, X, Y, True)
+    If Grh.GrhIndex <= 0 Then
+        LogError "DibujaPJ: Grh.GrhIndex INVALIDO=" & Grh.GrhIndex
+        Exit Sub
+    End If
 
-frmCuent.PJ(Index).Refresh
+    If Grh.GrhIndex > GrhCount Then
+        LogError "DibujaPJ: Grh fuera de rango=" & Grh.GrhIndex
+        Exit Sub
+    End If
+
+    If Not GrhData(Grh.GrhIndex).Active Then
+        LogError "DibujaPJ: Grh INACTIVO=" & Grh.GrhIndex
+        Exit Sub
+    End If
+
+    If Grh.FrameCounter <= 0 Then
+        Grh.FrameCounter = 1
+    End If
+
+    If Grh.FrameCounter > GrhData(Grh.GrhIndex).NumFrames Then
+        Grh.FrameCounter = 1
+    End If
+
+    iGrhIndex = GrhData(Grh.GrhIndex).Frames(Grh.FrameCounter)
+
+    If iGrhIndex <= 0 Or iGrhIndex > GrhCount Then
+        LogError "DibujaPJ: Frame INVALIDO. Grh=" & Grh.GrhIndex & _
+                 " Frame=" & Grh.FrameCounter & _
+                 " iGrh=" & iGrhIndex
+        Exit Sub
+    End If
+
+    If Not GrhData(iGrhIndex).Active Then
+        LogError "DibujaPJ: Frame INACTIVO=" & iGrhIndex
+        Exit Sub
+    End If
+
+    LogError "DibujaPJ: DIBUJANDO Index=" & Index & _
+             " Grh=" & Grh.GrhIndex & _
+             " Frame=" & Grh.FrameCounter & _
+             " iGrh=" & iGrhIndex & _
+             " X=" & X & _
+             " Y=" & Y & _
+             " W=" & GrhData(iGrhIndex).pixelWidth & _
+             " H=" & GrhData(iGrhIndex).pixelHeight
+
+    Call GrhRenderToHdc( _
+        iGrhIndex, _
+        frmCuent.PJ(Index).Hdc, _
+        X - (GrhData(iGrhIndex).pixelWidth \ 2), _
+        Y, _
+        True)
+
+    Exit Sub
+
+ErrorHandler:
+
+    LogError "DibujaPJ ERROR: Index=" & Index & _
+             " Grh=" & Grh.GrhIndex & _
+             " Frame=" & Grh.FrameCounter & _
+             " iGrh=" & iGrhIndex & _
+             " Err=" & Err.Number & _
+             " Desc=" & Err.Description
 
 End Sub
-
 Sub RenderizarPJsCuentas()
-    ' [CODE] - Renderizado centralizado para AoSpain
+
     On Error Resume Next
+
     Dim i As Integer
     Dim rColor As Long
 
-    ' Color de resaltado (Dorado para seleccion)
+    Static ContadorAnim As Integer
+
     rColor = RGB(255, 215, 0)
 
-    ' Recorremos los 10 slots (Estandarizado Fase 2)
+    ' Reducimos la velocidad de la animación
+    ContadorAnim = ContadorAnim + 1
+
     For i = 0 To 9
-        ' Limpiamos siempre el fondo para evitar rastro
+
         frmCuent.PJ(i).Cls
 
-        If PJs(i).Active Then
-            ' Incrementamos animacion
-            PJs(i).FrameIndex = PJs(i).FrameIndex + 1
-
-            ' Dibujamos el personaje (Cuerpo + Cabeza + Equipo)
-            Call ActualizarDibujoPJ(i)
-
-            ' Si este personaje es el seleccionado, borde dorado
-            If frmCuent.nombre(i).Caption = PJClickeado And PJClickeado <> "" Then
-                frmCuent.PJ(i).Line (0, 0)-(frmCuent.PJ(i).ScaleWidth - 1, frmCuent.PJ(i).ScaleHeight - 1), rColor, B
-                frmCuent.PJ(i).Line (1, 1)-(frmCuent.PJ(i).ScaleWidth - 2, frmCuent.PJ(i).ScaleHeight - 2), rColor, B
+            ' Solo avanzamos el frame cada 4 ciclos
+            If ContadorAnim >= 4 Then
+                PJs(i).FrameIndex = PJs(i).FrameIndex + 2
             End If
+            If PJs(i).Active Then
+            Call ActualizarDibujoPJ(i)
+            
+
+            If frmCuent.Nombre(i).Caption = PJClickeado And PJClickeado <> "" Then
+                frmCuent.PJ(i).Line (0, 0)- _
+                    (frmCuent.PJ(i).ScaleWidth - 1, frmCuent.PJ(i).ScaleHeight - 1), _
+                    rColor, B
+
+                frmCuent.PJ(i).Line (1, 1)- _
+                    (frmCuent.PJ(i).ScaleWidth - 2, frmCuent.PJ(i).ScaleHeight - 2), _
+                    rColor, B
+            End If
+
         Else
-            ' Slot vacio: mostrar "Crear Personaje"
             frmCuent.CP(i).Visible = True
         End If
+
     Next i
+
+    If ContadorAnim >= 4 Then
+        ContadorAnim = 0
+    End If
+
 End Sub
 
 Public Sub LimpiarPJsCuentas()
@@ -74,14 +144,14 @@ Public Sub LimpiarPJsCuentas()
     Dim i As Integer
     For i = 0 To 9
         PJs(i).Active = False
-        PJs(i).nombre = ""
+        PJs(i).Nombre = ""
         PJs(i).LVL = 0
         PJs(i).Body = 0
         PJs(i).Head = 0
 
         ' Limpiamos labels y pictures del formulario
-        frmCuent.nombre(i).Caption = "Nada"
-        frmCuent.nombre(i).Visible = False
+        frmCuent.Nombre(i).Caption = "Nada"
+        frmCuent.Nombre(i).Visible = False
         frmCuent.Label2(i).Caption = "Nivel: 0"
         frmCuent.Label2(i).Visible = False
         frmCuent.CP(i).Visible = True
@@ -93,11 +163,16 @@ Public Sub LimpiarPJsCuentas()
 End Sub
 
 Private Sub ActualizarDibujoPJ(ByVal Index As Integer)
+    
+    LogError "PJ TAMAÑO Index=" & Index & _
+         " Width=" & frmCuent.PJ(Index).ScaleWidth & _
+         " Height=" & frmCuent.PJ(Index).ScaleHeight
+    
     Dim Body As Long, Head As Long, Casco As Long, Shield As Long, Weapon As Long
     Dim Muerto As Integer, Baned As Long
     Dim Grh As Grh
     Dim Pos As Integer
-    Dim YBody As Long, YYY As Integer, XBody As Long, BBody As Long
+    Dim YBody As Long, YYY As Integer, XBody As Long, BBody As Long, YHead As Long
     
     Body = PJs(Index).Body
     Head = PJs(Index).Head
@@ -107,9 +182,10 @@ Private Sub ActualizarDibujoPJ(ByVal Index As Integer)
     Muerto = PJs(Index).Muerto
     Baned = PJs(Index).Baned
     
-    XBody = 29
-    YBody = 20
-    BBody = 35
+    XBody = 40
+    YBody = 26
+    BBody = 40
+    YHead = Pos + 8
 
     If Muerto = 1 Then
         Body = 8
@@ -118,22 +194,50 @@ Private Sub ActualizarDibujoPJ(ByVal Index As Integer)
         YBody = 38
         BBody = 35
     End If
-
+    
     ' Cuerpo (heading 3 = Sur, orientacion por defecto)
-    If Body > 0 And Body <= UBound(BodyData) Then
-        Grh = BodyData(Body).Walk(3)
-        If Grh.GrhIndex > 0 Then
-            Grh.FrameCounter = (PJs(Index).FrameIndex Mod GrhData(Grh.GrhIndex).NumFrames) + 1
-            Call DibujaPJ(Grh, XBody, YBody, Index)
-        End If
+   If Body > 0 And Body <= UBound(BodyData) Then
+    Grh = BodyData(Body).Walk(3)
+
+    If Grh.GrhIndex > 0 Then
+        PJs(Index).FrameIndex = PJs(Index).FrameIndex + 1
+
+    If PJs(Index).FrameIndex > 6 Then
+        PJs(Index).FrameIndex = 1
     End If
+        Grh.FrameCounter = ((PJs(Index).FrameIndex - 1) Mod _
+                            GrhData(Grh.GrhIndex).NumFrames) + 1
+
+        Call DibujaPJ(Grh, XBody, YBody, Index)
+
+    End If
+End If
 
     If Muerto = 0 And Body > 0 And Body <= UBound(BodyData) Then
         YYY = BodyData(Body).HeadOffset.Y
     End If
     If Muerto = 1 Then YYY = -9
 
-    Pos = YYY + GrhData(GrhData(Grh.GrhIndex).Frames(Grh.FrameCounter)).pixelHeight
+    Dim BodyGrhIndex As Long
+Dim BodyFrameIndex As Long
+Dim BodyHeight As Long
+
+BodyGrhIndex = Grh.GrhIndex
+BodyFrameIndex = Grh.FrameCounter
+
+If BodyGrhIndex > 0 And BodyGrhIndex <= GrhCount Then
+    If BodyFrameIndex > 0 And BodyFrameIndex <= GrhData(BodyGrhIndex).NumFrames Then
+        
+        BodyFrameIndex = GrhData(BodyGrhIndex).Frames(BodyFrameIndex)
+        
+        If BodyFrameIndex > 0 And BodyFrameIndex <= GrhCount Then
+            BodyHeight = GrhData(BodyFrameIndex).pixelHeight
+        End If
+        
+    End If
+End If
+
+Pos = YYY + BodyHeight
     
     ' Cabeza
     If Head > 0 And Head <= UBound(HeadData) Then
@@ -144,7 +248,8 @@ Private Sub ActualizarDibujoPJ(ByVal Index As Integer)
                 Call dibujaban(Index, vbBlack)
                 Call dibujaban(Index, vbRed)
             End If
-            Call DibujaPJ(Grh, BBody, Pos + 2, Index)
+            Call DibujaPJ(Grh, BBody, XHead, Index)
+            Debug.Print Pos + 8
         End If
     End If
         
@@ -158,7 +263,7 @@ Private Sub ActualizarDibujoPJ(ByVal Index As Integer)
     If Weapon > 0 And Weapon <> 2 And Weapon <= UBound(WeaponAnimData) Then
         Grh = WeaponAnimData(Weapon).WeaponWalk(3)
         If Grh.GrhIndex > 0 Then
-            Grh.FrameCounter = (PJs(Index).FrameIndex Mod GrhData(Grh.GrhIndex).NumFrames) + 1
+            Grh.FrameCounter = ((PJs(Index).FrameIndex - 1) Mod GrhData(Grh.GrhIndex).NumFrames) + 1
             Call DibujaPJ(Grh, XBody, YBody, Index)
         End If
     End If
@@ -167,13 +272,13 @@ Private Sub ActualizarDibujoPJ(ByVal Index As Integer)
     If Shield > 0 And Shield <> 2 And Shield <= UBound(ShieldAnimData) Then
         Grh = ShieldAnimData(Shield).ShieldWalk(3)
         If Grh.GrhIndex > 0 Then
-            Grh.FrameCounter = (PJs(Index).FrameIndex Mod GrhData(Grh.GrhIndex).NumFrames) + 1
+            Grh.FrameCounter = ((PJs(Index).FrameIndex - 1) Mod GrhData(Grh.GrhIndex).NumFrames) + 1
             Call DibujaPJ(Grh, XBody + 4, BBody - 13, Index)
         End If
     End If
 End Sub
 
-Public Sub DibujarTodo(ByVal Index As Integer, Body As Long, Head As Long, Casco As Long, Shield As Long, Weapon As Long, Baned As Long, nombre As String, LVL As Integer, Clase As String, Muerto As Integer)
+Public Sub DibujarTodo(ByVal Index As Integer, Body As Long, Head As Long, Casco As Long, Shield As Long, Weapon As Long, Baned As Long, Nombre As String, LVL As Integer, Clase As String, Muerto As Integer, GM As Long)
 
     With PJs(Index)
         .Body = Body
@@ -182,19 +287,26 @@ Public Sub DibujarTodo(ByVal Index As Integer, Body As Long, Head As Long, Casco
         .Shield = Shield
         .Weapon = Weapon
         .Baned = Baned
-        .nombre = nombre
+        .Nombre = Nombre
         .LVL = LVL
         .Clase = Clase
         .Muerto = Muerto
+        .GM = GM
         .Active = True
         .FrameIndex = 1
     End With
 
     ' Actualizamos labels del formulario
-    frmCuent.nombre(Index).Caption = nombre
-    frmCuent.CP(Index).Visible = False
-    frmCuent.nombre(Index).Visible = True
-    frmCuent.Label2(Index).Visible = True
+frmCuent.Nombre(Index).Caption = Nombre
+frmCuent.CP(Index).Visible = False
+frmCuent.Nombre(Index).Visible = True
+frmCuent.Label2(Index).Visible = True
+
+    If GM = 1 Then
+        frmCuent.GM(Index).Visible = True
+    Else
+        frmCuent.GM(Index).Visible = False
+    End If
     
     If LVL > 50 Then
         frmCuent.Label2(Index).Caption = "Nivel: 50 + " & LVL - 50

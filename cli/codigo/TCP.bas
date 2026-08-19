@@ -72,6 +72,8 @@ Sub HandleData(ByVal Rdata As String)
     Dim i As Integer, k As Integer
     Dim cad$, Index As Integer, m As Integer
     
+    Dim rcvGM As Long
+    
     Dim sData As String
     sData = UCase(Rdata)
     
@@ -434,7 +436,7 @@ Sub HandleData(ByVal Rdata As String)
         Case "CP"             ' >>>>> Cambiar Apariencia Personaje :: CP
             Rdata = Right$(Rdata, Len(Rdata) - 2)
             CharIndex = Val(ReadField(1, Rdata, 44))
-            charlist(CharIndex).muerto = Val(ReadField(3, Rdata, 44)) = 500
+            charlist(CharIndex).Muerto = Val(ReadField(3, Rdata, 44)) = 500
             charlist(CharIndex).Body = BodyData(Val(ReadField(2, Rdata, 44)))
             charlist(CharIndex).Head = Val(ReadField(3, Rdata, 44))
             charlist(CharIndex).Heading = Val(ReadField(4, Rdata, 44))
@@ -862,7 +864,8 @@ Sub HandleData(ByVal Rdata As String)
             rcvLevel = CLng(ReadField(10, Rdata, 44))
             rcvClase = ReadField(11, Rdata, 44)
             rcvMuerto = CLng(ReadField(12, Rdata, 44))
-            Call DibujarTodo(rcvIndex - 1, CLng(rcvBody), CLng(rcvHead), CLng(rcvCasco), CLng(rcvShield), CLng(rcvWeapon), CLng(rcvBaned), rcvName, CLng(rcvLevel), rcvClase, CLng(rcvMuerto))
+            rcvGM = CLng(ReadField(13, Rdata, 44))
+            Call DibujarTodo(rcvIndex - 1, CLng(rcvBody), CLng(rcvHead), CLng(rcvCasco), CLng(rcvShield), CLng(rcvWeapon), CLng(rcvBaned), rcvName, CLng(rcvLevel), rcvClase, CLng(rcvMuerto), CLng(rcvGM))
             Exit Sub
     End Select
     
@@ -895,7 +898,7 @@ Sub HandleData(ByVal Rdata As String)
         Case "PEDPRE"
             Rdata = Right$(Rdata, Len(Rdata) - 6)
             If frmCambiarPass.Visible Then
-                frmCambiarPass.pregunta.Caption = Rdata
+                frmCambiarPass.Pregunta.Caption = Rdata
                 Exit Sub
             End If
             If frmRecuperarCuenta.Visible Then

@@ -2,9 +2,9 @@ Attribute VB_Name = "Mod_TileEngine"
 Option Explicit
 
 '[B2 ACCOUNT] Declaraciones GDI para GrhRenderToHdc (cache de bitmaps)
-Private Declare Function CreateCompatibleDC Lib "gdi32" (ByVal hDC As Long) As Long
-Private Declare Function SelectObject Lib "gdi32" (ByVal hDC As Long, ByVal hObject As Long) As Long
-Private Declare Function DeleteDC Lib "gdi32" (ByVal hDC As Long) As Long
+Private Declare Function CreateCompatibleDC Lib "gdi32" (ByVal Hdc As Long) As Long
+Private Declare Function SelectObject Lib "gdi32" (ByVal Hdc As Long, ByVal hObject As Long) As Long
+Private Declare Function DeleteDC Lib "gdi32" (ByVal Hdc As Long) As Long
 Public Declare Function BitBlt Lib "gdi32" (ByVal hDestDC As Long, ByVal X As Long, ByVal Y As Long, ByVal nWidth As Long, ByVal nHeight As Long, ByVal hSrcDC As Long, ByVal xSrc As Long, ByVal ySrc As Long, ByVal dwRop As Long) As Long
 
 Public Const SRCCOPY = &HCC0020 ' (DWORD) dest = source
@@ -40,10 +40,10 @@ End Type
 'Info del encabezado del bmp
 Type BITMAPINFOHEADER
     biSize As Long
-    biWidth As Long
-    biHeight As Long
+    BiWidth As Long
+    BiHeight As Long
     biPlanes As Integer
-    biBitCount As Integer
+    BiBitCount As Integer
     biCompression As Long
     biSizeImage As Long
     biXPelsPerMeter As Long
@@ -52,7 +52,7 @@ Type BITMAPINFOHEADER
     biClrImportant As Long
 End Type
 
-Private Declare Function StretchDIBits Lib "gdi32" (ByVal hdc As Long, ByVal X As Long, ByVal Y As Long, ByVal dx As Long, ByVal dy As Long, ByVal SrcX As Long, ByVal SrcY As Long, ByVal srcWidth As Long, ByVal srcHeight As Long, ByVal lpBits As Any, ByVal lpBitsInfo As Any, ByVal wUsage As Long, ByVal dwRop As Long) As Long
+Private Declare Function StretchDIBits Lib "gdi32" (ByVal Hdc As Long, ByVal X As Long, ByVal Y As Long, ByVal dX As Long, ByVal dy As Long, ByVal SrcX As Long, ByVal SrcY As Long, ByVal srcWidth As Long, ByVal srcHeight As Long, ByVal lpBits As Any, ByVal lpBitsInfo As Any, ByVal wUsage As Long, ByVal dwRop As Long) As Long
 
 Private Declare Sub CopyMemory Lib "kernel32" Alias "RtlMoveMemory" (Destination As Any, Source As Any, ByVal Length As Long)
 
@@ -71,8 +71,8 @@ Private Declare Sub CopyMemory Lib "kernel32" Alias "RtlMoveMemory" (Destination
 
 'Contiene info acerca de donde se puede encontrar un grh tamaï¿½o y animacion
 Public Type GrhData
-    SX As Integer
-    SY As Integer
+    sx As Integer
+    sy As Integer
     
     FileNum As Long
     
@@ -174,7 +174,7 @@ Public Type char
     MoveOffsetY As Single
     
     pie As Boolean
-    muerto As Boolean
+    Muerto As Boolean
     invisible As Boolean
     Estainvi As Byte
     priv As Byte
@@ -597,8 +597,8 @@ Private Const FVF = D3DFVF_XYZRHW Or D3DFVF_TEX1 Or D3DFVF_DIFFUSE Or D3DFVF_SPE
 Private Const FVF2 = D3DFVF_XYZRHW Or D3DFVF_DIFFUSE Or D3DFVF_SPECULAR Or D3DFVF_TEX2
 
 Dim Texture As Direct3DTexture8
-Private Declare Function SetPixel Lib "gdi32" (ByVal hDC As Long, ByVal X As Long, ByVal Y As Long, ByVal crColor As Long) As Long
-Private Declare Function GetPixel Lib "gdi32" (ByVal hDC As Long, ByVal X As Long, ByVal Y As Long) As Long
+Private Declare Function SetPixel Lib "gdi32" (ByVal Hdc As Long, ByVal X As Long, ByVal Y As Long, ByVal crColor As Long) As Long
+Private Declare Function GetPixel Lib "gdi32" (ByVal Hdc As Long, ByVal X As Long, ByVal Y As Long) As Long
 
 Sub ConvertCPtoTP(ByVal viewPortX As Integer, ByVal viewPortY As Integer, ByRef tX As Byte, ByRef tY As Byte)
 '******************************************
@@ -615,7 +615,7 @@ Sub ResetCharInfo(ByVal CharIndex As Integer)
         .FxIndex = 0
         .invisible = False
         .Moving = 0
-        .muerto = False
+        .Muerto = False
         .Nombre = ""
         .PartyId = 0
         .pie = False
@@ -628,7 +628,7 @@ Sub ResetCharInfo(ByVal CharIndex As Integer)
 End Sub
 
 Sub MakeChar(ByVal CharIndex As Integer, ByVal Body As Integer, ByVal Head As Integer, ByVal Heading As Byte, ByVal X As Integer, ByVal Y As Integer, ByVal Arma As Integer, ByVal Escudo As Integer, ByVal Casco As Integer, ByVal Ataque As Integer)
-On Error Resume Next
+On Error GoTo ErrorHandler
     'Apuntamos al ultimo Char
     If CharIndex > LastChar Then LastChar = CharIndex
     
@@ -658,7 +658,7 @@ On Error Resume Next
         
         '[ANIM ATAK]
         .Arma.WeaponAttack = 0
-        
+        If Heading < 1 Or Heading > 4 Then Heading = 3
         .Heading = Heading
         
         'Reset moving stats
@@ -684,6 +684,17 @@ On Error Resume Next
     'Lorwik: Parche para los TP en el mismo mapa:
     'Si el cuerpo que se ha creado es el propio actualizamos el minimapa
     If CharIndex = UserCharIndex Then Call DibujarMiniMapa
+    Exit Sub
+
+ErrorHandler:
+    LogError "MakeChar ERROR " & Err.Number & _
+             " - " & Err.Description & _
+             " CharIndex=" & CharIndex & _
+             " Body=" & Body & _
+             " Head=" & Head & _
+             " Heading=" & Heading & _
+             " X=" & X & _
+             " Y=" & Y
 End Sub
 
 Sub EraseChar(ByVal CharIndex As Integer)
@@ -716,6 +727,7 @@ With charlist(CharIndex)
     'Update NumChars
     NumChars = NumChars - 1
 End With
+
 End Sub
 
 Public Sub InitGrh(ByRef Grh As Grh, ByVal GrhIndex As Long, Optional ByVal Started As Byte = 2)
@@ -759,7 +771,7 @@ Static TerrenoDePaso As TipoPaso
 
     With charlist(CharIndex)
         If Not UserNavegando Then
-            If Not .muerto And EstaPCarea(CharIndex) And (.priv = 0 Or .priv > 5) Then
+            If Not .Muerto And EstaPCarea(CharIndex) And (.priv = 0 Or .priv > 5) Then
                 .pie = Not .pie
                     
                     If Not Char_Big_Get(CharIndex) Then
@@ -1081,7 +1093,7 @@ Private Sub DrawHead(ByVal X As Integer, ByVal Y As Integer, ByVal EsCabeza As B
         .Left = textureX1
         .Top = textureY1
         .Right = (textureX2 + .Left)
-        .bottom = (textureY2 + .Top)
+        .Bottom = (textureY2 + .Top)
     End With
     
     Device_Textured_Render X - offsetX, Y - offsetY, _
@@ -1177,10 +1189,10 @@ Public Sub DibujarMiniMapa()
             End If
             
             If MapData(map_x, map_y).Graphic(Capas).GrhIndex > 0 Then
-                SetPixel frmMain.Minimap.hDC, X - 1, Y - 1, GrhData(MapData(map_x, map_y).Graphic(Capas).GrhIndex).MiniMap_color
+                SetPixel frmMain.Minimap.Hdc, X - 1, Y - 1, GrhData(MapData(map_x, map_y).Graphic(Capas).GrhIndex).MiniMap_color
             End If
             If MapData(map_x, map_y).Graphic(4).GrhIndex > 0 Then
-                SetPixel frmMain.Minimap.hDC, X - 1, Y - 1, GrhData(MapData(map_x, map_y).Graphic(4).GrhIndex).MiniMap_color
+                SetPixel frmMain.Minimap.Hdc, X - 1, Y - 1, GrhData(MapData(map_x, map_y).Graphic(4).GrhIndex).MiniMap_color
             End If
         Next Capas
         Next map_x
@@ -1296,7 +1308,7 @@ Sub ShowNextFrame(ByVal DisplayFormTop As Integer, ByVal DisplayFormLeft As Inte
     With re
         .Left = 0
         .Top = 0
-        .bottom = frmMain.renderer.ScaleHeight
+        .Bottom = frmMain.renderer.ScaleHeight
         .Right = frmMain.renderer.ScaleWidth
     End With
     
@@ -1730,25 +1742,39 @@ Private Sub CharRender(ByVal CharIndex As Long, ByVal PixelOffsetX As Integer, B
         PixelOffsetX = PixelOffsetX + .MoveOffsetX
         PixelOffsetY = PixelOffsetY + .MoveOffsetY
         
-        'ï¿½Tiene cabeza?
+        '¿Tiene cabeza?
         If charlist(CharIndex).Head Then
             movSpeed = 0.8
+    
             'Dibujamos el cuerpo
             If .Body.Walk(.Heading).GrhIndex Then _
                 Call DDrawTransGrhtoSurface(.Body.Walk(.Heading), PixelOffsetX, PixelOffsetY, 1, 1, Light, .Estainvi)
-                
+            
+           
             'Dibujamos la Cabeza
             If .Head Then
                 Call DDrawTransGrhtoSurface(HeadData(.Head).Head(.Heading), PixelOffsetX + .Body.HeadOffset.X, PixelOffsetY + .Body.HeadOffset.Y, 1, 0, Light, .Estainvi)
 
+'                'Draw Helmet
+'                If .Casco Then _
+'                    Call DDrawTransGrhtoSurface(CascoAnimData(.Casco).Head(.Heading), PixelOffsetX + .Body.HeadOffset.X, PixelOffsetY + .Body.HeadOffset.Y, 1, 0, Light, .Estainvi)
                 'Draw Helmet
-                If .Casco Then _
-                    Call DDrawTransGrhtoSurface(CascoAnimData(.Casco).Head(.Heading), PixelOffsetX + .Body.HeadOffset.X, PixelOffsetY + .Body.HeadOffset.Y, 1, 0, Light, .Estainvi)
-                             
+            If .Casco Then
+                
+                Call DDrawTransGrhtoSurface(CascoAnimData(.Casco).Head(.Heading), _
+                    PixelOffsetX + .Body.HeadOffset.X, _
+                    PixelOffsetY + .Body.HeadOffset.Y, _
+                    1, 0, Light, .Estainvi)
+            End If
+            
+            LogError "CHAR CASCO OK"
+            
                 If UserMontando = False Then
+                                                 
                     'Dibujamos el arma
                     If .Arma.WeaponWalk(.Heading).GrhIndex Then _
                         Call DDrawTransGrhtoSurface(.Arma.WeaponWalk(.Heading), PixelOffsetX, PixelOffsetY, 1, 1, Light, .Estainvi)
+                    
                     'Dibujamos el escudo
                     If .Escudo.ShieldWalk(.Heading).GrhIndex Then _
                         Call DDrawTransGrhtoSurface(.Escudo.ShieldWalk(.Heading), PixelOffsetX, PixelOffsetY, 1, 1, Light, .Estainvi)
@@ -1880,7 +1906,7 @@ Public Sub RenderConnect()
     With re
         .Left = 0
         .Top = 0
-        .bottom = 768
+        .Bottom = 768
         .Right = 1024
     End With
     
@@ -2030,10 +2056,10 @@ On Error GoTo Error
             End If
         End If
         
-        SourceRect.Left = .SX
-        SourceRect.Top = .SY
+        SourceRect.Left = .sx
+        SourceRect.Top = .sy
         SourceRect.Right = SourceRect.Left + .pixelWidth
-        SourceRect.bottom = SourceRect.Top + .pixelHeight
+        SourceRect.Bottom = SourceRect.Top + .pixelHeight
         
         'Draw
         Call Device_Textured_Render(X, Y, SurfaceDB.Surface(.FileNum), SourceRect, Light)
@@ -2070,10 +2096,10 @@ Sub DDrawTransGrhIndextoSurface(ByVal GrhIndex As Integer, ByVal X As Integer, B
             End If
         End If
         
-        SourceRect.Left = .SX
-        SourceRect.Top = .SY
+        SourceRect.Left = .sx
+        SourceRect.Top = .sy
         SourceRect.Right = SourceRect.Left + .pixelWidth
-        SourceRect.bottom = SourceRect.Top + .pixelHeight
+        SourceRect.Bottom = SourceRect.Top + .pixelHeight
         
         'Draw
         'Call BackBufferSurface.BltFast(X, Y, SurfaceDB.Surface(.FileNum), SourceRect, DDBLTFAST_SRCCOLORKEY Or DDBLTFAST_WAIT)
@@ -2112,6 +2138,16 @@ Sub DDrawTransGrhtoSurface(ByRef Grh As Grh, ByVal X As Integer, ByVal Y As Inte
         End If
     End If
     
+    If Grh.GrhIndex = 5757 Or Grh.GrhIndex = 5758 Or Grh.GrhIndex = 5759 _
+    Or Grh.GrhIndex = 6005 Or Grh.GrhIndex = 6014 Then
+
+    LogError "MAPA DIBUJA: GRH=" & Grh.GrhIndex & _
+             " Active=" & GrhData(Grh.GrhIndex).Active & _
+             " Frames=" & GrhData(Grh.GrhIndex).NumFrames & _
+             " FrameCounter=" & Grh.FrameCounter
+    End If
+
+    If Grh.FrameCounter < 1 Then Grh.FrameCounter = 1
     'Figure out what frame to draw (always 1 if not animated)
     CurrentGrhIndex = GrhData(Grh.GrhIndex).Frames(Grh.FrameCounter)
     
@@ -2127,10 +2163,10 @@ Sub DDrawTransGrhtoSurface(ByRef Grh As Grh, ByVal X As Integer, ByVal Y As Inte
             End If
         End If
                 
-        SourceRect.Left = .SX
-        SourceRect.Top = .SY
+        SourceRect.Left = .sx
+        SourceRect.Top = .sy
         SourceRect.Right = SourceRect.Left + .pixelWidth
-        SourceRect.bottom = SourceRect.Top + .pixelHeight
+        SourceRect.Bottom = SourceRect.Top + .pixelHeight
         
         'Draw
                 
@@ -2221,44 +2257,44 @@ movSpeed = 1
     
 On Error GoTo 0
     
-    frmCargando.Status.Text = "Cargando Graficos...."
+    frmCargando.status.Text = "Cargando Graficos...."
     frmCargando.Refresh
     Call frmCargando.progresoConDelay(20)
     Call LoadGrhData
-    frmCargando.Status.Text = "Cargando Particulas..."
+    frmCargando.status.Text = "Cargando Particulas..."
     frmCargando.Refresh
     Call frmCargando.progresoConDelay(25)
     Call CargarParticulas
-    frmCargando.Status.Text = "Cargando Minimapa...."
+    frmCargando.status.Text = "Cargando Minimapa...."
     frmCargando.Refresh
     Call frmCargando.progresoConDelay(30)
     Call LoadMiniMap
-    frmCargando.Status.Text = "Cargando Cuerpos...."
+    frmCargando.status.Text = "Cargando Cuerpos...."
     frmCargando.Refresh
     Call frmCargando.progresoConDelay(40)
     Call CargarCuerpos
-    frmCargando.Status.Text = "Cargando Ataques...."
+    frmCargando.status.Text = "Cargando Ataques...."
     frmCargando.Refresh
     Call frmCargando.progresoConDelay(45)
     Call CargarAtaques
-    frmCargando.Status.Text = "Cargando Cabezas...."
+    frmCargando.status.Text = "Cargando Cabezas...."
     frmCargando.Refresh
     Call frmCargando.progresoConDelay(50)
     Call CargarCabezas
-    frmCargando.Status.Text = "Cargando Cascos...."
+    frmCargando.status.Text = "Cargando Cascos...."
     frmCargando.Refresh
     Call frmCargando.progresoConDelay(55)
     Call CargarCascos
-    frmCargando.Status.Text = "Cargando Fx's...."
+    frmCargando.status.Text = "Cargando Fx's...."
     frmCargando.Refresh
     Call frmCargando.progresoConDelay(60)
     Call CargarFxs
-    frmCargando.Status.Text = "Cargando Luces...."
+    frmCargando.status.Text = "Cargando Luces...."
     frmCargando.Refresh
     Call frmCargando.progresoConDelay(67)
     Call InitColor 'Lorwik> OJO! Colores de luces !!
     
-    frmCargando.Status.Text = "Cargando Fuentes...."
+    frmCargando.status.Text = "Cargando Fuentes...."
     frmCargando.Refresh
     Call frmCargando.progresoConDelay(65)
     Call Texto.Engine_Init_FontSettings
@@ -2377,10 +2413,10 @@ Public Sub Geometry_Create_Box(ByRef verts() As TLVERTEX, ByRef dest As RECT, By
     If Angle > 0 Then
         'Center coordinates on screen of the square
         x_center = dest.Left + (dest.Right - dest.Left) / 2
-        y_center = dest.Top + (dest.bottom - dest.Top) / 2
+        y_center = dest.Top + (dest.Bottom - dest.Top) / 2
         
         'Calculate radius
-        radius = Sqr((dest.Right - x_center) ^ 2 + (dest.bottom - y_center) ^ 2)
+        radius = Sqr((dest.Right - x_center) ^ 2 + (dest.Bottom - y_center) ^ 2)
         
         'Calculate left and right points
         temp = (dest.Right - x_center) / radius
@@ -2391,7 +2427,7 @@ Public Sub Geometry_Create_Box(ByRef verts() As TLVERTEX, ByRef dest As RECT, By
     'Calculate screen coordinates of sprite, and only rotate if necessary
     If Angle = 0 Then
         x_Cor = dest.Left
-        y_Cor = dest.bottom
+        y_Cor = dest.Bottom
     Else
         x_Cor = x_center + Cos(-left_point - Angle) * radius
         y_Cor = y_center - Sin(-left_point - Angle) * radius
@@ -2400,7 +2436,7 @@ Public Sub Geometry_Create_Box(ByRef verts() As TLVERTEX, ByRef dest As RECT, By
     
     '0 - Bottom left vertex
     If Textures_Width Or Textures_Height Then
-        verts(2) = Geometry_Create_TLVertex(x_Cor, y_Cor, 0, 1, rgb_list(0), 0, src.Left / Textures_Width + 0.001, (src.bottom + 1) / Textures_Height)
+        verts(2) = Geometry_Create_TLVertex(x_Cor, y_Cor, 0, 1, rgb_list(0), 0, src.Left / Textures_Width + 0.001, (src.Bottom + 1) / Textures_Height)
     Else
         verts(2) = Geometry_Create_TLVertex(x_Cor, y_Cor, 0, 1, rgb_list(0), 0, 0, 0)
     End If
@@ -2423,7 +2459,7 @@ Public Sub Geometry_Create_Box(ByRef verts() As TLVERTEX, ByRef dest As RECT, By
     'Calculate screen coordinates of sprite, and only rotate if necessary
     If Angle = 0 Then
         x_Cor = dest.Right
-        y_Cor = dest.bottom
+        y_Cor = dest.Bottom
     Else
         x_Cor = x_center + Cos(-right_point - Angle) * radius
         y_Cor = y_center - Sin(-right_point - Angle) * radius
@@ -2432,7 +2468,7 @@ Public Sub Geometry_Create_Box(ByRef verts() As TLVERTEX, ByRef dest As RECT, By
     
     '2 - Bottom right vertex
     If Textures_Width Or Textures_Height Then
-        verts(3) = Geometry_Create_TLVertex(x_Cor, y_Cor, 0, 1, rgb_list(2), 0, (src.Right + 1) / Textures_Width, (src.bottom + 1) / Textures_Height)
+        verts(3) = Geometry_Create_TLVertex(x_Cor, y_Cor, 0, 1, rgb_list(2), 0, (src.Right + 1) / Textures_Width, (src.Bottom + 1) / Textures_Height)
     Else
         verts(3) = Geometry_Create_TLVertex(x_Cor, y_Cor, 0, 1, rgb_list(2), 0, 1, 0)
     End If
@@ -2490,7 +2526,7 @@ Public Sub Device_Textured_Render(ByVal X As Integer, ByVal Y As Integer, ByVal 
     If (light_value(3) = 0) Then light_value(3) = base_light
  
     With dest_rect
-        .bottom = Y + (src_rect.bottom - src_rect.Top)
+        .Bottom = Y + (src_rect.Bottom - src_rect.Top)
         .Left = X
         .Right = X + (src_rect.Right - src_rect.Left)
         .Top = Y
@@ -2586,7 +2622,7 @@ Public Sub DrawSpells()
     Static re As RECT
     re.Left = 0
     re.Top = 0
-    re.bottom = frmMain.picSpell.ScaleHeight
+    re.Bottom = frmMain.picSpell.ScaleHeight
     re.Right = frmMain.picSpell.ScaleWidth
     
     With DirectDevice

@@ -4,14 +4,25 @@ Attribute VB_Name = "CargasInit"
 ' Separado de TileEngine.bas para mayor modularidad
 '==========================================================
 Option Explicit
-
+Private Declare Function TransparentBlt Lib "msimg32.dll" ( _
+    ByVal hdcDest As Long, _
+    ByVal nXOriginDest As Long, _
+    ByVal nYOriginDest As Long, _
+    ByVal nWidthDest As Long, _
+    ByVal nHeightDest As Long, _
+    ByVal hdcSrc As Long, _
+    ByVal nXOriginSrc As Long, _
+    ByVal nYOriginSrc As Long, _
+    ByVal nWidthSrc As Long, _
+    ByVal nHeightSrc As Long, _
+    ByVal crTransparent As Long) As Long
 ' === Declaraciones API GDI32 - necesarias para DrawGrhtoHdc y GrhRenderToHdc ===
 Private Declare Sub CopyMemory Lib "kernel32" Alias "RtlMoveMemory" (ByVal Destination As Long, ByVal Source As Long, ByVal Length As Long)
-Private Declare Function StretchDIBits Lib "gdi32" (ByVal hDC As Long, ByVal x As Long, ByVal y As Long, ByVal dx As Long, ByVal dy As Long, ByVal SrcX As Long, ByVal SrcY As Long, ByVal wSrcWidth As Long, ByVal wSrcHeight As Long, lpBits As Any, lpBitsInfo As Any, ByVal wUsage As Long, ByVal dwRop As Long) As Long
-Private Declare Function CreateCompatibleDC Lib "gdi32" (ByVal hDC As Long) As Long
-Private Declare Function SelectObject Lib "gdi32" (ByVal hDC As Long, ByVal hObject As Long) As Long
-Private Declare Function DeleteDC Lib "gdi32" (ByVal hDC As Long) As Long
-Private Declare Function BitBlt Lib "gdi32" (ByVal hDestDC As Long, ByVal x As Long, ByVal y As Long, ByVal nWidth As Long, ByVal nHeight As Long, ByVal hSrcDC As Long, ByVal xSrc As Long, ByVal ySrc As Long, ByVal dwRop As Long) As Long
+Private Declare Function StretchDIBits Lib "gdi32" (ByVal Hdc As Long, ByVal X As Long, ByVal Y As Long, ByVal dX As Long, ByVal dy As Long, ByVal SrcX As Long, ByVal SrcY As Long, ByVal wSrcWidth As Long, ByVal wSrcHeight As Long, lpBits As Any, lpBitsInfo As Any, ByVal wUsage As Long, ByVal dwRop As Long) As Long
+Private Declare Function CreateCompatibleDC Lib "gdi32" (ByVal Hdc As Long) As Long
+Private Declare Function SelectObject Lib "gdi32" (ByVal Hdc As Long, ByVal hObject As Long) As Long
+Private Declare Function DeleteDC Lib "gdi32" (ByVal Hdc As Long) As Long
+Private Declare Function BitBlt Lib "gdi32" (ByVal hDestDC As Long, ByVal X As Long, ByVal Y As Long, ByVal nWidth As Long, ByVal nHeight As Long, ByVal hSrcDC As Long, ByVal xSrc As Long, ByVal ySrc As Long, ByVal dwRop As Long) As Long
 Private Const SRCCOPY As Long = &HCC0020
 
 ' === Cache de bitmaps para GrhRenderToHdc (evita re-leer archivo cada frame) ===
@@ -19,118 +30,281 @@ Private GrhHdcCache_Count As Long
 Private GrhHdcCache_FileNum() As Integer
 Private GrhHdcCache_Picture() As Object
 
-Public Sub DrawGrhtoHdc(ByVal hwnd As Long, ByVal Hdc As Long, ByVal GrhIdx As Integer, _
+Public Sub DrawGrhtoHdc(ByVal hwnd As Long, ByVal Hdc As Long, ByVal grhIdx As Integer, _
                         SourceRect As RECT, destRect As RECT)
-    On Error GoTo ErrHandler
-    
+
+    On Error GoTo errhandler
+
     Static callCount As Long
     callCount = callCount + 1
-    
-    If GrhIdx <= 0 Or GrhIdx > GrhCount Then
-        If callCount <= 5 Then LogError "DrawGrhtoHdc: FAIL GrhIdx=" & GrhIdx & " GrhCount=" & GrhCount
+
+    '--------------------------------------------------
+    ' Validar GRH
+    '--------------------------------------------------
+    If grhIdx <= 0 Or grhIdx > GrhCount Then
+        LogError "DrawGrhtoHdc: FAIL GrhIdx=" & grhIdx & _
+                 " GrhCount=" & GrhCount
         Exit Sub
     End If
-    If Not GrhData(GrhIdx).Active Then
-        If callCount <= 5 Then LogError "DrawGrhtoHdc: FAIL NotActive GrhIdx=" & GrhIdx
+
+    If Not GrhData(grhIdx).Active Then
+        LogError "DrawGrhtoHdc: FAIL NotActive GrhIdx=" & grhIdx
         Exit Sub
     End If
-    
+
+    '--------------------------------------------------
+    ' Obtener frame
+    '--------------------------------------------------
     Dim GrhIndex As Long
-    GrhIndex = GrhData(GrhIdx).Frames(1)
+
+    GrhIndex = GrhData(grhIdx).Frames(1)
+
     If GrhIndex <= 0 Or GrhIndex > GrhCount Then
-        If callCount <= 5 Then LogError "DrawGrhtoHdc: FAIL FrameIdx=" & GrhIndex
+        LogError "DrawGrhtoHdc: FAIL FrameIdx=" & GrhIndex & _
+                 " GrhIdx=" & grhIdx
         Exit Sub
     End If
+
     If Not GrhData(GrhIndex).Active Then
-        If callCount <= 5 Then LogError "DrawGrhtoHdc: FAIL FrameNotActive idx=" & GrhIndex
+        LogError "DrawGrhtoHdc: FAIL FrameNotActive idx=" & GrhIndex
         Exit Sub
     End If
-    
+
+    '--------------------------------------------------
+    ' Obtener BMP
+    '--------------------------------------------------
     Dim FileNum As Integer
     Dim FileSize As Long
     Dim Buffer() As Byte
     Dim BmpFile As String
-    
+
     FileNum = GrhData(GrhIndex).FileNum
+
     BmpFile = App.Path & "\Graficos\" & FileNum & ".bmp"
-    
+
     If Dir(BmpFile) = "" Then
-        If callCount <= 5 Then LogError "DrawGrhtoHdc: FAIL NoFile " & BmpFile
+        LogError "DrawGrhtoHdc: FAIL NoFile " & BmpFile
         Exit Sub
     End If
-    
+
+    '--------------------------------------------------
+    ' Leer BMP
+    '--------------------------------------------------
     Dim fNum As Integer
+
     fNum = FreeFile
+
     Open BmpFile For Binary Access Read As #fNum
+
     FileSize = LOF(fNum)
-    If FileSize <= 0 Then Close #fNum: Exit Sub
-    
+
+    If FileSize < 54 Then
+        Close #fNum
+
+        LogError "DrawGrhtoHdc: BMP demasiado pequeño. " & _
+                 "Size=" & FileSize & _
+                 " GrhIdx=" & grhIdx
+
+        Exit Sub
+    End If
+
     ReDim Buffer(0 To FileSize - 1)
+
     Get #fNum, , Buffer
+
     Close #fNum
-    
+
+    '--------------------------------------------------
+    ' Leer cabecera BMP
+    '--------------------------------------------------
     Dim BiWidth As Long
     Dim BiHeight As Long
     Dim BiBitCount As Integer
-    
-    CopyMemory BiWidth, Buffer(18), 4
-    CopyMemory BiHeight, Buffer(22), 4
-    CopyMemory BiBitCount, Buffer(28), 2
-    
-    Dim sx As Long, sy As Long, pw As Long, ph As Long
-    sx = GrhData(GrhIndex).SX
-    sy = GrhData(GrhIndex).SY
+
+    BiWidth = Buffer(18) Or _
+              (CLng(Buffer(19)) * 256) Or _
+              (CLng(Buffer(20)) * 65536) Or _
+              (CLng(Buffer(21)) * 16777216)
+
+    BiHeight = Buffer(22) Or _
+               (CLng(Buffer(23)) * 256) Or _
+               (CLng(Buffer(24)) * 65536) Or _
+               (CLng(Buffer(25)) * 16777216)
+
+    BiBitCount = Buffer(28) Or _
+                 (CLng(Buffer(29)) * 256)
+
+    LogError "BMP HEADER: Width=" & BiWidth & _
+             " Height=" & BiHeight & _
+             " Bits=" & BiBitCount
+
+    '--------------------------------------------------
+    ' Datos del GRH
+    '--------------------------------------------------
+    Dim sx As Long
+    Dim sy As Long
+    Dim pw As Long
+    Dim ph As Long
+
+    sx = GrhData(GrhIndex).sx
+    sy = GrhData(GrhIndex).sy
     pw = GrhData(GrhIndex).pixelWidth
     ph = GrhData(GrhIndex).pixelHeight
-    
-    If sx + pw > BiWidth Then pw = BiWidth - sx
-    If sy + ph > BiHeight Then ph = BiHeight - sy
-    If pw <= 0 Or ph <= 0 Then
-        If callCount <= 5 Then LogError "DrawGrhtoHdc: FAIL BadDim pw=" & pw & " ph=" & ph
+
+    LogError "BMP GRH: sx=" & sx & _
+             " sy=" & sy & _
+             " pw=" & pw & _
+             " ph=" & ph
+
+    If sx < 0 Or sy < 0 Then
+        LogError "DrawGrhtoHdc: FAIL Coordenadas negativas"
         Exit Sub
     End If
-    
-    Dim dstW As Long, dstH As Long
+
+    If sx >= BiWidth Or sy >= BiHeight Then
+        LogError "DrawGrhtoHdc: FAIL GRH fuera del BMP"
+        Exit Sub
+    End If
+
+    If sx + pw > BiWidth Then
+        pw = BiWidth - sx
+    End If
+
+    If sy + ph > BiHeight Then
+        ph = BiHeight - sy
+    End If
+
+    If pw <= 0 Or ph <= 0 Then
+        LogError "DrawGrhtoHdc: FAIL BadDim pw=" & pw & _
+                 " ph=" & ph
+        Exit Sub
+    End If
+
+    '--------------------------------------------------
+    ' Destino
+    '--------------------------------------------------
+    Dim dstW As Long
+    Dim dstH As Long
+
     dstW = destRect.Right - destRect.Left
-    dstH = destRect.bottom - destRect.Top
+    dstH = destRect.Bottom - destRect.Top
+
     If dstW <= 0 Then dstW = pw
     If dstH <= 0 Then dstH = ph
-    
+
+    '--------------------------------------------------
+    ' Offset de los pixels
+    '--------------------------------------------------
     Dim PixelDataOffset As Long
-    CopyMemory PixelDataOffset, Buffer(10), 4
-    
-    ' BITMAPINFOHEADER starts at offset 14 in BMP file, not offset 2
-    ' BITMAPINFO = BITMAPINFOHEADER (40) + ColorTable (up to 1024 for 8-bit)
+
+    PixelDataOffset = Buffer(10) Or _
+                     (CLng(Buffer(11)) * 256) Or _
+                      (CLng(Buffer(12)) * 65536) Or _
+                   (CLng(Buffer(13)) * 16777216)
+
+    LogError "BMP PIXELS: Offset=" & PixelDataOffset & _
+             " FileSize=" & FileSize
+
+
+    If PixelDataOffset < 0 Or PixelDataOffset >= FileSize Then
+        LogError "DrawGrhtoHdc: FAIL PixelDataOffset inválido"
+        Exit Sub
+    End If
+
+    '--------------------------------------------------
+    ' BITMAPINFO
+    '--------------------------------------------------
     Dim colorTableSize As Long
-    If BiBitCount <= 8 Then
-        colorTableSize = CLng(4) * (CLng(2) ^ BiBitCount)
-    Else
-        colorTableSize = 0
+
+    ' La paleta real termina justo antes de los píxeles
+    colorTableSize = PixelDataOffset - 14 - 40
+
+    If colorTableSize < 0 Then
+        LogError "BMP: ERROR tamaño de paleta=" & colorTableSize
+        Exit Sub
     End If
+
+    LogError "BMP: PixelDataOffset=" & PixelDataOffset & _
+             " ColorTableSize=" & colorTableSize
     
+
+    If 54 + colorTableSize > FileSize Then
+        LogError "DrawGrhtoHdc: FAIL Paleta fuera del BMP"
+        Exit Sub
+    End If
+
     Dim BmInfo() As Byte
+
     ReDim BmInfo(0 To 40 + colorTableSize - 1)
-    CopyMemory BmInfo(0), Buffer(14), 40
+
+    LogError "BMP: BmInfo creado"
+
+    Dim i As Long
+
+    ' Copiar BITMAPINFOHEADER byte a byte
+    For i = 0 To 39
+      BmInfo(i) = Buffer(14 + i)
+    Next i
+
+    LogError "BMP: header copiado"
+
+    ' Copiar paleta byte a byte
     If colorTableSize > 0 Then
-        CopyMemory BmInfo(40), Buffer(54), colorTableSize
+
+        For i = 0 To colorTableSize - 1
+         BmInfo(40 + i) = Buffer(54 + i)
+        Next i
+
+        LogError "BMP: paleta copiada"
+
     End If
-    
-    If callCount <= 5 Then
-        LogError "DrawGrhtoHdc: OK GrhIdx=" & GrhIdx & " FileNum=" & FileNum & " sx=" & sx & " sy=" & sy & " pw=" & pw & " ph=" & ph & " dstW=" & dstW & " dstH=" & dstH & " BmpW=" & BiWidth & " BmpH=" & BiHeight & " Bits=" & BiBitCount & " hdc=" & Hdc
-    End If
-    
+
+    '--------------------------------------------------
+    ' Antes de StretchDIBits
+    '--------------------------------------------------
+    LogError "DrawGrhtoHdc: ANTES StretchDIBits" & _
+             " GrhIdx=" & grhIdx & _
+             " FileNum=" & FileNum & _
+             " sx=" & sx & _
+             " sy=" & sy & _
+             " pw=" & pw & _
+             " ph=" & ph & _
+             " dstW=" & dstW & _
+             " dstH=" & dstH & _
+             " Hdc=" & Hdc
+
+    '--------------------------------------------------
+    ' Dibujar
+    '--------------------------------------------------
     Dim result As Long
-    result = StretchDIBits(Hdc, destRect.Left, destRect.Top, dstW, dstH, _
-                  sx, sy, pw, ph, _
-                  ByVal VarPtr(Buffer(PixelDataOffset)), ByVal VarPtr(BmInfo(0)), 0, vbSrcCopy)
-    
-    If callCount <= 5 Then
-        LogError "DrawGrhtoHdc: StretchDIBits result=" & result & " GrhIdx=" & GrhIdx
-    End If
-    
-Exit Sub
-ErrHandler:
-    LogError "DrawGrhtoHdc: Err=" & Err.Number & " Desc=" & Err.Description & " GrhIdx=" & GrhIdx
+
+    result = StretchDIBits( _
+                Hdc, _
+                destRect.Left, _
+                destRect.Top, _
+                dstW, _
+                dstH, _
+                sx, _
+                sy, _
+                pw, _
+                ph, _
+                ByVal VarPtr(Buffer(PixelDataOffset)), _
+                ByVal VarPtr(BmInfo(0)), _
+                0, _
+                vbSrcCopy)
+
+    LogError "DrawGrhtoHdc: StretchDIBits result=" & result & _
+             " GrhIdx=" & grhIdx
+
+    Exit Sub
+
+errhandler:
+
+    LogError "DrawGrhtoHdc: ERR=" & Err.Number & _
+             " Desc=" & Err.Description & _
+             " GrhIdx=" & grhIdx & _
+             " FileNum=" & FileNum
+
 End Sub
 
 '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
@@ -141,123 +315,259 @@ End Sub
 
 Sub LoadGrhData()
 '*****************************************************************
-'Carga Graficos.ind: MiCabecera + 5 x Integer + registros Int16
-'terminados en un indice <= 0. Pasa 1: halla el indice maximo para
-'dimensionar GrhData. Pasa 2: lee los registros.
+' Carga Graficos.ind
+'
+' Formato:
+'   Cabecera fija de 255 bytes
+'   Datos de cabecera
+'   Registros GRH:
+'       GrhIndex As Integer
+'       NumFrames As Integer
+'       FileNum As Integer
+'       SX As Integer
+'       SY As Integer
+'       pixelWidth As Integer
+'       pixelHeight As Integer
+'
+' Los GRH animados contienen:
+'       GrhIndex
+'       NumFrames
+'       Frame1...
+'       Speed
 '*****************************************************************
-On Error Resume Next
+
+    On Error GoTo ErrorHandler
+
     Dim Grh As Long
     Dim Frame As Long
     Dim i As Long
     Dim tempint As Integer
     Dim maxGrh As Long
+
     Dim grhIdx As Integer
     Dim nf As Integer
-    Dim fileNum As Integer
+    Dim FileNum As Integer
     Dim sx As Integer
     Dim sy As Integer
     Dim pw As Integer
     Dim ph As Integer
     Dim sp As Integer
     Dim fr As Integer
+
     Dim Handle As Integer
 
     Handle = FreeFile
+
     Open IniPath & "Graficos.ind" For Binary Access Read As #Handle
 
-    'Pasa 1: determinar el indice de grh maximo
+    '-------------------------------------------------------------
+    ' CABECERA
+    '-------------------------------------------------------------
     Get #Handle, , MiCabecera
+
+    ' Los datos de cabecera que existen antes del primer GRH.
     For i = 1 To 5
         Get #Handle, , tempint
     Next i
 
+    '-------------------------------------------------------------
+    ' IMPORTANTE:
+    ' En este Graficos.ind el primer GRH empieza en el byte 273
+    ' (offset 0). VB6 utiliza posiciones desde 1.
+    ' Por tanto el primer GRH está en Seek 274.
+    '-------------------------------------------------------------
+    Seek #Handle, 274
+
+    '-------------------------------------------------------------
+    ' PASADA 1
+    ' Buscar el GRH máximo para dimensionar GrhData.
+    '-------------------------------------------------------------
     maxGrh = 0
-    Do
+
+    Do While Loc(Handle) <= LOF(Handle)
+
         Get #Handle, , grhIdx
+
         If grhIdx <= 0 Then Exit Do
-        If grhIdx > maxGrh Then maxGrh = grhIdx
+
+        If grhIdx > maxGrh Then
+            maxGrh = grhIdx
+        End If
+
         Get #Handle, , nf
+
         If nf > 1 Then
+
+            ' GRH animado
             For Frame = 1 To nf
                 Get #Handle, , fr
             Next Frame
+
             Get #Handle, , sp
+
         Else
-            Get #Handle, , fileNum
+
+            ' GRH estático
+            Get #Handle, , FileNum
             Get #Handle, , sx
             Get #Handle, , sy
             Get #Handle, , pw
             Get #Handle, , ph
+
         End If
+
     Loop
 
     If maxGrh <= 0 Then
         Close #Handle
+        LogError "LoadGrhData: ERROR - no se encontraron GRH."
         Exit Sub
     End If
 
+    '-------------------------------------------------------------
+    ' CREAR ARRAY
+    '-------------------------------------------------------------
     ReDim GrhData(1 To maxGrh) As GrhData
 
-    'Pasa 2: leer los registros
-    Seek #Handle, 1
-    Get #Handle, , MiCabecera
-    For i = 1 To 5
-        Get #Handle, , tempint
-    Next i
+    '-------------------------------------------------------------
+    ' PASADA 2
+    ' Volvemos al primer GRH.
+    '-------------------------------------------------------------
+    Seek #Handle, 274
 
-    Do
+    Do While Loc(Handle) <= LOF(Handle)
+
         Get #Handle, , grhIdx
+
         If grhIdx <= 0 Then Exit Do
+
+        If grhIdx > maxGrh Then Exit Do
+
         GrhData(grhIdx).Active = True
+
         Get #Handle, , nf
-        If nf < 1 Then nf = 1
-        GrhData(grhIdx).NumFrames = nf
-        ReDim GrhData(grhIdx).Frames(1 To nf)
+
+        '---------------------------------------------------------
+        ' GRH ANIMADO
+        '---------------------------------------------------------
         If nf > 1 Then
+
+            GrhData(grhIdx).NumFrames = nf
+
+            ReDim GrhData(grhIdx).Frames(1 To nf)
+
             For Frame = 1 To nf
+
                 Get #Handle, , fr
+
                 GrhData(grhIdx).Frames(Frame) = fr
+
             Next Frame
+
             Get #Handle, , sp
+
             GrhData(grhIdx).Speed = sp
-            GrhData(grhIdx).pixelHeight = GrhData(GrhData(grhIdx).Frames(1)).pixelHeight
-            GrhData(grhIdx).pixelWidth = GrhData(GrhData(grhIdx).Frames(1)).pixelWidth
-            GrhData(grhIdx).TileWidth = GrhData(GrhData(grhIdx).Frames(1)).TileWidth
-            GrhData(grhIdx).TileHeight = GrhData(GrhData(grhIdx).Frames(1)).TileHeight
+
+            ' Heredar las dimensiones del primer frame
+            If GrhData(grhIdx).Frames(1) > 0 _
+               And GrhData(grhIdx).Frames(1) <= maxGrh Then
+
+                GrhData(grhIdx).pixelHeight = _
+                    GrhData(GrhData(grhIdx).Frames(1)).pixelHeight
+
+                GrhData(grhIdx).pixelWidth = _
+                    GrhData(GrhData(grhIdx).Frames(1)).pixelWidth
+
+                GrhData(grhIdx).TileWidth = _
+                    GrhData(GrhData(grhIdx).Frames(1)).TileWidth
+
+                GrhData(grhIdx).TileHeight = _
+                    GrhData(GrhData(grhIdx).Frames(1)).TileHeight
+
+            End If
+
         Else
-            Get #Handle, , fileNum
-            GrhData(grhIdx).FileNum = fileNum
+
+            '-----------------------------------------------------
+            ' GRH ESTÁTICO
+            '-----------------------------------------------------
+            GrhData(grhIdx).NumFrames = 1
+
+            ReDim GrhData(grhIdx).Frames(1)
+
+            Get #Handle, , FileNum
             Get #Handle, , sx
-            GrhData(grhIdx).SX = sx
             Get #Handle, , sy
-            GrhData(grhIdx).SY = sy
             Get #Handle, , pw
-            GrhData(grhIdx).pixelWidth = pw
             Get #Handle, , ph
+
+            GrhData(grhIdx).FileNum = FileNum
+            GrhData(grhIdx).sx = sx
+            GrhData(grhIdx).sy = sy
+            GrhData(grhIdx).pixelWidth = pw
             GrhData(grhIdx).pixelHeight = ph
-            GrhData(grhIdx).TileWidth = pw / TilePixelHeight
-            GrhData(grhIdx).TileHeight = ph / TilePixelWidth
+
+            ' El propio GRH es su frame
             GrhData(grhIdx).Frames(1) = grhIdx
+
+            ' IMPORTANTE:
+            ' Width con TilePixelWidth
+            ' Height con TilePixelHeight
+            GrhData(grhIdx).TileWidth = _
+                pw / TilePixelWidth
+
+            GrhData(grhIdx).TileHeight = _
+                ph / TilePixelHeight
+
         End If
+
     Loop
 
     Close #Handle
 
     GrhCount = maxGrh
-    LogError "LoadGrhData: maxGrh=" & maxGrh & " GrhCount=" & GrhCount
-    If maxGrh <= 0 Then LogError "LoadGrhData: WARNING - no GRH entries!"
-    
-    ' Diagnostic: dump first 10 GRH records
-    Dim diag As Long
-    For diag = 1 To 10
-        If GrhData(diag).Active Then
-            LogError "GRH " & diag & ": Active=" & GrhData(diag).Active & " FileNum=" & GrhData(diag).FileNum & " SX=" & GrhData(diag).SX & " SY=" & GrhData(diag).SY & " PW=" & GrhData(diag).pixelWidth & " PH=" & GrhData(diag).pixelHeight & " Frames=" & GrhData(diag).NumFrames & " Speed=" & GrhData(diag).Speed
-        Else
-            LogError "GRH " & diag & ": INACTIVE"
-        End If
-    Next diag
-End Sub
 
+    LogError "LoadGrhData: maxGrh=" & maxGrh & _
+             " GrhCount=" & GrhCount
+
+    '-------------------------------------------------------------
+    ' DIAGNÓSTICO
+    '-------------------------------------------------------------
+    For i = 1 To 10
+
+        If GrhData(i).Active Then
+
+            LogError "GRH " & i & _
+                     ": Active=" & GrhData(i).Active & _
+                     " FileNum=" & GrhData(i).FileNum & _
+                     " SX=" & GrhData(i).sx & _
+                     " SY=" & GrhData(i).sy & _
+                     " PW=" & GrhData(i).pixelWidth & _
+                     " PH=" & GrhData(i).pixelHeight & _
+                     " Frames=" & GrhData(i).NumFrames & _
+                     " Speed=" & GrhData(i).Speed
+
+        Else
+
+            LogError "GRH " & i & ": INACTIVE"
+
+        End If
+
+    Next i
+
+    Exit Sub
+
+ErrorHandler:
+
+    LogError "LoadGrhData ERROR: " & _
+             Err.Number & " - " & Err.Description & _
+             " Loc=" & Loc(Handle)
+
+    On Error Resume Next
+
+    Close #Handle
+
+End Sub
 Sub CargarCuerpos()
 '*****************************************************************
 'Carga Personajes.ind: MiCabecera + NumCuerpos + registros
@@ -305,7 +615,7 @@ On Error Resume Next
     Dim n As Integer
     Dim i As Long
     Dim j As Byte
-    Dim grhIndex As Long
+    Dim GrhIndex As Long
     Dim Miscabezas() As tIndiceCabeza
 
     n = FreeFile
@@ -325,14 +635,14 @@ On Error Resume Next
         For j = 1 To 4
             Call InitGrh(HeadData(i).Head(j), Miscabezas(i).Head(j), 0)
         Next j
-        grhIndex = HeadData(i).Head(1).GrhIndex
-        If grhIndex > 0 And grhIndex <= UBound(GrhData) Then
-            heads(i).Texture = GrhData(grhIndex).FileNum
-            heads(i).startX = GrhData(grhIndex).SX
-            heads(i).startY = GrhData(grhIndex).SY
+        GrhIndex = HeadData(i).Head(1).GrhIndex
+        If GrhIndex > 0 And GrhIndex <= UBound(GrhData) Then
+            heads(i).Texture = GrhData(GrhIndex).FileNum
+            heads(i).startX = GrhData(GrhIndex).sx
+            heads(i).startY = GrhData(GrhIndex).sy
         End If
         If i <= 5 Then
-            LogError "Head " & i & ": grhIdx=" & grhIndex & " FileNum=" & heads(i).Texture & " startX=" & heads(i).startX & " startY=" & heads(i).startY
+            LogError "Head " & i & ": grhIdx=" & GrhIndex & " FileNum=" & heads(i).Texture & " startX=" & heads(i).startX & " startY=" & heads(i).startY
         End If
     Next i
 
@@ -348,7 +658,7 @@ On Error Resume Next
     Dim n As Integer
     Dim i As Long
     Dim j As Byte
-    Dim grhIndex As Long
+    Dim GrhIndex As Long
     Dim Miscabezas() As tIndiceCabeza
 
     n = FreeFile
@@ -366,11 +676,11 @@ On Error Resume Next
         For j = 1 To 4
             Call InitGrh(CascoAnimData(i).Head(j), Miscabezas(i).Head(j), 0)
         Next j
-        grhIndex = CascoAnimData(i).Head(1).GrhIndex
-        If grhIndex > 0 And grhIndex <= UBound(GrhData) Then
-            Cascos(i).Texture = GrhData(grhIndex).FileNum
-            Cascos(i).startX = GrhData(grhIndex).SX
-            Cascos(i).startY = GrhData(grhIndex).SY
+        GrhIndex = CascoAnimData(i).Head(1).GrhIndex
+        If GrhIndex > 0 And GrhIndex <= UBound(GrhData) Then
+            Cascos(i).Texture = GrhData(GrhIndex).FileNum
+            Cascos(i).startX = GrhData(GrhIndex).sx
+            Cascos(i).startY = GrhData(GrhIndex).sy
         End If
     Next i
 
@@ -475,11 +785,14 @@ Private Function GetGrhPictureForHdc(ByVal FileNum As Integer) As Object
     Set GetGrhPictureForHdc = Pic
 End Function
 
-Public Sub GrhRenderToHdc(ByVal GrhIndex As Long, ByVal DesthDC As Long, ByVal X As Integer, ByVal Y As Integer, ByVal Transparent As Boolean)
-    On Error Resume Next
+Public Sub GrhRenderToHdc(ByVal GrhIndex As Long, ByVal DesthDC As Long, _
+                          ByVal X As Integer, ByVal Y As Integer, _
+                          ByVal Transparent As Boolean)
+
+    On Error GoTo ErrorHandler
 
     Dim FileNum As Integer
-    Dim sX As Integer, sY As Integer
+    Dim sx As Integer, sy As Integer
     Dim pixelWidth As Integer, pixelHeight As Integer
     Dim Pic As Object
     Dim MemDC As Long
@@ -487,28 +800,66 @@ Public Sub GrhRenderToHdc(ByVal GrhIndex As Long, ByVal DesthDC As Long, ByVal X
 
     If GrhIndex <= 0 Then Exit Sub
 
-    ' Obtener datos del Grh
     With GrhData(GrhIndex)
-        sX = .SX
-        sY = .SY
+        sx = .sx
+        sy = .sy
         pixelWidth = .pixelWidth
         pixelHeight = .pixelHeight
         FileNum = .FileNum
     End With
 
-    ' Validaciones de seguridad
     If FileNum <= 0 Then Exit Sub
 
     Set Pic = GetGrhPictureForHdc(FileNum)
     If Pic Is Nothing Then Exit Sub
 
-    ' Crear un DC compatible en memoria y seleccionar el bitmap cargado
     MemDC = CreateCompatibleDC(DesthDC)
+
     OldBmp = SelectObject(MemDC, Pic.Handle)
 
-    Call BitBlt(DesthDC, X, Y, pixelWidth, pixelHeight, MemDC, sX, sY, SRCCOPY)
+    If OldBmp = 0 Then
+        LogError "ERROR SelectObject: Grh=" & GrhIndex & _
+                 " File=" & FileNum & _
+                 " Handle=" & Pic.Handle
+        DeleteDC MemDC
+        Exit Sub
+    End If
 
-    ' Restaurar y liberar el DC temporal (el bitmap en si queda vivo en cache)
+    If Transparent Then
+
+        Call TransparentBlt( _
+            DesthDC, _
+            X, Y, _
+            pixelWidth, pixelHeight, _
+            MemDC, _
+            sx, sy, _
+            pixelWidth, pixelHeight, _
+            RGB(0, 0, 0))
+
+    Else
+
+        Call BitBlt( _
+            DesthDC, _
+            X, Y, _
+            pixelWidth, pixelHeight, _
+            MemDC, _
+            sx, sy, _
+            SRCCOPY)
+
+    End If
+
     Call SelectObject(MemDC, OldBmp)
     Call DeleteDC(MemDC)
+
+    Exit Sub
+
+ErrorHandler:
+
+    LogError "GrhRenderToHdc ERROR: Grh=" & GrhIndex & _
+             " X=" & X & _
+             " Y=" & Y & _
+             " HDC=" & DesthDC & _
+             " Err=" & Err.Number & _
+             " Desc=" & Err.Description
+
 End Sub

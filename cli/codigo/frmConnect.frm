@@ -185,6 +185,31 @@ Begin VB.Form frmConnect
       Top             =   3401
       Width           =   1725
    End
+   Begin VB.CheckBox Check1 
+      BackColor       =   &H00FFFFFF&
+      Caption         =   "Recordar cuenta"
+      BeginProperty Font 
+         Name            =   "Tahoma"
+         Size            =   8.25
+         Charset         =   0
+         Weight          =   400
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      ForeColor       =   &H00000000&
+      Height          =   255
+      Left            =   5055
+      TabIndex        =   9
+      Top             =   5040
+      Width           =   1725
+   End
+   Begin VB.Image imgSalir 
+      Height          =   375
+      Left            =   11400
+      Top             =   120
+      Width           =   495
+   End
    Begin VB.Image EliminarCuenta 
       Height          =   495
       Left            =   8160
@@ -205,25 +230,6 @@ Begin VB.Form frmConnect
       MousePointer    =   99  'Custom
       Top             =   8040
       Width           =   1245
-   End
-   Begin VB.CheckBox Check1 
-      BackColor       =   &H00FFFFFF&
-      Caption         =   "Recordar cuenta"
-      BeginProperty Font 
-         Name            =   "Tahoma"
-         Size            =   8.25
-         Charset         =   0
-         Weight          =   400
-         Underline       =   0   'False
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
-      ForeColor       =   &H00000000&
-      Height          =   255
-      Left            =   5055
-      TabIndex        =   9
-      Top             =   5040
-      Width           =   1725
    End
    Begin VB.Image CrearPersonaje 
       Height          =   315
@@ -286,7 +292,7 @@ Private Sub Form_Activate()
     End If
 
     Call CargarLst
-    DescTxt.Text = ServersLst(CurServer).Desc
+    DescTxt.Text = ServersLst(CurServer).desc
 
     ' Aseguramos que el directorio Web existe para logs locales si fuera necesario
     nDirectorio = Dir(App.Path & "\Web", vbDirectory)
@@ -341,12 +347,12 @@ Private Sub Form_Load()
         If Val(GetVar(sFile, "Recordar", "Check")) = 1 Then
             NameTxt.Text = GetVar(sFile, "Recordar", "Nombre")
             PasswordTxt.Text = DecryptINI$(GetVar(sFile, "Recordar", "Password"), "aopass")
-            Check1.Value = 1
+            Check1.value = 1
         Else
-            Check1.Value = 0
+            Check1.value = 0
         End If
     Else
-        Check1.Value = 0
+        Check1.value = 0
     End If
     
     bLoadingRecordar = False
@@ -395,7 +401,7 @@ Private Sub Conectar_Click(Index As Integer)
     passcuent = PasswordTxt.Text
     
     ' Si "Recordar cuenta" est� activo, guardamos los datos
-    If Check1.Value = 1 Then
+    If Check1.value = 1 Then
         Dim sFile As String
         sFile = App.Path & "\LIBS\Recordar.dat"
         Call WriteVar(sFile, "Recordar", "Nombre", nombrecuent)
@@ -413,6 +419,24 @@ Private Sub Conectar_Click(Index As Integer)
     frmMain.Socket1.RemotePort = CurServerPort
     frmMain.Socket1.Connect
 End Sub
+
+
+Private Sub imgSalir_Click()
+    ' Sonido
+    Call PlayWaveDS(SND_CLICK)
+
+    ' Desconectar socket
+    On Error Resume Next
+
+    If frmMain.Socket1.Connected Then
+        frmMain.Socket1.Disconnect
+        frmMain.Socket1.Cleanup
+    End If
+
+    ' Cerrar completamente el juego
+    End
+End Sub
+
 
 ' --- BOTON: RECUPERAR CUENTA ---
 Private Sub RecuperarCuenta_Click()
@@ -472,7 +496,7 @@ Private Sub Check1_Click()
     Dim sFile As String
     sFile = App.Path & "\LIBS\Recordar.dat"
     
-    If Check1.Value = 0 Then
+    If Check1.value = 0 Then
         ' Desactivar recordar - borrar archivo
         If Dir(sFile) <> "" Then Kill sFile
         NameTxt.Text = ""

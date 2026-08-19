@@ -110,7 +110,7 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 Option Explicit
-Private Sub Cancelar_MouseDown(Button As Integer, Shift As Integer, x As Single, y As Single)
+Private Sub Cancelar_MouseDown(Button As Integer, Shift As Integer, X As Single, Y As Single)
 PlayWaveDS (SND_CLICK)
 If frmMain.Socket1.HostAddress = CurServerIp Or frmMain.Socket1.RemotePort = CurServerPort Then
             frmMain.Socket1.Disconnect
@@ -141,11 +141,11 @@ PlayWaveDS (SND_CLICK)
 Call SendData("REECUU" & txtNombre & "," & txtRespuesta)
 End Sub
 
-Private Sub Recuperar_MouseDown(Button As Integer, Shift As Integer, x As Single, y As Single)
+Private Sub Recuperar_MouseDown(Button As Integer, Shift As Integer, X As Single, Y As Single)
 Me.Recuperar.Picture = LoadPicture(App.Path & "\Graficos\Principal\Recuperar2FinA.jpg")
 End Sub
 
-Private Sub Recuperar_MouseMove(Button As Integer, Shift As Integer, x As Single, y As Single)
+Private Sub Recuperar_MouseMove(Button As Integer, Shift As Integer, X As Single, Y As Single)
 Me.Recuperar.Picture = LoadPicture(App.Path & "\Graficos\Principal\Recuperar2Fin.jpg")
 End Sub
 
@@ -156,7 +156,7 @@ PlayWaveDS (SND_CLICK)
 
         
 If txtNombre = "" Or txtMail = "" Then
-MsgBox "ï¿½Completa todo!"
+MsgBox "¡Completa todo!"
 Exit Sub
 End If
 
@@ -168,7 +168,7 @@ End If
 Call SendData("RECCUU" & txtNombre & "," & txtMail)
 End Sub
 
-Private Sub Siguiente_MouseDown(Button As Integer, Shift As Integer, x As Single, y As Single)
+Private Sub Siguiente_MouseDown(Button As Integer, Shift As Integer, X As Single, Y As Single)
 Siguiente.Picture = LoadPicture(App.Path & "\Graficos\Principal\RecuperarSiguienteA.jpg")
 End Sub
 
