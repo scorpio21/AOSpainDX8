@@ -40,7 +40,7 @@ Public RawServersList As String
 Public Type tServerInfo
     Ip As String
     Puerto As Integer
-    Desc As String
+    desc As String
     PassRecPort As Integer
 End Type
 
@@ -333,8 +333,8 @@ Public PuertoDelServidor As String
 Public Declare Function GetTickCount Lib "kernel32" () As Long
 
 'para escribir y leer variables
-Public Declare Function writeprivateprofilestring Lib "kernel32" Alias "WritePrivateProfileStringA" (ByVal lpApplicationname As String, ByVal lpKeyname As Any, ByVal lpString As String, ByVal lpfilename As String) As Long
-Public Declare Function getprivateprofilestring Lib "kernel32" Alias "GetPrivateProfileStringA" (ByVal lpApplicationname As String, ByVal lpKeyname As Any, ByVal lpdefault As String, ByVal lpreturnedstring As String, ByVal nsize As Long, ByVal lpfilename As String) As Long
+Public Declare Function writeprivateprofilestring Lib "kernel32" Alias "WritePrivateProfileStringA" (ByVal lpApplicationName As String, ByVal lpKeyName As Any, ByVal lpString As String, ByVal lpFileName As String) As Long
+Public Declare Function GetPrivateProfileString Lib "kernel32" Alias "GetPrivateProfileStringA" (ByVal lpApplicationName As String, ByVal lpKeyName As Any, ByVal lpDefault As String, ByVal lpReturnedString As String, ByVal nSize As Long, ByVal lpFileName As String) As Long
 
 'Teclado
 Public Declare Function GetKeyState Lib "user32" (ByVal nVirtKey As Long) As Integer
@@ -468,7 +468,7 @@ End Type
 
 '=== Tipos/Enums de Aodrag9 Declares.bas agregados para completar DX8 ===
 Public Type Servidores
-    Nombre As String
+    nombre As String
     Ip As String
     Puerto As Integer
 End Type
@@ -590,7 +590,7 @@ Public rcvMuerto As Integer
 
 Public PJSAmount As Integer
 
-Public Type pjs
+Public Type PJs
     NamePJ As String
     LvlPJ As Integer
     ClasePJ As eClass
@@ -613,7 +613,7 @@ Public Type acc
     resp As String
    
     CantPJ As Byte
-    pjs(1 To 8) As pjs
+    PJs(1 To 8) As PJs
 End Type
 
 Public Enum FxMeditar

@@ -7,7 +7,7 @@ Private Type tPJCuentas
     Shield As Long
     Weapon As Long
     Baned As Long
-    Nombre As String
+    nombre As String
     LVL As Integer
     Clase As String
     Muerto As Integer
@@ -26,10 +26,10 @@ Sub DibujaPJ(Grh As Grh, ByVal X As Integer, ByVal Y As Integer, Index As Intege
 
     Dim iGrhIndex As Long
 
-    If Grh.GrhIndex <= 0 Then
-        LogError "DibujaPJ: Grh.GrhIndex INVALIDO=" & Grh.GrhIndex
-        Exit Sub
-    End If
+'    If Grh.GrhIndex <= 0 Then
+'        LogError "DibujaPJ: Grh.GrhIndex INVALIDO=" & Grh.GrhIndex
+'        Exit Sub
+'    End If
 
     If Grh.GrhIndex > GrhCount Then
         LogError "DibujaPJ: Grh fuera de rango=" & Grh.GrhIndex
@@ -62,16 +62,23 @@ Sub DibujaPJ(Grh As Grh, ByVal X As Integer, ByVal Y As Integer, Index As Intege
         LogError "DibujaPJ: Frame INACTIVO=" & iGrhIndex
         Exit Sub
     End If
+    
+    'log dibujando
+    Dim msgPJ As String
 
-    LogError "DibujaPJ: DIBUJANDO Index=" & Index & _
-             " Grh=" & Grh.GrhIndex & _
-             " Frame=" & Grh.FrameCounter & _
-             " iGrh=" & iGrhIndex & _
-             " X=" & X & _
-             " Y=" & Y & _
-             " W=" & GrhData(iGrhIndex).pixelWidth & _
-             " H=" & GrhData(iGrhIndex).pixelHeight
-
+    msgPJ = "[DibujaPJ] DIBUJANDO Index=" & Index & _
+        " Grh=" & Grh.GrhIndex & _
+        " Frame=" & Grh.FrameCounter & _
+        " iGrh=" & iGrhIndex & _
+        " X=" & X & _
+        " Y=" & Y & _
+        " W=" & GrhData(iGrhIndex).pixelWidth & _
+        " H=" & GrhData(iGrhIndex).pixelHeight
+    
+    If LogsEnabled And Log_DibujaPJ Then
+        LogLimitedCategory "DibujaPJ.log", "DibujaPJ", msgPJ, 10
+    End If
+    
     Call GrhRenderToHdc( _
         iGrhIndex, _
         frmCuent.PJ(Index).Hdc, _
@@ -117,7 +124,7 @@ Sub RenderizarPJsCuentas()
             Call ActualizarDibujoPJ(i)
             
 
-            If frmCuent.Nombre(i).Caption = PJClickeado And PJClickeado <> "" Then
+            If frmCuent.nombre(i).Caption = PJClickeado And PJClickeado <> "" Then
                 frmCuent.PJ(i).Line (0, 0)- _
                     (frmCuent.PJ(i).ScaleWidth - 1, frmCuent.PJ(i).ScaleHeight - 1), _
                     rColor, B
@@ -144,14 +151,14 @@ Public Sub LimpiarPJsCuentas()
     Dim i As Integer
     For i = 0 To 9
         PJs(i).Active = False
-        PJs(i).Nombre = ""
+        PJs(i).nombre = ""
         PJs(i).LVL = 0
         PJs(i).Body = 0
         PJs(i).Head = 0
 
         ' Limpiamos labels y pictures del formulario
-        frmCuent.Nombre(i).Caption = "Nada"
-        frmCuent.Nombre(i).Visible = False
+        frmCuent.nombre(i).Caption = "Nada"
+        frmCuent.nombre(i).Visible = False
         frmCuent.Label2(i).Caption = "Nivel: 0"
         frmCuent.Label2(i).Visible = False
         frmCuent.CP(i).Visible = True
@@ -163,11 +170,7 @@ Public Sub LimpiarPJsCuentas()
 End Sub
 
 Private Sub ActualizarDibujoPJ(ByVal Index As Integer)
-    
-    LogError "PJ TAMAÑO Index=" & Index & _
-         " Width=" & frmCuent.PJ(Index).ScaleWidth & _
-         " Height=" & frmCuent.PJ(Index).ScaleHeight
-    
+         
     Dim Body As Long, Head As Long, Casco As Long, Shield As Long, Weapon As Long
     Dim Muerto As Integer, Baned As Long
     Dim Grh As Grh
@@ -278,7 +281,7 @@ Pos = YYY + BodyHeight
     End If
 End Sub
 
-Public Sub DibujarTodo(ByVal Index As Integer, Body As Long, Head As Long, Casco As Long, Shield As Long, Weapon As Long, Baned As Long, Nombre As String, LVL As Integer, Clase As String, Muerto As Integer, GM As Long)
+Public Sub DibujarTodo(ByVal Index As Integer, Body As Long, Head As Long, Casco As Long, Shield As Long, Weapon As Long, Baned As Long, nombre As String, LVL As Integer, Clase As String, Muerto As Integer, GM As Long)
 
     With PJs(Index)
         .Body = Body
@@ -287,7 +290,7 @@ Public Sub DibujarTodo(ByVal Index As Integer, Body As Long, Head As Long, Casco
         .Shield = Shield
         .Weapon = Weapon
         .Baned = Baned
-        .Nombre = Nombre
+        .nombre = nombre
         .LVL = LVL
         .Clase = Clase
         .Muerto = Muerto
@@ -297,9 +300,9 @@ Public Sub DibujarTodo(ByVal Index As Integer, Body As Long, Head As Long, Casco
     End With
 
     ' Actualizamos labels del formulario
-frmCuent.Nombre(Index).Caption = Nombre
+frmCuent.nombre(Index).Caption = nombre
 frmCuent.CP(Index).Visible = False
-frmCuent.Nombre(Index).Visible = True
+frmCuent.nombre(Index).Visible = True
 frmCuent.Label2(Index).Visible = True
 
     If GM = 1 Then

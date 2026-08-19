@@ -134,9 +134,9 @@ Public Sub DrawGrhtoHdc(ByVal hwnd As Long, ByVal Hdc As Long, ByVal grhIdx As I
     BiBitCount = Buffer(28) Or _
                  (CLng(Buffer(29)) * 256)
 
-    LogError "BMP HEADER: Width=" & BiWidth & _
-             " Height=" & BiHeight & _
-             " Bits=" & BiBitCount
+'    LogError "BMP HEADER: Width=" & BiWidth & _
+'             " Height=" & BiHeight & _
+'             " Bits=" & BiBitCount
 
     '--------------------------------------------------
     ' Datos del GRH
@@ -151,10 +151,10 @@ Public Sub DrawGrhtoHdc(ByVal hwnd As Long, ByVal Hdc As Long, ByVal grhIdx As I
     pw = GrhData(GrhIndex).pixelWidth
     ph = GrhData(GrhIndex).pixelHeight
 
-    LogError "BMP GRH: sx=" & sx & _
-             " sy=" & sy & _
-             " pw=" & pw & _
-             " ph=" & ph
+'    LogError "BMP GRH: sx=" & sx & _
+'             " sy=" & sy & _
+'             " pw=" & pw & _
+'             " ph=" & ph
 
     If sx < 0 Or sy < 0 Then
         LogError "DrawGrhtoHdc: FAIL Coordenadas negativas"
@@ -202,8 +202,8 @@ Public Sub DrawGrhtoHdc(ByVal hwnd As Long, ByVal Hdc As Long, ByVal grhIdx As I
                       (CLng(Buffer(12)) * 65536) Or _
                    (CLng(Buffer(13)) * 16777216)
 
-    LogError "BMP PIXELS: Offset=" & PixelDataOffset & _
-             " FileSize=" & FileSize
+'    LogError "BMP PIXELS: Offset=" & PixelDataOffset & _
+'             " FileSize=" & FileSize
 
 
     If PixelDataOffset < 0 Or PixelDataOffset >= FileSize Then
@@ -224,8 +224,8 @@ Public Sub DrawGrhtoHdc(ByVal hwnd As Long, ByVal Hdc As Long, ByVal grhIdx As I
         Exit Sub
     End If
 
-    LogError "BMP: PixelDataOffset=" & PixelDataOffset & _
-             " ColorTableSize=" & colorTableSize
+'    LogError "BMP: PixelDataOffset=" & PixelDataOffset & _
+'             " ColorTableSize=" & colorTableSize
     
 
     If 54 + colorTableSize > FileSize Then
@@ -262,16 +262,24 @@ Public Sub DrawGrhtoHdc(ByVal hwnd As Long, ByVal Hdc As Long, ByVal grhIdx As I
     '--------------------------------------------------
     ' Antes de StretchDIBits
     '--------------------------------------------------
-    LogError "DrawGrhtoHdc: ANTES StretchDIBits" & _
-             " GrhIdx=" & grhIdx & _
-             " FileNum=" & FileNum & _
-             " sx=" & sx & _
-             " sy=" & sy & _
-             " pw=" & pw & _
-             " ph=" & ph & _
-             " dstW=" & dstW & _
-             " dstH=" & dstH & _
-             " Hdc=" & Hdc
+   Dim DrawGrh As String
+
+    Const SUB_NAME As String = "DrawGrhtoHdc"
+
+    DrawGrh = "[" & SUB_NAME & "] ANTES StretchDIBits" & _
+              " GrhIdx=" & grhIdx & _
+              " FileNum=" & FileNum & _
+              " sx=" & sx & _
+              " sy=" & sy & _
+              " pw=" & pw & _
+              " ph=" & ph & _
+              " dstW=" & dstW & _
+              " dstH=" & dstH & _
+              " Hdc=" & Hdc
+              
+    If LogsEnabled And Log_DrawGrh Then
+        LogLimited "DrawGrhtoHdc.log", DrawGrh, 10
+    End If
 
     '--------------------------------------------------
     ' Dibujar
@@ -358,7 +366,7 @@ Sub LoadGrhData()
 
     Handle = FreeFile
 
-    Open IniPath & "Graficos.ind" For Binary Access Read As #Handle
+    Open iniPath & "Graficos.ind" For Binary Access Read As #Handle
 
     '-------------------------------------------------------------
     ' CABECERA
@@ -580,7 +588,7 @@ On Error Resume Next
     Dim MisCuerpos() As tIndiceCuerpo
 
     n = FreeFile
-    Open IniPath & "Personajes.ind" For Binary Access Read As #n
+    Open iniPath & "Personajes.ind" For Binary Access Read As #n
 
     Get #n, , MiCabecera
     Get #n, , NumCuerpos
@@ -619,7 +627,7 @@ On Error Resume Next
     Dim Miscabezas() As tIndiceCabeza
 
     n = FreeFile
-    Open IniPath & "Cabezas.ind" For Binary Access Read As #n
+    Open iniPath & "Cabezas.ind" For Binary Access Read As #n
 
     Get #n, , MiCabecera
     Get #n, , NumHeads
@@ -662,7 +670,7 @@ On Error Resume Next
     Dim Miscabezas() As tIndiceCabeza
 
     n = FreeFile
-    Open IniPath & "Cascos.ind" For Binary Access Read As #n
+    Open iniPath & "Cascos.ind" For Binary Access Read As #n
 
     Get #n, , MiCabecera
     Get #n, , NumCascos
@@ -696,7 +704,7 @@ On Error Resume Next
     Dim i As Long
 
     n = FreeFile
-    Open IniPath & "Fxs.ind" For Binary Access Read As #n
+    Open iniPath & "Fxs.ind" For Binary Access Read As #n
 
     Get #n, , MiCabecera
     Get #n, , NumFxs
@@ -723,7 +731,7 @@ On Error Resume Next
     Dim MisAtaques() As tIndiceAtaque
 
     n = FreeFile
-    Open IniPath & "Ataques.ind" For Binary Access Read As #n
+    Open iniPath & "Ataques.ind" For Binary Access Read As #n
 
     Get #n, , MiCabecera
     Get #n, , NumAtaques

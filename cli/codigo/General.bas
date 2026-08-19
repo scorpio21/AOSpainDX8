@@ -192,7 +192,7 @@ Next loopc
 
 End Sub
 
-Sub Addtostatus(RichTextBox As RichTextBox, Text As String, RED As Byte, GREEN As Byte, BLUE As Byte, Bold As Byte, Italic As Byte)
+Sub Addtostatus(RichTextBox As RichTextBox, Text As String, red As Byte, green As Byte, blue As Byte, Bold As Byte, Italic As Byte)
 '******************************************
 'Adds text to a Richtext box at the bottom.
 'Automatically scrolls to new text.
@@ -200,27 +200,27 @@ Sub Addtostatus(RichTextBox As RichTextBox, Text As String, RED As Byte, GREEN A
 'apperance!
 '******************************************
 
-frmCargando.Status.SelStart = Len(RichTextBox.Text)
-frmCargando.Status.SelLength = 0
-frmCargando.Status.SelColor = RGB(RED, GREEN, BLUE)
+frmCargando.status.SelStart = Len(RichTextBox.Text)
+frmCargando.status.SelLength = 0
+frmCargando.status.SelColor = RGB(red, green, blue)
 
 If Bold Then
-    frmCargando.Status.SelBold = True
+    frmCargando.status.SelBold = True
 Else
-    frmCargando.Status.SelBold = False
+    frmCargando.status.SelBold = False
 End If
 
 If Italic Then
-    frmCargando.Status.SelItalic = True
+    frmCargando.status.SelItalic = True
 Else
-    frmCargando.Status.SelItalic = False
+    frmCargando.status.SelItalic = False
 End If
 
-frmCargando.Status.SelText = Chr(13) & Chr(10) & Text
+frmCargando.status.SelText = Chr(13) & Chr(10) & Text
 
 End Sub
 
-    Sub AddtoRichTextBox(RichTextBox As RichTextBox, Text As String, Optional RED As Integer = -1, Optional GREEN As Integer, Optional BLUE As Integer, Optional Bold As Boolean, Optional Italic As Boolean, Optional bCrLf As Boolean)
+    Sub AddtoRichTextBox(RichTextBox As RichTextBox, Text As String, Optional red As Integer = -1, Optional green As Integer, Optional blue As Integer, Optional Bold As Boolean, Optional Italic As Boolean, Optional bCrLf As Boolean)
         With RichTextBox
             If (Len(.Text)) > 2000 Then .Text = ""
             .SelStart = Len(RichTextBox.Text)
@@ -229,7 +229,7 @@ End Sub
             .SelBold = IIf(Bold, True, False)
             .SelItalic = IIf(Italic, True, False)
             
-            If Not RED = -1 Then .SelColor = RGB(RED, GREEN, BLUE)
+            If Not red = -1 Then .SelColor = RGB(red, green, blue)
     
             .SelText = IIf(bCrLf, Text, Text & vbCrLf)
             
@@ -850,7 +850,7 @@ For i = 1 To Cont
     cur$ = ReadField(i, RawServersList, Asc(";"))
     ServersLst(i).Ip = ReadField(1, cur$, Asc(":"))
     ServersLst(i).Puerto = ReadField(2, cur$, Asc(":"))
-    ServersLst(i).Desc = ReadField(4, cur$, Asc(":"))
+    ServersLst(i).desc = ReadField(4, cur$, Asc(":"))
     ServersLst(i).PassRecPort = ReadField(3, cur$, Asc(":"))
 Next i
 
@@ -907,6 +907,7 @@ Dim f As Boolean
 ChDrive App.Path
 ChDir App.Path
 
+Call InitLogs
 
 'Cargamos el archivo de configuracion inicial
 If FileExist(App.Path & "\init\Inicio.con", vbNormal) Then
@@ -947,7 +948,7 @@ UserParalizado = False
 
 frmConnect.version = "v" & App.Major & "." & App.Minor & " Beta: 1"
 Form_Caption = "AOSpain v" & App.Major & "." & App.Minor & " Beta: 1"
-AddtoRichTextBox frmCargando.Status, "Buscando servidores de AOSpain....", 0, 0, 0, 0, 0, 1
+AddtoRichTextBox frmCargando.status, "Buscando servidores de AOSpain....", 0, 0, 0, 0, 0, 1
 
 'frmMain.Inet1.URL = "http://www.caratula2000.net/power/poweraoiplist3.txt"
 'RawServersList = frmMain.Inet1.OpenURL
@@ -970,8 +971,8 @@ Call InitServersList(RawServersList)
 'IPdelServidor =
 'PuertoDelServidor = 7666
 
-AddtoRichTextBox frmCargando.Status, "Ok", , , , 1
-AddtoRichTextBox frmCargando.Status, "Iniciando constantes...", 0, 0, 0, 0, 0, 1
+AddtoRichTextBox frmCargando.status, "Ok", , , , 1
+AddtoRichTextBox frmCargando.status, "Iniciando constantes...", 0, 0, 0, 0, 0, 1
 
 ReDim Ciudades(1 To NUMCIUDADES) As String
 Ciudades(1) = "Ullathorpe"
@@ -1055,7 +1056,7 @@ AtributosNames(5) = "Constitucion"
 frmOldPersonaje.NameTxt.Text = Config_Inicio.Name
 frmOldPersonaje.PasswordTxt.Text = ""
 
-AddtoRichTextBox frmCargando.Status, "Hecho", , , , 1
+AddtoRichTextBox frmCargando.status, "Hecho", , , , 1
     'DX8: Opciones de audio derivadas de la configuracion del cliente (RenderMod)
     Opciones.Audio = IIf(Fx = 1, 0, 1)
     Opciones.NamePlayers = 1  ' [FIX] Mostrar nombres de personajes
@@ -1076,8 +1077,8 @@ AddtoRichTextBox frmCargando.Status, "Hecho", , , , 1
 
 DirectXInit
 
-AddtoRichTextBox frmCargando.Status, "Cargando Sonidos....", 0, 0, 0, 0, 0, 1
-AddtoRichTextBox frmCargando.Status, "Hecho", , , , 1
+AddtoRichTextBox frmCargando.status, "Cargando Sonidos....", 0, 0, 0, 0, 0, 1
+AddtoRichTextBox frmCargando.status, "Hecho", , , , 1
 
 Dim loopc As Integer
 
@@ -1095,7 +1096,7 @@ ENDC = Chr(1)
 
     End If
 'Call AddtoRichTextBox(frmCargando.Status, "Creando animaciones extras.", 2, 51, 223, 1, 1)
-Call AddtoRichTextBox(frmCargando.Status, "Creando animaciones extra....")
+Call AddtoRichTextBox(frmCargando.status, "Creando animaciones extra....")
 
 
 Call CargarTips
@@ -1105,7 +1106,7 @@ Call CargarAnimArmas
 Call CargarAnimEscudos
 
 
-AddtoRichTextBox frmCargando.Status, "                    �Bienvenido a Argentum Online!", , , , 1
+AddtoRichTextBox frmCargando.status, "                    �Bienvenido a Argentum Online!", , , , 1
 
 
 Unload frmCargando
@@ -1223,7 +1224,7 @@ Loop
 
 EngineRun = False
 frmCargando.Show
-AddtoRichTextBox frmCargando.Status, "Liberando recursos...", 0, 0, 0, 0, 0, 1
+AddtoRichTextBox frmCargando.status, "Liberando recursos...", 0, 0, 0, 0, 0, 1
 DeinitTileEngine
 
 
@@ -1310,7 +1311,7 @@ szReturn = ""
 sSpaces = Space(5000) ' This tells the computer how long the longest string can be. If you want, you can change the number 75 to any number you wish
 
 
-getprivateprofilestring Main, Var, szReturn, sSpaces, Len(sSpaces), File
+GetPrivateProfileString Main, Var, szReturn, sSpaces, Len(sSpaces), File
 
 GetVar = RTrim(sSpaces)
 GetVar = Left(GetVar, Len(GetVar) - 1)
