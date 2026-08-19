@@ -813,7 +813,7 @@ Sub LoadUserAccount(ByVal PJinit As String)
                   GetVar(CharPath & "\" & PJinit, "STATS", "ELV") & "," & _
                   GetVar(CharPath & "\" & PJinit, "INIT", "Clase") & "," & _
                   GetVar(CharPath & "\" & PJinit, "FLAGS", "Muerto") & "," & _
-                  IIf(EsDios(PJinit), "1", "0")
+                  GetVar(CharPath & "\" & PJinit, "FLAGS", "Dios")
 End Sub
 
 Function UserAccountEsCrimi(ByVal PJinit As String) As Integer

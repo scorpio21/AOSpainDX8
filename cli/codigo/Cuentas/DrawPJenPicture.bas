@@ -185,7 +185,7 @@ Private Sub ActualizarDibujoPJ(ByVal Index As Integer)
     XBody = 40
     YBody = 26
     BBody = 40
-    YHead = Pos + 8
+    
 
     If Muerto = 1 Then
         Body = 8
@@ -238,7 +238,7 @@ If BodyGrhIndex > 0 And BodyGrhIndex <= GrhCount Then
 End If
 
 Pos = YYY + BodyHeight
-    
+    YHead = Pos + 8
     ' Cabeza
     If Head > 0 And Head <= UBound(HeadData) Then
         Grh = HeadData(Head).Head(3)
@@ -248,7 +248,7 @@ Pos = YYY + BodyHeight
                 Call dibujaban(Index, vbBlack)
                 Call dibujaban(Index, vbRed)
             End If
-            Call DibujaPJ(Grh, BBody, XHead, Index)
+            Call DibujaPJ(Grh, BBody, YHead, Index)
             Debug.Print Pos + 8
         End If
     End If
