@@ -78,14 +78,14 @@ Public Const EspadaMataDragonesIndex = 402
 
 Public Const MAXMASCOTASENTRENADOR = 7
 
-Public Const FXWARP = 1
+Public Const FXWARP = 42
 Public Const FXCURAR = 2
 
-Public Const FXMEDITARCHICO = 17
-Public Const FXMEDITARMEDIANO = 5
+Public Const FXMEDITARCHICO = 26
+Public Const FXMEDITARMEDIANO = 6
 Public Const FXMEDITARMEDIANODOS = 4
-Public Const FXMEDITARGRANDE = 6
-Public Const FXMEDITARPOWA = 18
+Public Const FXMEDITARGRANDE = 16
+Public Const FXMEDITARPOWA = 50
 
 Public Const POSINVALIDA = 3
 
@@ -177,7 +177,7 @@ Public Const NPCTYPE_GUARDIASMALVADOS = 8
 Public Const FX_TELEPORT_INDEX = 1
 
 
-Public Const MIN_APUÃ±ALAR = 10
+Public Const MIN_APUÑALAR = 10
 
 '********** CONSTANTANTES ***********
 Public Const NUMSKILLS = 22 '[Efestos]
@@ -213,7 +213,7 @@ Public Const iCabezaMuerto = 500
 
 
 Public Const iORO = 12
-Public Const Pescado = 139
+Public Const Pescado = 1191
 
 
 '%%%%%%%%%% CONSTANTES DE INDICES -> reemplazadas por Enum eSkill %%%%%%%%%%%
@@ -223,7 +223,7 @@ Public Const Pescado = 139
 'Public Const Tacticas = 4
 'Public Const Armas = 5
 'Public Const Meditar = 6
-'Public Const ApuÃ±alar = 7
+'Public Const Apuñalar = 7
 'Public Const Ocultarse = 8
 'Public Const Supervivencia = 9
 'Public Const Talar = 10
@@ -249,7 +249,7 @@ Public Enum eSkill
     Tacticas = 4
     Armas = 5
     Meditar = 6
-    ApuÃ±alar = 7
+    Apuñalar = 7
     Ocultarse = 8
     Supervivencia = 9
     Talar = 10
@@ -582,7 +582,7 @@ Public Type ObjData
     'Solo contenedores
     MaxItems As Integer
     Conte As Inventario
-    ApuÃ±ala As Byte
+    Apuñala As Byte
     
     HechizoIndex As Integer
     

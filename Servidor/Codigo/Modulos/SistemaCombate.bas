@@ -578,10 +578,10 @@ Call SendData(ToIndex, UserIndex, 0, "||Has golpeado a la criatura por " & Daño 
 'Call SendData(ToIndex, UserIndex, 0, "U2" & Daño)
 
 If Npclist(NpcIndex).Stats.MinHP > 0 Then
-    'Trata de ApuÃ±alar por la espalda al enemigo
-    If PuedeApuÃ±alar(UserIndex) Then
-       Call DoApuÃ±alar(UserIndex, NpcIndex, 0, Daño)
-       Call SubirSkill(UserIndex, ApuÃ±alar)
+    'Trata de Apuñalar por la espalda al enemigo
+    If PuedeApuñalar(UserIndex) Then
+       Call DoApuñalar(UserIndex, NpcIndex, 0, Daño)
+       Call SubirSkill(UserIndex, Apuñalar)
     End If
 End If
 
@@ -1108,10 +1108,10 @@ If UserList(AtacanteIndex).Flags.Hambre = 0 And UserList(AtacanteIndex).Flags.Se
         
         Call SubirSkill(AtacanteIndex, Tacticas)
         
-        'Trata de ApuÃ±alar por la espalda al enemigo
-        If PuedeApuÃ±alar(AtacanteIndex) Then
-                Call DoApuÃ±alar(AtacanteIndex, 0, VictimaIndex, Daño)
-                Call SubirSkill(AtacanteIndex, ApuÃ±alar)
+        'Trata de Apuñalar por la espalda al enemigo
+        If PuedeApuñalar(AtacanteIndex) Then
+                Call DoApuñalar(AtacanteIndex, 0, VictimaIndex, Daño)
+                Call SubirSkill(AtacanteIndex, Apuñalar)
         End If
 End If
 

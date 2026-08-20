@@ -1267,7 +1267,7 @@ Private Sub imgBorrarPJ_Click()
         Exit Sub
     End If
     
-    If MsgBox("Â¿EstÃ¡s seguro que deseas borrar a " & PJClickeado & "?", vbYesNo + vbQuestion) = vbYes Then
+    If MsgBox("¿Estás seguro que deseas borrar a " & PJClickeado & "?", vbYesNo + vbQuestion) = vbYes Then
         Call SendData("BORR" & PJClickeado & "," & nombrecuent)
     End If
 End Sub

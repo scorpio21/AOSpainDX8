@@ -138,9 +138,47 @@ Public Sub InitLogs()
     Log_Criticos = (ReadIni("LOGS", "EnableCriticos", "1", iniPath) = "1")
     Log_Warnings = (ReadIni("LOGS", "EnableWarnings", "1", iniPath) = "1")
     Log_DebugGeneral = (ReadIni("LOGS", "EnableDebugGeneral", "0", iniPath) = "1")
+    ' ============================================================
+' BORRAR LOGS AL INICIAR (OPCIONAL)
+' ============================================================
+
+If LogsEnabled Then
+    On Error Resume Next
+
+    Kill App.Path & "\Logs\DibujaPJ.log"
+    Kill App.Path & "\Logs\DrawGrhtoHdc.log"
+    Kill App.Path & "\Logs\Render_TileSize.log"
+    Kill App.Path & "\Logs\Render_Coords.log"
+    Kill App.Path & "\Logs\Render_Bounds.log"
+    Kill App.Path & "\Logs\Mapa_Dibuja.log"
+    Kill App.Path & "\Logs\Mapa_Carga.log"
+    Kill App.Path & "\Logs\Mapa_Transiciones.log"
+    Kill App.Path & "\Logs\TCP_Conexiones.log"
+    Kill App.Path & "\Logs\TCP_Paquetes.log"
+    Kill App.Path & "\Logs\TCP_Errores.log"
+    Kill App.Path & "\Logs\Inventario.log"
+    Kill App.Path & "\Logs\Items.log"
+    Kill App.Path & "\Logs\Hechizos.log"
+    Kill App.Path & "\Logs\UserLogin.log"
+    Kill App.Path & "\Logs\UserAcciones.log"
+    Kill App.Path & "\Logs\UserDebug.log"
+    Kill App.Path & "\Logs\Criticos.log"
+    Kill App.Path & "\Logs\Warnings.log"
+    Kill App.Path & "\Logs\DebugGeneral.log"
+    Kill App.Path & "\Logs\errores.log"
+    Kill App.Path & "\Logs\Render_FirstTile.log"
+    Kill App.Path & "\Logs\DrawGrh.Log"
+End If
 
 End Sub
-
+Public Sub LogError(desc As String)
+On Error Resume Next
+Dim nfile As Integer
+nfile = FreeFile ' obtenemos un canal
+Open App.Path & "\Logs\errores.log" For Append As #nfile
+Print #nfile, Format$(Now, "yyyy-mm-dd hh:nn:ss") & " - " & desc
+Close #nfile
+End Sub
 ' ============================================================
 ' LOG ROTATIVO (PRO)
 ' ============================================================
@@ -162,7 +200,7 @@ End Sub
 ' LOG CON NIVELES (INFO / WARN / ERROR / CRITICAL)
 ' ============================================================
 
-Public Sub LogLevel(FileName As String, Level As String, Msg As String)
+Public Sub LogLevel(FileName As String, Level As String, msg As String)
     If Not LogsEnabled Then Exit Sub
 
     Dim nfile As Integer
@@ -174,7 +212,7 @@ Public Sub LogLevel(FileName As String, Level As String, Msg As String)
     RotateLog FilePath, 500   ' 500 KB rotación
 
     Open FilePath For Append As #nfile
-    Print #nfile, Format$(Now, "yyyy-mm-dd hh:nn:ss") & " [" & Level & "] " & Msg
+    Print #nfile, Format$(Now, "yyyy-mm-dd hh:nn:ss") & " [" & Level & "] " & msg
     Close #nfile
 End Sub
 
@@ -190,13 +228,13 @@ Public Sub LogLimited(FileName As String, desc As String, MaxRepeats As Integer)
     Dim Key As String
     Key = desc
 
-    Dim Count As Integer
-    If LogCount.Exists(Key) Then Count = LogCount(Key)
+    Dim count As Integer
+    If LogCount.Exists(Key) Then count = LogCount(Key)
 
-    If Count >= MaxRepeats Then Exit Sub
+    If count >= MaxRepeats Then Exit Sub
 
     LogCount.Remove Key
-    LogCount.Add Count + 1, Key
+    LogCount.Add count + 1, Key
 
     LogLevel FileName, "INFO", desc
 End Sub
@@ -213,13 +251,13 @@ Public Sub LogLimitedSub(FileName As String, SubName As String, desc As String, 
     Dim Key As String
     Key = SubName & desc
 
-    Dim Count As Integer
-    If LogCount.Exists(Key) Then Count = LogCount(Key)
+    Dim count As Integer
+    If LogCount.Exists(Key) Then count = LogCount(Key)
 
-    If Count >= MaxRepeats Then Exit Sub
+    If count >= MaxRepeats Then Exit Sub
 
     LogCount.Remove Key
-    LogCount.Add Count + 1, Key
+    LogCount.Add count + 1, Key
 
     LogLevel FileName, SubName, desc
 End Sub
@@ -233,13 +271,13 @@ Public Sub LogLimitedCategory(FileName As String, Category As String, desc As St
 
     On Error Resume Next
 
-    Dim Count As Integer
-    If LogCount.Exists(Category) Then Count = LogCount(Category)
+    Dim count As Integer
+    If LogCount.Exists(Category) Then count = LogCount(Category)
 
-    If Count >= MaxRepeats Then Exit Sub
+    If count >= MaxRepeats Then Exit Sub
 
     LogCount.Remove Category
-    LogCount.Add Count + 1, Category
+    LogCount.Add count + 1, Category
 
     LogLevel FileName, Category, desc
 End Sub

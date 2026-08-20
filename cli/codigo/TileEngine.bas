@@ -159,7 +159,7 @@ Public Type char
     
     Criminal As Byte
     
-    nombre As String
+    Nombre As String
     ClanName As String
     PartyId As Integer
     NPCtype As Integer
@@ -616,7 +616,7 @@ Sub ResetCharInfo(ByVal CharIndex As Integer)
         .invisible = False
         .Moving = 0
         .Muerto = False
-        .nombre = ""
+        .Nombre = ""
         .PartyId = 0
         .pie = False
         .Pos.X = 0
@@ -1492,6 +1492,15 @@ On Error Resume Next
     If screenminX < XMinMapSize Then screenminX = XMinMapSize
     Debug.Print "Bounds: minXY=" & screenminX & "," & screenminY & " maxXY=" & screenmaxX & "," & screenmaxY
     If screenminY < YMinMapSize Then screenminY = YMinMapSize
+    ' LOG DE BOUNDS
+    If LogsEnabled And Log_RenderScreen Then
+        LogLevel "Render_Bounds.log", "INFO", _
+            "tile=" & tilex & "," & tiley & _
+            " Half=" & HalfWindowTileWidth & "," & HalfWindowTileHeight & _
+            " screenMin=" & screenminX & "," & screenminY & _
+            " screenMax=" & screenmaxX & "," & screenmaxY & _
+            " renderer=" & frmMain.renderer.Width & "x" & frmMain.renderer.Height
+    End If
     
     '=============================================================================================================
     'Comenzamos a dibujar las capas. Aquellas capas que esten por debajo de las demas, se van a mostrar arriba.
@@ -1502,8 +1511,16 @@ On Error Resume Next
     
     For Y = screenminY To screenmaxY
         For X = screenminX To screenmaxX
-            'Capa 1 **********************************
             
+            If LogsEnabled And Log_RenderScreen Then
+                LogLimited "Render_FirstTile.log", _
+                    "X=" & X & _
+                    " Y=" & Y & _
+                    " ScreenX=" & ScreenX & _
+                    " ScreenY=" & ScreenY & _
+                    " Grh=" & MapData(X, Y).Graphic(1).GrhIndex, 10
+            End If
+            'Capa 1 **********************************
             Call DDrawGrhtoSurface(MapData(X, Y).Graphic(1), _
                 (ScreenX - 1) * TilePixelWidth + PixelOffsetX, _
                 (ScreenY - 1) * TilePixelHeight + PixelOffsetY, _
@@ -1813,9 +1830,9 @@ Private Sub CharRender(ByVal CharIndex As Long, ByVal PixelOffsetX As Integer, B
         If .invisible = False Then
             'Dibujamos el nombre debajo de la cabeza.
             If Opciones.NamePlayers Then
-                If Len(.nombre) > 0 Then
-                    Pos = InStr(.nombre, "<")
-                    If Pos = 0 Then Pos = Len(.nombre) + 2
+                If Len(.Nombre) > 0 Then
+                    Pos = InStr(.Nombre, "<")
+                    If Pos = 0 Then Pos = Len(.Nombre) + 2
                             
                     If .priv = 0 Then
                         Select Case .Criminal
@@ -1835,7 +1852,7 @@ Private Sub CharRender(ByVal CharIndex As Long, ByVal PixelOffsetX As Integer, B
                     End If
                             
                     'Nick
-                    line = .nombre
+                    line = .Nombre
                     Call Texto.Engine_Text_Draw(PixelOffsetX + 15, PixelOffsetY + 30, line, Color, , True)
                             
                     If Not .ClanName = "" Then
@@ -2081,6 +2098,18 @@ On Error GoTo Error
         SourceRect.Right = SourceRect.Left + .pixelWidth
         SourceRect.Bottom = SourceRect.Top + .pixelHeight
         
+        If LogsEnabled And Log_DrawGrh Then
+            LogLimited "DrawGrh.log", _
+                "Grh=" & Grh.GrhIndex & _
+                " Frame=" & CurrentGrhIndex & _
+                " X=" & X & _
+                " Y=" & Y & _
+                " W=" & .pixelWidth & _
+                " H=" & .pixelHeight & _
+                " TileW=" & .TileWidth & _
+                " TileH=" & .TileHeight & _
+                " File=" & .FileNum, 50
+        End If
         'Draw
         Call Device_Textured_Render(X, Y, SurfaceDB.Surface(.FileNum), SourceRect, Light)
     End With
@@ -2246,6 +2275,14 @@ movSpeed = 1
     WindowTileWidth = setWindowTileWidth
     TileBufferSize = setTileBufferSize
     
+    If LogsEnabled And Log_DX8Debug Then
+    LogLevel "Engine_Init.log", "INFO", _
+        "Tile=" & TilePixelWidth & "x" & TilePixelHeight & _
+        " Window=" & WindowTileWidth & "x" & WindowTileHeight & _
+        " MainViewTop=" & MainViewTop & _
+        " MainViewLeft=" & MainViewLeft & _
+        " Renderer=" & frmMain.renderer.Width & "x" & frmMain.renderer.Height
+    End If
     iniPath = App.Path & "\Init\"
     
     HalfWindowTileHeight = (frmMain.renderer.Height / 32) \ 2
@@ -3233,7 +3270,7 @@ Private Sub Particle_Render(ByRef temp_particle As Particle, ByVal screen_x As L
                             Optional ByVal XMove As Boolean, Optional ByVal move_x1 As Integer, Optional ByVal move_x2 As Integer, _
                             Optional ByVal move_y1 As Integer, Optional ByVal move_y2 As Integer, Optional ByVal YMove As Boolean, _
                             Optional ByVal spin_speedH As Single, Optional ByVal spin As Boolean, _
-                            Optional ByVal Radio As Integer, Optional ByVal Count As Integer, Optional ByVal Index As Integer)
+                            Optional ByVal Radio As Integer, Optional ByVal count As Integer, Optional ByVal Index As Integer)
 '**************************************************************
 'Author: Aaron Perkins
 'Modified by: Ryan Cain (Onezero)
@@ -3248,8 +3285,8 @@ Private Sub Particle_Render(ByRef temp_particle As Particle, ByVal screen_x As L
                 temp_particle.X = RandomNumber(x1, x2)
                 temp_particle.Y = RandomNumber(y1, y2)
             Else
-                temp_particle.X = (RandomNumber(x1, x2) + Radio) + Radio * Cos(PI * 2 * Index / Count)
-                temp_particle.Y = (RandomNumber(y1, y2) + Radio) + Radio * Sin(PI * 2 * Index / Count)
+                temp_particle.X = (RandomNumber(x1, x2) + Radio) + Radio * Cos(PI * 2 * Index / count)
+                temp_particle.Y = (RandomNumber(y1, y2) + Radio) + Radio * Sin(PI * 2 * Index / count)
             End If
             temp_particle.X = RandomNumber(x1, x2) - (base_tile_size \ 2)
             temp_particle.Y = RandomNumber(y1, y2) - (base_tile_size \ 2)

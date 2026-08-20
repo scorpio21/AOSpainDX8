@@ -878,17 +878,17 @@ End If
 
 End Sub
 
-Function PuedeApuÃ±alar(ByVal UserIndex As Integer) As Boolean
+Function PuedeApuñalar(ByVal UserIndex As Integer) As Boolean
 
 If UserList(UserIndex).Invent.WeaponEqpObjIndex > 0 Then
- PuedeApuÃ±alar = _
- ((UserList(UserIndex).Stats.UserSkills(ApuÃ±alar) >= MIN_APUÃ±ALAR) _
- And (ObjData(UserList(UserIndex).Invent.WeaponEqpObjIndex).ApuÃ±ala = 1)) _
+ PuedeApuñalar = _
+ ((UserList(UserIndex).Stats.UserSkills(Apuñalar) >= MIN_APUÑALAR) _
+ And (ObjData(UserList(UserIndex).Invent.WeaponEqpObjIndex).Apuñala = 1)) _
  Or _
   ((UserList(UserIndex).Clase = "Asesino") And _
-  (ObjData(UserList(UserIndex).Invent.WeaponEqpObjIndex).ApuÃ±ala = 1))
+  (ObjData(UserList(UserIndex).Invent.WeaponEqpObjIndex).Apuñala = 1))
 Else
- PuedeApuÃ±alar = False
+ PuedeApuñalar = False
 End If
 End Function
 Sub SubirSkill(ByVal UserIndex As Integer, ByVal Skill As Integer)

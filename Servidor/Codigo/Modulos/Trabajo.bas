@@ -937,40 +937,40 @@ Else
 End If
 
 End Sub
-Public Sub DoApuÃ±alar(ByVal UserIndex As Integer, ByVal VictimNpcIndex As Integer, ByVal VictimUserIndex As Integer, ByVal Daño As Integer)
+Public Sub DoApuñalar(ByVal UserIndex As Integer, ByVal VictimNpcIndex As Integer, ByVal VictimUserIndex As Integer, ByVal Daño As Integer)
 
 Dim Suerte As Integer
 Dim res As Integer
 
-If UserList(UserIndex).Stats.UserSkills(ApuÃ±alar) <= 10 _
-   And UserList(UserIndex).Stats.UserSkills(ApuÃ±alar) >= -1 Then
+If UserList(UserIndex).Stats.UserSkills(Apuñalar) <= 10 _
+   And UserList(UserIndex).Stats.UserSkills(Apuñalar) >= -1 Then
                     Suerte = 35
-ElseIf UserList(UserIndex).Stats.UserSkills(ApuÃ±alar) <= 20 _
-   And UserList(UserIndex).Stats.UserSkills(ApuÃ±alar) >= 11 Then
+ElseIf UserList(UserIndex).Stats.UserSkills(Apuñalar) <= 20 _
+   And UserList(UserIndex).Stats.UserSkills(Apuñalar) >= 11 Then
                     Suerte = 30
-ElseIf UserList(UserIndex).Stats.UserSkills(ApuÃ±alar) <= 30 _
-   And UserList(UserIndex).Stats.UserSkills(ApuÃ±alar) >= 21 Then
+ElseIf UserList(UserIndex).Stats.UserSkills(Apuñalar) <= 30 _
+   And UserList(UserIndex).Stats.UserSkills(Apuñalar) >= 21 Then
                     Suerte = 28
-ElseIf UserList(UserIndex).Stats.UserSkills(ApuÃ±alar) <= 40 _
-   And UserList(UserIndex).Stats.UserSkills(ApuÃ±alar) >= 31 Then
+ElseIf UserList(UserIndex).Stats.UserSkills(Apuñalar) <= 40 _
+   And UserList(UserIndex).Stats.UserSkills(Apuñalar) >= 31 Then
                     Suerte = 24
-ElseIf UserList(UserIndex).Stats.UserSkills(ApuÃ±alar) <= 50 _
-   And UserList(UserIndex).Stats.UserSkills(ApuÃ±alar) >= 41 Then
+ElseIf UserList(UserIndex).Stats.UserSkills(Apuñalar) <= 50 _
+   And UserList(UserIndex).Stats.UserSkills(Apuñalar) >= 41 Then
                     Suerte = 22
-ElseIf UserList(UserIndex).Stats.UserSkills(ApuÃ±alar) <= 60 _
-   And UserList(UserIndex).Stats.UserSkills(ApuÃ±alar) >= 51 Then
+ElseIf UserList(UserIndex).Stats.UserSkills(Apuñalar) <= 60 _
+   And UserList(UserIndex).Stats.UserSkills(Apuñalar) >= 51 Then
                     Suerte = 20
-ElseIf UserList(UserIndex).Stats.UserSkills(ApuÃ±alar) <= 70 _
-   And UserList(UserIndex).Stats.UserSkills(ApuÃ±alar) >= 61 Then
+ElseIf UserList(UserIndex).Stats.UserSkills(Apuñalar) <= 70 _
+   And UserList(UserIndex).Stats.UserSkills(Apuñalar) >= 61 Then
                     Suerte = 18
-ElseIf UserList(UserIndex).Stats.UserSkills(ApuÃ±alar) <= 80 _
-   And UserList(UserIndex).Stats.UserSkills(ApuÃ±alar) >= 71 Then
+ElseIf UserList(UserIndex).Stats.UserSkills(Apuñalar) <= 80 _
+   And UserList(UserIndex).Stats.UserSkills(Apuñalar) >= 71 Then
                     Suerte = 15
-ElseIf UserList(UserIndex).Stats.UserSkills(ApuÃ±alar) <= 90 _
-   And UserList(UserIndex).Stats.UserSkills(ApuÃ±alar) >= 81 Then
+ElseIf UserList(UserIndex).Stats.UserSkills(Apuñalar) <= 90 _
+   And UserList(UserIndex).Stats.UserSkills(Apuñalar) >= 81 Then
                     Suerte = 10
-ElseIf UserList(UserIndex).Stats.UserSkills(ApuÃ±alar) <= 100 _
-   And UserList(UserIndex).Stats.UserSkills(ApuÃ±alar) >= 91 Then
+ElseIf UserList(UserIndex).Stats.UserSkills(Apuñalar) <= 100 _
+   And UserList(UserIndex).Stats.UserSkills(Apuñalar) >= 91 Then
                     Suerte = 5
 End If
 res = RandomNumber(1, Suerte)
@@ -978,13 +978,13 @@ res = RandomNumber(1, Suerte)
 If res = 3 Then
     If VictimUserIndex <> 0 Then
         UserList(VictimUserIndex).Stats.MinHP = UserList(VictimUserIndex).Stats.MinHP - (Daño * 1.5)
-        Call SendData(ToIndex, UserIndex, 0, "||Has ApuÃ±alado a " & UserList(VictimUserIndex).Name & " por " & (Daño * 2) & FONTTYPE_FIGHT)
-        Call SendData(ToIndex, VictimUserIndex, 0, "||Te ha ApuÃ±alado " & UserList(UserIndex).Name & " por " & (Daño * 2) & FONTTYPE_FIGHT)
+        Call SendData(ToIndex, UserIndex, 0, "||Has Apuñalado a " & UserList(VictimUserIndex).Name & " por " & (Daño * 2) & FONTTYPE_FIGHT)
+        Call SendData(ToIndex, VictimUserIndex, 0, "||Te ha Apuñalado " & UserList(UserIndex).Name & " por " & (Daño * 2) & FONTTYPE_FIGHT)
     Else
         Npclist(VictimNpcIndex).Stats.MinHP = Npclist(VictimNpcIndex).Stats.MinHP - (Daño * 2)
         If Npclist(VictimNpcIndex).Stats.MinHP < 0 Then Npclist(VictimNpcIndex).Stats.MinHP = 0
-        Call SendData(ToIndex, UserIndex, 0, "||Has ApuÃ±alado la criatura por " & (Daño * 2) & " (" & Npclist(VictimNpcIndex).Stats.MinHP & "/" & Npclist(VictimNpcIndex).Stats.MaxHP & ")" & FONTTYPE_FIGHT)
-        Call SubirSkill(UserIndex, ApuÃ±alar)
+        Call SendData(ToIndex, UserIndex, 0, "||Has Apuñalado la criatura por " & (Daño * 2) & " (" & Npclist(VictimNpcIndex).Stats.MinHP & "/" & Npclist(VictimNpcIndex).Stats.MaxHP & ")" & FONTTYPE_FIGHT)
+        Call SubirSkill(UserIndex, Apuñalar)
     End If
     
 Else

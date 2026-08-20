@@ -66,16 +66,16 @@ Select Case UCase$(UserList(UserIndex).Raza)
     Case "ORCO"
       Select Case UCase$(UserList(UserIndex).Genero)
                 Case "HOMBRE"
-                     UserList(UserIndex).Char.Body = 232
+                     UserList(UserIndex).Char.Body = 300
                 Case "MUJER"
-                     UserList(UserIndex).Char.Body = 234
+                     UserList(UserIndex).Char.Body = 302
       End Select
     Case "HOBBIT"
       Select Case UCase$(UserList(UserIndex).Genero)
                 Case "HOMBRE"
-                     UserList(UserIndex).Char.Body = 239
+                     UserList(UserIndex).Char.Body = 297
                 Case "MUJER"
-                     UserList(UserIndex).Char.Body = 240
+                     UserList(UserIndex).Char.Body = 298
       End Select
       Case Else
       Select Case UCase$(UserList(UserIndex).Genero)
@@ -295,7 +295,7 @@ SkillsNames(3) = "Robar"
 SkillsNames(4) = "Tacticas de combate"
 SkillsNames(5) = "Combate con armas"
 SkillsNames(6) = "Meditar"
-SkillsNames(7) = "ApuÃ±alar"
+SkillsNames(7) = "Apuñalar"
 SkillsNames(8) = "Ocultarse"
 SkillsNames(9) = "Supervivencia"
 SkillsNames(10) = "Talar arboles"
