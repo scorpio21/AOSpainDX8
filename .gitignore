@@ -25,7 +25,6 @@ cli_backup_dx7_*/
 *.exp
 *.lib
 *.pdb
-*.log
 *.SYS
 
 # Windows

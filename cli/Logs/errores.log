@@ -1,0 +1,111 @@
+2026-08-21 01:47:42 - LoadGrhData: maxGrh=31387 GrhCount=31387
+2026-08-21 01:47:42 - GRH 1: Active=Verdadero FileNum=1 SX=64 SY=0 PW=32 PH=32 Frames=1 Speed=0
+2026-08-21 01:47:42 - GRH 2: Active=Verdadero FileNum=1 SX=32 SY=0 PW=32 PH=32 Frames=1 Speed=0
+2026-08-21 01:47:42 - GRH 3: Active=Verdadero FileNum=1 SX=0 SY=0 PW=32 PH=32 Frames=1 Speed=0
+2026-08-21 01:47:42 - GRH 4: Active=Verdadero FileNum=1 SX=96 SY=0 PW=32 PH=32 Frames=1 Speed=0
+2026-08-21 01:47:42 - GRH 5: Active=Verdadero FileNum=6013 SX=0 SY=0 PW=32 PH=32 Frames=1 Speed=0
+2026-08-21 01:47:42 - GRH 6: Active=Verdadero FileNum=6013 SX=32 SY=0 PW=32 PH=32 Frames=1 Speed=0
+2026-08-21 01:47:42 - GRH 7: Active=Verdadero FileNum=6013 SX=64 SY=0 PW=32 PH=32 Frames=1 Speed=0
+2026-08-21 01:47:42 - GRH 8: Active=Verdadero FileNum=6013 SX=96 SY=0 PW=32 PH=32 Frames=1 Speed=0
+2026-08-21 01:47:42 - GRH 9: Active=Verdadero FileNum=6013 SX=0 SY=32 PW=32 PH=32 Frames=1 Speed=0
+2026-08-21 01:47:42 - GRH 10: Active=Verdadero FileNum=6013 SX=32 SY=32 PW=32 PH=32 Frames=1 Speed=0
+2026-08-21 01:47:42 - CargarCuerpos: NumCuerpos=663
+2026-08-21 01:47:42 - Body 1: grhIdx=4582 HeadOffsetX=0 HeadOffsetY=-38
+2026-08-21 01:47:42 - Body 2: grhIdx=4586 HeadOffsetX=0 HeadOffsetY=-38
+2026-08-21 01:47:42 - Body 3: grhIdx=4590 HeadOffsetX=0 HeadOffsetY=-38
+2026-08-21 01:47:42 - Body 4: grhIdx=4574 HeadOffsetX=0 HeadOffsetY=-28
+2026-08-21 01:47:42 - Body 5: grhIdx=4517 HeadOffsetX=0 HeadOffsetY=-28
+2026-08-21 01:47:42 - CargarCabezas: NumHeads=831
+2026-08-21 01:47:42 - Head 1: grhIdx=3003 FileNum=27 startX=496 startY=0
+2026-08-21 01:47:42 - Head 2: grhIdx=3007 FileNum=27 startX=112 startY=0
+2026-08-21 01:47:42 - Head 3: grhIdx=3011 FileNum=27 startX=176 startY=0
+2026-08-21 01:47:42 - Head 4: grhIdx=3015 FileNum=27 startX=368 startY=0
+2026-08-21 01:47:42 - Head 5: grhIdx=3023 FileNum=27 startX=48 startY=16
+2026-08-21 01:47:58 - SwitchMap: Map 34 loaded
+2026-08-21 01:47:58 - Tile(1,1): L1=1505 L2=0 L3=0 L4=0
+2026-08-21 01:47:58 - Tile(50,50): L1=1514 L2=0 L3=0 L4=0
+2026-08-21 01:47:58 - Tile(100,100): L1=0 L2=0 L3=0 L4=0
+2026-08-21 01:47:59 - INV: Slot=1 ObjGrh=506 FrameGrh=506 sx=576 sy=32 FileNum=3
+2026-08-21 01:47:59 - INV: DRAWING Slot=1 Source=(576,32)-(608,64) Dest=(0,0)-(32,32)
+2026-08-21 01:47:59 - BMP: BmInfo creado
+2026-08-21 01:47:59 - BMP: header copiado
+2026-08-21 01:47:59 - BMP: header modificado para region 32x32
+2026-08-21 01:47:59 - BMP: paleta copiada
+2026-08-21 01:47:59 - DrawGrhtoHdc: StretchDIBits result=0 GrhIdx=506 ERR=0 DESC=
+2026-08-21 01:47:59 - INV: Slot=2 ObjGrh=537 FrameGrh=537 sx=416 sy=64 FileNum=3
+2026-08-21 01:47:59 - INV: DRAWING Slot=2 Source=(416,64)-(448,96) Dest=(32,0)-(64,32)
+2026-08-21 01:47:59 - BMP: BmInfo creado
+2026-08-21 01:47:59 - BMP: header copiado
+2026-08-21 01:47:59 - BMP: header modificado para region 32x32
+2026-08-21 01:47:59 - BMP: paleta copiada
+2026-08-21 01:47:59 - DrawGrhtoHdc: StretchDIBits result=0 GrhIdx=537 ERR=0 DESC=
+2026-08-21 01:47:59 - INV: Slot=3 ObjGrh=510 FrameGrh=510 sx=32 sy=64 FileNum=3
+2026-08-21 01:47:59 - INV: DRAWING Slot=3 Source=(32,64)-(64,96) Dest=(64,0)-(96,32)
+2026-08-21 01:47:59 - BMP: BmInfo creado
+2026-08-21 01:47:59 - BMP: header copiado
+2026-08-21 01:47:59 - BMP: header modificado para region 32x32
+2026-08-21 01:47:59 - BMP: paleta copiada
+2026-08-21 01:47:59 - DrawGrhtoHdc: StretchDIBits result=0 GrhIdx=510 ERR=0 DESC=
+2026-08-21 01:47:59 - INV: Slot=4 ObjGrh=527 FrameGrh=527 sx=384 sy=32 FileNum=129
+2026-08-21 01:47:59 - INV: DRAWING Slot=4 Source=(384,32)-(416,64) Dest=(96,0)-(128,32)
+2026-08-21 01:47:59 - BMP: BmInfo creado
+2026-08-21 01:47:59 - BMP: header copiado
+2026-08-21 01:47:59 - BMP: header modificado para region 32x32
+2026-08-21 01:47:59 - BMP: paleta copiada
+2026-08-21 01:47:59 - DrawGrhtoHdc: StretchDIBits result=0 GrhIdx=527 ERR=0 DESC=
+2026-08-21 01:47:59 - INV: Slot=5 ObjGrh=542 FrameGrh=542 sx=512 sy=64 FileNum=3
+2026-08-21 01:47:59 - INV: DRAWING Slot=5 Source=(512,64)-(544,96) Dest=(128,0)-(160,32)
+2026-08-21 01:47:59 - BMP: BmInfo creado
+2026-08-21 01:47:59 - BMP: header copiado
+2026-08-21 01:47:59 - BMP: header modificado para region 32x32
+2026-08-21 01:47:59 - BMP: paleta copiada
+2026-08-21 01:47:59 - DrawGrhtoHdc: StretchDIBits result=0 GrhIdx=542 ERR=0 DESC=
+2026-08-21 01:47:59 - INV: Slot=6 ObjGrh=543 FrameGrh=543 sx=544 sy=64 FileNum=3
+2026-08-21 01:47:59 - INV: DRAWING Slot=6 Source=(544,64)-(576,96) Dest=(0,32)-(32,64)
+2026-08-21 01:47:59 - BMP: BmInfo creado
+2026-08-21 01:47:59 - BMP: header copiado
+2026-08-21 01:47:59 - BMP: header modificado para region 32x32
+2026-08-21 01:47:59 - BMP: paleta copiada
+2026-08-21 01:47:59 - DrawGrhtoHdc: StretchDIBits result=0 GrhIdx=543 ERR=0 DESC=
+2026-08-21 01:47:59 - INV: Slot=1 ObjGrh=506 FrameGrh=506 sx=576 sy=32 FileNum=3
+2026-08-21 01:47:59 - INV: DRAWING Slot=1 Source=(576,32)-(608,64) Dest=(0,0)-(32,32)
+2026-08-21 01:47:59 - BMP: BmInfo creado
+2026-08-21 01:47:59 - BMP: header copiado
+2026-08-21 01:47:59 - BMP: header modificado para region 32x32
+2026-08-21 01:47:59 - BMP: paleta copiada
+2026-08-21 01:47:59 - DrawGrhtoHdc: StretchDIBits result=0 GrhIdx=506 ERR=0 DESC=
+2026-08-21 01:47:59 - INV: Slot=2 ObjGrh=537 FrameGrh=537 sx=416 sy=64 FileNum=3
+2026-08-21 01:47:59 - INV: DRAWING Slot=2 Source=(416,64)-(448,96) Dest=(32,0)-(64,32)
+2026-08-21 01:47:59 - BMP: BmInfo creado
+2026-08-21 01:47:59 - BMP: header copiado
+2026-08-21 01:47:59 - BMP: header modificado para region 32x32
+2026-08-21 01:47:59 - BMP: paleta copiada
+2026-08-21 01:47:59 - DrawGrhtoHdc: StretchDIBits result=0 GrhIdx=537 ERR=0 DESC=
+2026-08-21 01:47:59 - INV: Slot=3 ObjGrh=510 FrameGrh=510 sx=32 sy=64 FileNum=3
+2026-08-21 01:47:59 - INV: DRAWING Slot=3 Source=(32,64)-(64,96) Dest=(64,0)-(96,32)
+2026-08-21 01:47:59 - BMP: BmInfo creado
+2026-08-21 01:47:59 - BMP: header copiado
+2026-08-21 01:47:59 - BMP: header modificado para region 32x32
+2026-08-21 01:47:59 - BMP: paleta copiada
+2026-08-21 01:47:59 - DrawGrhtoHdc: StretchDIBits result=0 GrhIdx=510 ERR=0 DESC=
+2026-08-21 01:47:59 - INV: Slot=4 ObjGrh=527 FrameGrh=527 sx=384 sy=32 FileNum=129
+2026-08-21 01:47:59 - INV: DRAWING Slot=4 Source=(384,32)-(416,64) Dest=(96,0)-(128,32)
+2026-08-21 01:47:59 - BMP: BmInfo creado
+2026-08-21 01:47:59 - BMP: header copiado
+2026-08-21 01:47:59 - BMP: header modificado para region 32x32
+2026-08-21 01:47:59 - BMP: paleta copiada
+2026-08-21 01:47:59 - DrawGrhtoHdc: StretchDIBits result=0 GrhIdx=527 ERR=0 DESC=
+2026-08-21 01:47:59 - INV: Slot=5 ObjGrh=542 FrameGrh=542 sx=512 sy=64 FileNum=3
+2026-08-21 01:47:59 - INV: DRAWING Slot=5 Source=(512,64)-(544,96) Dest=(128,0)-(160,32)
+2026-08-21 01:47:59 - BMP: BmInfo creado
+2026-08-21 01:47:59 - BMP: header copiado
+2026-08-21 01:47:59 - BMP: header modificado para region 32x32
+2026-08-21 01:47:59 - BMP: paleta copiada
+2026-08-21 01:47:59 - DrawGrhtoHdc: StretchDIBits result=0 GrhIdx=542 ERR=0 DESC=
+2026-08-21 01:47:59 - INV: Slot=6 ObjGrh=543 FrameGrh=543 sx=544 sy=64 FileNum=3
+2026-08-21 01:47:59 - INV: DRAWING Slot=6 Source=(544,64)-(576,96) Dest=(0,32)-(32,64)
+2026-08-21 01:47:59 - BMP: BmInfo creado
+2026-08-21 01:47:59 - BMP: header copiado
+2026-08-21 01:47:59 - BMP: header modificado para region 32x32
+2026-08-21 01:47:59 - BMP: paleta copiada
+2026-08-21 01:47:59 - DrawGrhtoHdc: StretchDIBits result=0 GrhIdx=543 ERR=0 DESC=

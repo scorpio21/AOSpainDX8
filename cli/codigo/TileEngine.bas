@@ -2110,6 +2110,19 @@ On Error GoTo Error
                 " TileH=" & .TileHeight & _
                 " File=" & .FileNum, 50
         End If
+        
+        If LogsEnabled And Log_Inventario Then
+    LogLimited "Inventario_Render.log", _
+        "Grh=" & Grh.GrhIndex & _
+        " Frame=" & CurrentGrhIndex & _
+        " FileNum=" & .FileNum & _
+        " SX=" & .sx & _
+        " SY=" & .sy & _
+        " W=" & .pixelWidth & _
+        " H=" & .pixelHeight & _
+        " X=" & X & _
+        " Y=" & Y, 100
+End If
         'Draw
         Call Device_Textured_Render(X, Y, SurfaceDB.Surface(.FileNum), SourceRect, Light)
     End With
@@ -2599,6 +2612,17 @@ Public Sub Device_Textured_Render(ByVal X As Integer, ByVal Y As Integer, ByVal 
     Texture.GetLevelDesc 0, srdesc
     texwidth = srdesc.Width
     texheight = srdesc.Height
+    
+    If LogsEnabled And Log_Inventario Then
+    
+    LogLimited "Inventario_Texture.log", _
+        "X=" & X & _
+        " Y=" & Y & _
+        " Src=" & src_rect.Left & "," & src_rect.Top & _
+        " - " & src_rect.Right & "," & src_rect.Bottom & _
+        " TexW=" & texwidth & _
+        " TexH=" & texheight, 100
+    End If
     
     Geometry_Create_Box temp_verts(), dest_rect, src_rect, light_value(), texwidth, texheight, Angle
     

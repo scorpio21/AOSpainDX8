@@ -1,0 +1,12 @@
+2026-08-21 01:47:59 [INFO] [DrawGrhtoHdc] ANTES StretchDIBits GrhIdx=506 FileNum=3 sx=576 sy=32 pw=32 ph=32 dstW=32 dstH=32 Hdc=-2147413803 BMP_Size=640x742 PixelOffset=1074 RowSize=640 CalcOffset=22130
+2026-08-21 01:47:59 [INFO] [DrawGrhtoHdc] ANTES StretchDIBits GrhIdx=537 FileNum=3 sx=416 sy=64 pw=32 ph=32 dstW=32 dstH=32 Hdc=-2147413803 BMP_Size=640x742 PixelOffset=1074 RowSize=640 CalcOffset=42450
+2026-08-21 01:47:59 [INFO] [DrawGrhtoHdc] ANTES StretchDIBits GrhIdx=510 FileNum=3 sx=32 sy=64 pw=32 ph=32 dstW=32 dstH=32 Hdc=-2147413803 BMP_Size=640x742 PixelOffset=1074 RowSize=640 CalcOffset=42066
+2026-08-21 01:47:59 [INFO] [DrawGrhtoHdc] ANTES StretchDIBits GrhIdx=527 FileNum=129 sx=384 sy=32 pw=32 ph=32 dstW=32 dstH=32 Hdc=-2147413803 BMP_Size=576x492 PixelOffset=1074 RowSize=576 CalcOffset=19890
+2026-08-21 01:47:59 [INFO] [DrawGrhtoHdc] ANTES StretchDIBits GrhIdx=542 FileNum=3 sx=512 sy=64 pw=32 ph=32 dstW=32 dstH=32 Hdc=-2147413803 BMP_Size=640x742 PixelOffset=1074 RowSize=640 CalcOffset=42546
+2026-08-21 01:47:59 [INFO] [DrawGrhtoHdc] ANTES StretchDIBits GrhIdx=543 FileNum=3 sx=544 sy=64 pw=32 ph=32 dstW=32 dstH=32 Hdc=-2147413803 BMP_Size=640x742 PixelOffset=1074 RowSize=640 CalcOffset=42578
+2026-08-21 01:47:59 [INFO] [DrawGrhtoHdc] ANTES StretchDIBits GrhIdx=506 FileNum=3 sx=576 sy=32 pw=32 ph=32 dstW=32 dstH=32 Hdc=1006703671 BMP_Size=640x742 PixelOffset=1074 RowSize=640 CalcOffset=22130
+2026-08-21 01:47:59 [INFO] [DrawGrhtoHdc] ANTES StretchDIBits GrhIdx=537 FileNum=3 sx=416 sy=64 pw=32 ph=32 dstW=32 dstH=32 Hdc=1006703671 BMP_Size=640x742 PixelOffset=1074 RowSize=640 CalcOffset=42450
+2026-08-21 01:47:59 [INFO] [DrawGrhtoHdc] ANTES StretchDIBits GrhIdx=510 FileNum=3 sx=32 sy=64 pw=32 ph=32 dstW=32 dstH=32 Hdc=1006703671 BMP_Size=640x742 PixelOffset=1074 RowSize=640 CalcOffset=42066
+2026-08-21 01:47:59 [INFO] [DrawGrhtoHdc] ANTES StretchDIBits GrhIdx=527 FileNum=129 sx=384 sy=32 pw=32 ph=32 dstW=32 dstH=32 Hdc=1006703671 BMP_Size=576x492 PixelOffset=1074 RowSize=576 CalcOffset=19890
+2026-08-21 01:47:59 [INFO] [DrawGrhtoHdc] ANTES StretchDIBits GrhIdx=542 FileNum=3 sx=512 sy=64 pw=32 ph=32 dstW=32 dstH=32 Hdc=1006703671 BMP_Size=640x742 PixelOffset=1074 RowSize=640 CalcOffset=42546
+2026-08-21 01:47:59 [INFO] [DrawGrhtoHdc] ANTES StretchDIBits GrhIdx=543 FileNum=3 sx=544 sy=64 pw=32 ph=32 dstW=32 dstH=32 Hdc=1006703671 BMP_Size=640x742 PixelOffset=1074 RowSize=640 CalcOffset=42578
