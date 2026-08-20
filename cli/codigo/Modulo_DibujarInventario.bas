@@ -67,12 +67,21 @@ itemCount = 0
 
 For iX = OffsetDelInv + 1 To UBound(UserInventory)
     If UserInventory(iX).GrhIndex > 0 Then
+    
         itemCount = itemCount + 1
         Dim Grh As Long
         Grh = UserInventory(iX).GrhIndex
         If Grh > 0 And Grh <= GrhCount And GrhData(Grh).Active Then
             Dim frameGrh As Long
             frameGrh = GrhData(Grh).Frames(1)
+            If LogsEnabled And Log_Inventario Then
+                LogError "INV: Slot=" & iX & _
+                    " ObjGrh=" & UserInventory(iX).GrhIndex & _
+                    " FrameGrh=" & frameGrh & _
+                    " sx=" & GrhData(frameGrh).sx & _
+                    " sy=" & GrhData(frameGrh).sy & _
+                    " FileNum=" & GrhData(frameGrh).FileNum
+            End If
             If frameGrh > 0 And frameGrh <= GrhCount And GrhData(frameGrh).Active Then
                 With rSource
                     .Left = GrhData(frameGrh).sx
@@ -82,7 +91,40 @@ For iX = OffsetDelInv + 1 To UBound(UserInventory)
                 End With
             End If
         End If
-        
+    '===========================
+    ' LOG DE INVENTARIO / OBJETOS
+    '===========================
+    If LogsEnabled And Log_Inventario Then
+
+    Dim indLine As String
+    indLine = "Grh" & frameGrh & "=" & _
+              GrhData(frameGrh).NumFrames & "-" & _
+              GrhData(frameGrh).FileNum & "-" & _
+              GrhData(frameGrh).sx & "-" & _
+              GrhData(frameGrh).sy & "-" & _
+              GrhData(frameGrh).pixelWidth & "-" & _
+              GrhData(frameGrh).pixelHeight
+
+    Dim logMsg As String
+    logMsg = "Slot=" & iX & _
+             " Grh=" & UserInventory(iX).GrhIndex & _
+             " Cant=" & UserInventory(iX).amount & _
+             " Equipped=" & UserInventory(iX).Equipped & _
+             " FrameGrh=" & frameGrh & _
+             " sx=" & rSource.Left & _
+             " sy=" & rSource.Top & _
+             " W=" & (rSource.Right - rSource.Left) & _
+             " H=" & (rSource.Bottom - rSource.Top) & _
+             " | IND=" & indLine
+
+    Call LogLimited("Inventario.log", logMsg, 20)
+End If
+    '===========================
+        If LogsEnabled And Log_Inventario Then
+            LogError "INV: DRAWING Slot=" & iX & _
+                     " Source=(" & rSource.Left & "," & rSource.Top & ")-(" & rSource.Right & "," & rSource.Bottom & ")" & _
+                     " Dest=(" & rDest.Left & "," & rDest.Top & ")-(" & rDest.Right & "," & rDest.Bottom & ")"
+        End If
         Call DrawGrhtoHdc(frmMain.picInv.hwnd, frmMain.picInv.Hdc, UserInventory(iX).GrhIndex, rSource, rDest)
 
         frmMain.picInv.CurrentX = rDest.Left
@@ -105,6 +147,7 @@ For iX = OffsetDelInv + 1 To UBound(UserInventory)
         rDest.Top = rDest.Top + 32
         rDest.Bottom = rDest.Bottom + 32
     End If
+
 Next iX
 
 frmMain.picInv.Refresh

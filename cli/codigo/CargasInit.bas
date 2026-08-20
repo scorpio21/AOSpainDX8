@@ -101,7 +101,7 @@ Public Sub DrawGrhtoHdc(ByVal hwnd As Long, ByVal Hdc As Long, ByVal grhIdx As I
     If FileSize < 54 Then
         Close #fNum
 
-        LogError "DrawGrhtoHdc: BMP demasiado pequeño. " & _
+        LogError "DrawGrhtoHdc: BMP demasiado pequeï¿½o. " & _
                  "Size=" & FileSize & _
                  " GrhIdx=" & grhIdx
 
@@ -139,17 +139,18 @@ Public Sub DrawGrhtoHdc(ByVal hwnd As Long, ByVal Hdc As Long, ByVal grhIdx As I
 '             " Bits=" & BiBitCount
 
     '--------------------------------------------------
-    ' Datos del GRH
+    ' Datos del GRH - Usar SourceRect en lugar de recalcular
     '--------------------------------------------------
     Dim sx As Long
     Dim sy As Long
     Dim pw As Long
     Dim ph As Long
 
-    sx = GrhData(GrhIndex).sx
-    sy = GrhData(GrhIndex).sy
-    pw = GrhData(GrhIndex).pixelWidth
-    ph = GrhData(GrhIndex).pixelHeight
+    ' Usar las coordenadas que nos pasaron en SourceRect
+    sx = SourceRect.Left
+    sy = SourceRect.Top
+    pw = SourceRect.Right - SourceRect.Left
+    ph = SourceRect.Bottom - SourceRect.Top
 
 '    LogError "BMP GRH: sx=" & sx & _
 '             " sy=" & sy & _
@@ -207,7 +208,7 @@ Public Sub DrawGrhtoHdc(ByVal hwnd As Long, ByVal Hdc As Long, ByVal grhIdx As I
 
 
     If PixelDataOffset < 0 Or PixelDataOffset >= FileSize Then
-        LogError "DrawGrhtoHdc: FAIL PixelDataOffset inválido"
+        LogError "DrawGrhtoHdc: FAIL PixelDataOffset invï¿½lido"
         Exit Sub
     End If
 
@@ -216,11 +217,11 @@ Public Sub DrawGrhtoHdc(ByVal hwnd As Long, ByVal Hdc As Long, ByVal grhIdx As I
     '--------------------------------------------------
     Dim colorTableSize As Long
 
-    ' La paleta real termina justo antes de los píxeles
+    ' La paleta real termina justo antes de los pï¿½xeles
     colorTableSize = PixelDataOffset - 14 - 40
 
     If colorTableSize < 0 Then
-        LogError "BMP: ERROR tamaño de paleta=" & colorTableSize
+        LogError "BMP: ERROR tamaï¿½o de paleta=" & colorTableSize
         Exit Sub
     End If
 
@@ -266,6 +267,14 @@ Public Sub DrawGrhtoHdc(ByVal hwnd As Long, ByVal Hdc As Long, ByVal grhIdx As I
 
     Const SUB_NAME As String = "DrawGrhtoHdc"
 
+    ' Calcular el offset correcto para BMP de 8 bits
+    ' Para BMP de 8 bits, cada fila tiene padding para ser mÃºltiplo de 4 bytes
+    Dim rowSize As Long
+    rowSize = ((BiWidth + 3) \ 4) * 4  ' Padded row size
+    
+    Dim pixelOffset As Long
+    pixelOffset = PixelDataOffset + (sy * rowSize) + sx
+
     DrawGrh = "[" & SUB_NAME & "] ANTES StretchDIBits" & _
               " GrhIdx=" & grhIdx & _
               " FileNum=" & FileNum & _
@@ -275,7 +284,11 @@ Public Sub DrawGrhtoHdc(ByVal hwnd As Long, ByVal Hdc As Long, ByVal grhIdx As I
               " ph=" & ph & _
               " dstW=" & dstW & _
               " dstH=" & dstH & _
-              " Hdc=" & Hdc
+              " Hdc=" & Hdc & _
+              " BMP_Size=" & BiWidth & "x" & BiHeight & _
+              " PixelOffset=" & PixelDataOffset & _
+              " RowSize=" & rowSize & _
+              " CalcOffset=" & pixelOffset
               
     If LogsEnabled And Log_DrawGrh Then
         LogLimited "DrawGrhtoHdc.log", DrawGrh, 10
@@ -302,7 +315,8 @@ Public Sub DrawGrhtoHdc(ByVal hwnd As Long, ByVal Hdc As Long, ByVal grhIdx As I
                 vbSrcCopy)
 
     LogError "DrawGrhtoHdc: StretchDIBits result=" & result & _
-             " GrhIdx=" & grhIdx
+             " GrhIdx=" & grhIdx & _
+             " ERR=" & Err.Number & " DESC=" & Err.Description
 
     Exit Sub
 
@@ -382,13 +396,13 @@ Sub LoadGrhData()
     ' IMPORTANTE:
     ' En este Graficos.ind el primer GRH empieza en el byte 273
     ' (offset 0). VB6 utiliza posiciones desde 1.
-    ' Por tanto el primer GRH está en Seek 274.
+    ' Por tanto el primer GRH estï¿½ en Seek 274.
     '-------------------------------------------------------------
     Seek #Handle, 274
 
     '-------------------------------------------------------------
     ' PASADA 1
-    ' Buscar el GRH máximo para dimensionar GrhData.
+    ' Buscar el GRH mï¿½ximo para dimensionar GrhData.
     '-------------------------------------------------------------
     maxGrh = 0
 
@@ -415,7 +429,7 @@ Sub LoadGrhData()
 
         Else
 
-            ' GRH estático
+            ' GRH estï¿½tico
             Get #Handle, , FileNum
             Get #Handle, , sx
             Get #Handle, , sy
@@ -497,7 +511,7 @@ Sub LoadGrhData()
         Else
 
             '-----------------------------------------------------
-            ' GRH ESTÁTICO
+            ' GRH ESTï¿½TICO
             '-----------------------------------------------------
             GrhData(grhIdx).NumFrames = 1
 
@@ -539,7 +553,7 @@ Sub LoadGrhData()
              " GrhCount=" & GrhCount
 
     '-------------------------------------------------------------
-    ' DIAGNÓSTICO
+    ' DIAGNï¿½STICO
     '-------------------------------------------------------------
     For i = 1 To 10
 

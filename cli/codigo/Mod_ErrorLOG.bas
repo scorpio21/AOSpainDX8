@@ -168,6 +168,10 @@ If LogsEnabled Then
     Kill App.Path & "\Logs\errores.log"
     Kill App.Path & "\Logs\Render_FirstTile.log"
     Kill App.Path & "\Logs\DrawGrh.Log"
+    Kill App.Path & "\Logs\Inventario_Render.log"
+    Kill App.Path & "\Logs\Inventario_Texture.log"
+    Kill App.Path & "\Logs\Engine_Init.Log"
+    
 End If
 
 End Sub
