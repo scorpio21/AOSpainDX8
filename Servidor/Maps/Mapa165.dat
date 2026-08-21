@@ -1,0 +1,14 @@
+[Mapa165]
+Name=Barco
+MusicNum=0-0
+StartPos=195-0-0
+MagiaSinefecto=1
+InviSinEfecto=1
+ResuSinEfecto=0
+NoEncriptarMP=0
+Terreno=BOSQUE
+Zona=CAMPO
+Restringir=No
+BackUp= 0
+Pk=1
+SeCaenItems=1

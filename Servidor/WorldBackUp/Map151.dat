@@ -1,0 +1,9 @@
+[Mapa151]
+Name=Dungeon de Hielo
+MusicNum=28
+StartPos=0-0-0
+Terreno=NIEVE
+Zona=DUNGEON
+Restringir=No
+BackUp= 1
+pk=0

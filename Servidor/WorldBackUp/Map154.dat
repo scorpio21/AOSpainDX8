@@ -1,0 +1,9 @@
+[Mapa154]
+Name=Sala de duelos
+MusicNum=49
+StartPos=0-0-0
+Terreno=BOSQUE
+Zona=CAMPO
+Restringir=No
+BackUp= 1
+pk=0

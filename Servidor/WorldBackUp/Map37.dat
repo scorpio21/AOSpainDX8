@@ -1,0 +1,9 @@
+[Mapa37]
+Name=Ciudad Newbie
+MusicNum=5
+StartPos=0-0-0
+Terreno=BOSQUE
+Zona=CIUDAD
+Restringir=Si
+BackUp= 1
+pk=1

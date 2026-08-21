@@ -2,23 +2,11 @@
 cli_backup_dx7_*/
 
 # Archivos binarios de recursos (no versionados)
-*.map
 *.grh
-*.wav
-*.mp3
-*.mid
-*.midi
 *.ogg
-*.dat
 
 # Ejecutables compilados
 *.exe
-*.dll
-!cli/DX8VB.DLL
-!cli/quartz.dll
-!cli/zlib.dll
-!cli/unzip32.dll
-!cli/olepro32.dll
 
 # Visual Basic temporales
 *.vbw

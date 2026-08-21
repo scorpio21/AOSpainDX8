@@ -1,0 +1,17 @@
+[Mapa174]
+Name=Dungeon Pirata
+MusicNum=46
+MagiaSinefecto=0
+NoEncriptarMP=0
+Terreno=BOSQUE
+Zona=CAMPO
+Restringir=No
+BackUp= 0
+Pk=0
+MinLevel=20
+InviSinEfecto=0
+ResuSinEfecto=0
+SeCaenItems=1
+InviSinEfecto=0
+ResuSinEfecto=0
+PuedeMascotas=0

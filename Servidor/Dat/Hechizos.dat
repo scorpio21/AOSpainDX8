@@ -1,0 +1,2366 @@
+'Tipos....
+'1 actuan sobre HP,MANA,STA,HAM y SED
+'2 actuan sobre los estados de los usuarios
+'3 invocacion
+'4 materializa
+'5 terr
+
+'Targets....
+'1.....Usuario
+'2.....Npc
+'3.....Usuario Y Npc
+'4.....Terreno
+
+[INIT]
+NumeroHechizos=71
+
+[HECHIZO1]
+Nombre=Curar veneno
+Desc=Cura el envenenamiento
+PalabrasMagicas=NIHIL VED
+HechizeroMsg=Has curado a
+TargetMsg=te ha curado del envenenamiento.
+PropioMsg=Te has curado del envenenamiento.
+Tipo=2
+WAV=16
+FXgrh=2
+Loops=3
+CuraVeneno=1
+MinSkill=8
+ManaRequerido=10
+Target=1
+
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+
+
+[HECHIZO2]
+Nombre=Destello de luz
+Desc=Causa 5 a 10 puntos de daño a la victima.
+PalabrasMagicas=OHL VOR PEK
+HechizeroMsg=Has lanzado destello de luz sobre
+TargetMsg=lanzó destello de luz sobre ti.
+Tipo=1
+WAV=16
+FXgrh=78
+Loops=3
+Resis=1
+SubeHP=2
+MinHP=5
+MaxHP=10
+MinSkill=6
+ManaRequerido=12
+Target=3
+
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+
+[HECHIZO3]
+Nombre=Curar heridas leves
+Desc=Cura heridas leves, restaura entre 1 y 5 puntos de salud.
+PalabrasMagicas=CORP SANC
+
+HechizeroMsg=Has sanado a
+TargetMsg=te ha curado algunas heridas.
+PropioMsg=Te has curado algunas heridas.
+
+Tipo=1
+WAV=17
+FXgrh=0
+
+SubeHP=1
+MinHP=1
+MaxHP=5
+    
+SubeMana=0
+MinMana=0
+MaxMana=0
+    
+SubeSta=0
+MinSta=0
+MaxSta=0
+    
+SubeHam=0
+MinHam=0
+MaxHam=0
+    
+SubeSed=0
+MinSed=0
+MaxSed=0
+
+Invisibilidad=0
+Paraliza=0
+CuraVeneno=0
+Envenena=0
+Maldicion=0
+RemoverMaldicion=0
+Bendicion=0
+Revivir=0
+
+Invoca=0
+NumNpc=0
+
+materializa=0
+itemindex=0
+
+MinSkill=10
+ManaRequerido=10
+
+Target=1
+
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+
+[HECHIZO4]
+Nombre=Envenenar
+Desc=Envenenamiento, provoca la muerte si no se contrarresta el veneno, se puede curar con el hechizo curar veneno o con la pocion adecuada.
+PalabrasMagicas=SERP XON IN
+
+HechizeroMsg=Has envenenado a
+TargetMsg=te ha envenenado, debes curarte pronto o el veneno podra contigo.
+PropioMsg=Te has envenenado, debes curarte pronto o el veneno podra contigo.
+
+Tipo=2
+WAV=16
+FXgrh=3
+Loops=3
+Resis=1
+ExclusivoClase=Druida
+Envenena=2
+MinSkill=20
+ManaRequerido=20
+
+Target=3
+CP1="MAGO"
+CP2="CLERIGO"
+CP3="GUERRERO"
+CP4="ASESINO"
+CP5="LADRON"
+CP6="BARDO"
+'CP7="DRUIDA"
+CP8="PALADIN"
+CP9="PIRATA"
+CP10="TRABAJADOR"
+CP11="BRUJO"
+CP12="ARQUERO"
+CP13="BANDIDO"
+CP14="DOMADOR"
+
+
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+
+[HECHIZO5]
+Nombre=Curar heridas graves
+Desc=Curar heridas graves, restaura entre 15 y 25 puntos de salud.
+PalabrasMagicas=EN CORP SANCTIS
+
+HechizeroMsg=Has sanado a
+TargetMsg=te ha curado algunas heridas.
+PropioMsg=Te has curado algunas heridas.
+
+Tipo=1
+WAV=18
+FXgrh=9
+loops=1
+
+SubeHP=1
+MinHP=15
+MaxHP=25
+    
+MinSkill=38
+ManaRequerido=40
+
+Target=1
+
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+[HECHIZO6]
+Nombre=Viento fugaz
+Desc=Causa 10 a 14 puntos de daño a la victima.
+PalabrasMagicas=VAX PER
+HechizeroMsg=Has lanzado Viento Fugaz sobre 
+TargetMsg=lanzo Viento Fugaz sobre vos.
+PropioMsg=Te has lanzado Viento Fugaz.
+Tipo=1
+WAV=19
+FXgrh=0
+Resis=1
+SubeHP=2
+MinHP=10
+MaxHP=14
+    
+MinSkill=12
+ManaRequerido=20
+
+Target=3
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+
+[HECHIZO7]
+Nombre=Electroshock
+Desc=Causa 12 a 20 puntos de daño a la victima.
+PalabrasMagicas=SUN VAP
+HechizeroMsg=Has lanzado Electroshock sobre
+TargetMsg=lanzo Electroshock sobre ti.
+PropioMsg=Te has lanzado Electroshock, debes atacar al enemigo...
+Tipo=1
+WAV=16
+FXgrh=0
+Resis=1
+
+SubeHP=2
+MinHP=12
+MaxHP=20
+    
+MinSkill=22
+ManaRequerido=35
+
+Target=3
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+
+[HECHIZO8]
+Nombre=Golpe de Luz
+Desc=Causa 20 a 30 puntos de daño a la victima.
+PalabrasMagicas=VAX IN TAR
+HechizeroMsg=Sacas tu varita y lanzas Golpe de Luz sobre
+TargetMsg=lanzo Golpe de Luz sobre ti y te ha quemado partes de tu piel.
+PropioMsg=Te has herido lanzandote golpe de luz.
+Tipo=1
+WAV=27
+FXgrh=81
+loops=1
+Resis=1
+
+SubeHP=2
+MinHP=20
+MaxHP=30
+    
+SubeMana=0
+MinMana=0
+MaxMana=0
+    
+SubeSta=0
+MinSta=0
+MaxSta=0
+    
+SubeHam=0
+MinHam=0
+MaxHam=0
+    
+SubeSed=0
+MinSed=0
+MaxSed=0
+
+Invisibilidad=0
+Paraliza=0
+CuraVeneno=0
+Envenena=0
+Maldicion=0
+Revivir=0
+
+Invoca=0
+NumNpc=0
+
+materializa=0
+itemindex=0
+
+MinSkill=37
+ManaRequerido=45
+
+Target=3
+
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+
+[HECHIZO9]
+Nombre=Paralizar
+Desc=Paraliza por un momento a la victima.
+PalabrasMagicas=HOAX VORP
+
+HechizeroMsg=Has paralizado a
+TargetMsg=te ha paralizado.
+PropioMsg=Te has paralizado.
+
+Tipo=2
+WAV=16
+FXgrh=8
+loops=1
+Paraliza=1
+
+MinSkill=60
+ManaRequerido=350
+
+'CP1="MAGO"
+'CP2="CLERIGO"
+CP3="GUERRERO"
+CP4="ASESINO"
+CP5="LADRON"
+'CP6="BARDO"
+'CP7="DRUIDA"
+CP8="PALADIN"
+CP9="PIRATA"
+CP10="TRABAJADOR"
+CP11="BRUJO"
+CP12="ARQUERO"
+CP13="BANDIDO"
+CP14="DOMADOR"
+
+Target=3
+
+
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+
+[HECHIZO10]
+Nombre=Remover paralisis
+Desc=Remueve la paralisis.
+PalabrasMagicas=AN HOAX VORP
+
+HechizeroMsg=Le has removido la paralisis a
+TargetMsg=te ha removido la paralisis.
+PropioMsg=Te has removido la paralisis.
+
+Tipo=2
+WAV=16
+FXgrh=0
+
+RemoverParalisis=1
+
+MinSkill=45
+ManaRequerido=300
+
+Target=3
+
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+
+[HECHIZO11]
+Nombre=Resucitar
+Desc=Resucitar un usuario muerto.
+PalabrasMagicas=AHIL KNÄ XÄR
+
+HechizeroMsg=Has resucitado a
+TargetMsg=te ha resucitado.
+PropioMsg=Te has resucitado.
+
+Tipo=2
+WAV=58
+FXgrh=0
+
+Revivir=1
+
+Invoca=0
+NumNpc=0
+
+materializa=0
+itemindex=0
+
+MinSkill=75
+ManaRequerido=420
+
+Target=1
+
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+
+[HECHIZO12]
+Nombre=Provocar hambre
+Desc=Provocar hambre, provoca la perdida de entre 30 y 70 pts de comida.
+PalabrasMagicas=ÔL AEX
+
+HechizeroMsg=Le has lanzado hambre a
+TargetMsg=te ha lanzado hambre, empiezas a notarte cansado, debes comer...
+PropioMsg=Te has lanzado hambre.
+
+Tipo=1
+WAV=16
+Resis=1
+
+SubeHam=2
+MinHam=30
+MaxHam=70
+    
+MinSkill=5
+ManaRequerido=20
+
+Target=1
+Reemplazar=2
+
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+
+[HECHIZO13]
+Nombre=Terrible hambre de Igôr
+Desc=Terrible hambre de Igôr, provoca la perdida de todos los pts de comida. Este encantamiento
+fue creado por el mago Nimbul estudiando la conducta de los gigantes de las montañas, la primer
+victima de este hechizo fue un gigante llamado Igôr.
+PalabrasMagicas=ÛX'ÔL AEX
+
+HechizeroMsg=Le has lanzado gran hambre a
+TargetMsg=te ha lanzado gran hambre.
+PropioMsg=Te has lanzado gran hambre.
+
+Tipo=1
+WAV=16
+Resis=1
+
+SubeHam=2
+MinHam=100
+MaxHam=100
+    
+MinSkill=35
+ManaRequerido=55
+
+Target=1
+
+
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+
+[HECHIZO14]
+Nombre=Invisibilidad
+Desc=Hace invisible a un personaje, el efecto no es permanente.
+PalabrasMagicas=Invi§iBiLiTy
+HechizeroMsg=Has lanzado invisibilidad sobre
+TargetMsg=te ha hecho invisible.
+PropioMsg=Te has hecho invisible.
+Tipo=2
+WAV=57
+FXgrh=59
+
+Invisibilidad=1
+
+MinSkill=87
+ManaRequerido=500
+
+Target=1
+
+
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+
+[HECHIZO15]
+Nombre=Llama infernal
+Desc=Causa 35 a 55 puntos de daño a la victima.
+PalabrasMagicas=VAX IN TAR
+HechizeroMsg=Has lanzado Llama infernal sobre
+TargetMsg=lanzo Llama infernal sobre ti.
+PropioMsg=Has lanzado Llama infernal sobre ti.
+Tipo=1
+WAV=67
+FXgrh=86
+Loops=1
+Resis=1
+
+SubeHP=2
+MinHP=35
+MaxHP=55
+    
+MinSkill=50
+ManaRequerido=250
+
+Target=3
+
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+
+
+
+[HECHIZO16]
+Nombre=Metamorfosis Mata Gente (M)(B)
+Desc=Te transforma temporalmente en un Mata Gente.
+PalabrasMagicas=Mata$ GenTe
+HechizeroMsg=Has convertido en un Mata Gente a
+TargetMsg=te ha convertido en un Mata Gente.
+PropioMsg=Te has convertido en un Mata Gente.
+Tipo=2
+WAV=16
+FXgrh=0
+
+Metamorfosis=1
+Body=618
+Fuerza=665
+Agilidad=765
+Inteligencia=565
+MinSkill=0
+ManaRequerido=0
+ExclusivoClase=Mago
+ExclusivoClase1=Bardo
+Target=1
+'CP1="MAGO"
+CP2="CLERIGO"
+CP3="GUERRERO"
+CP4="ASESINO"
+CP5="LADRON"
+'CP6="BARDO"
+CP7="DRUIDA"
+CP8="PALADIN"
+CP9="PIRATA"
+CP10="TRABAJADOR"
+CP11="BRUJO"
+CP12="ARQUERO"
+CP13="BANDIDO"
+CP14="DOMADOR"
+
+
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+
+[HECHIZO17]
+Nombre=Invocar elemental de Viento
+Desc=Invocar elemental de Viento
+PalabrasMagicas=BeTe'P
+HechizeroMsg=Has invocado un elemental Templario
+Tipo=4
+WAV=17
+FXgrh=7
+Invoca=1
+NumNpc=693
+Cant=1
+MinSkill=90
+ManaRequerido=520
+Target=4
+
+
+
+
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+
+[HECHIZO18]
+Nombre=Celeridad
+Desc=Aumenta la agilidad del usuario que recibe el hechizo.
+PalabrasMagicas=YUP A'INC
+HechizeroMsg=Has lanzado celeridad sobre 
+TargetMsg=te ha lanzado celeridad, tu agilitad aumenta.
+PropioMsg=Te has lanzado celeridad, tu agilidad aumenta.
+Tipo=1
+WAV=17
+FXgrh=79
+
+SubeAG=1
+MinAG=2
+MaxAG=5
+
+MinSkill=20
+ManaRequerido=40
+Target=1
+
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+
+[HECHIZO19]
+Nombre=Torpeza (Solo Clerigo)
+Desc=Reduce la agilidad del usuario que recibe el spell
+PalabrasMagicas=ASYNC YUP A'INC
+HechizeroMsg=Has lanzado torpeza sobre 
+TargetMsg=te ha lanzado torpeza, notas como baja tu agilidad.
+PropioMsg=Te has lanzado torpeza, notas como baja tu agilidad.
+Tipo=1
+WAV=17
+FXgrh=0
+
+SubeAG=2
+MinAG=2
+MaxAG=5
+
+MinSkill=20
+ManaRequerido=20
+Target=1
+
+
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+
+[HECHIZO20]
+Nombre=Fuerza
+Desc=Aumenta la fuerza del objetivo
+PalabrasMagicas=Ar A'kron
+HechizeroMsg=Has lanzado fuerza sobre 
+TargetMsg=te ha lanzado fuerza, te sientes mas fuerte.
+PropioMsg=Te has lanzado fuerza, te sientes mas fuerte.
+Tipo=1
+WAV=17
+FXgrh=80
+
+SubeFU=1
+MinFU=2
+MaxFU=5
+
+MinSkill=35
+ManaRequerido=50
+Target=1
+
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+
+[HECHIZO21]
+Nombre=Debilidad
+Desc=Reduce la fuerza del usuario que recibe el hechizo
+PalabrasMagicas=Xoom varp
+HechizeroMsg=Has lanzado Debilidad sobre 
+TargetMsg=te ha lanzado Debilidad, sientes como baja tu fuerza.
+PropioMsg=Te has lanzado Debilidad, sientes como baja tu fuerza.
+Tipo=1
+WAV=17
+FXgrh=0
+
+SubeFU=2
+MinFU=2
+MaxFU=5
+
+MinSkill=35
+ManaRequerido=45
+Target=1
+
+
+
+
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+
+[HECHIZO22]
+Nombre=Aro de Zeus 
+Desc=Causa entre 50 a 65 puntos de daño a la victima.
+PalabrasMagicas=Potestâ Zeus
+HechizeroMsg=Has lanzado Aro de Zeus sobre
+TargetMsg=lanzó Aro de Zeus sobre ti.
+PropioMsg=Te has Aro de Zeus, ten cuidado.
+Tipo=1
+WAV=67
+FXgrh=77
+Loops=1
+Resis=1
+SubeHP=2
+MinHP=50
+MaxHP=65
+    
+MinSkill=50
+ManaRequerido=470
+
+
+CP1="MAGO"
+CP2="CLERIGO"
+CP3="GUERRERO"
+'CP4="ASESINO"
+CP5="LADRON"
+CP6="BARDO"
+CP7="DRUIDA"
+'CP8="PALADIN"
+CP9="PIRATA"
+CP10="TRABAJADOR"
+'CP11="BRUJO"
+CP12="ARQUERO"
+CP13="BANDIDO"
+CP14="DOMADOR"
+
+Target=3
+
+
+
+
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+
+[HECHIZO23]
+Nombre= Rayo Divino
+Desc=Causa 60 a 75 puntos de daño a la victima.
+PalabrasMagicas=T'HY KOOOL
+HechizeroMsg=Has lanzado rayo Divino Sobre
+TargetMsg=lanzó Rayo Divino sobre ti.
+PropioMsg=Te has lanzado Rayo Divino, ten cuidado.
+Tipo=1
+WAV=108
+FXgrh=11
+Loops=1
+Resis=1
+
+SubeHP=2
+MinHP=60
+MaxHP=75
+    
+MinSkill=65
+ManaRequerido=510
+
+Target=3
+
+'CP1="MAGO"
+'CP2="CLERIGO"
+CP3="GUERRERO"
+'CP4="ASESINO"
+CP5="LADRON"
+'CP6="BARDO"
+'CP7="DRUIDA"
+'CP8="PALADIN"
+CP9="PIRATA"
+CP10="TRABAJADOR"
+CP11="BRUJO"
+CP12="ARQUERO"
+CP13="BANDIDO"
+CP14="DOMADOR"
+
+
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+
+[HECHIZO24]
+Nombre=Inmovilizar
+Desc=Paraliza por un momento a la victima. Gasta 300 de mana y requiere 60 skills en Magia.
+PalabrasMagicas=Är Prop s'uo
+
+HechizeroMsg=Has paralizado a
+TargetMsg=te ha paralizado, estas en peligro.
+PropioMsg=Te has paralizado, estas en peligro, debes removerte.
+
+Tipo=2
+WAV=26
+FXgrh=12
+loops=1
+Paraliza=1
+Inmoviliza=0
+MinSkill=60
+ManaRequerido=260
+
+CP1="MAGO"
+CP2="CLERIGO"
+CP3="GUERRERO"
+'CP4="ASESINO"
+CP5="LADRON"
+CP6="BARDO"
+CP7="DRUIDA"
+'CP8="PALADIN"
+CP9="PIRATA"
+CP10="TRABAJADOR"
+CP11="BRUJO"
+CP12="ARQUERO"
+CP13="BANDIDO"
+CP14="DOMADOR"
+
+Target=3
+
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+
+[HECHIZO25]
+Nombre=Apocalipsis
+Desc=Causa 85 a 95 puntos de daño a la victima.
+PalabrasMagicas=Rahma Nañarak O'al
+HechizeroMsg=Has lanzado Apocalipsis sobre
+TargetMsg=te ha lanzado Apocalipsis.
+PropioMsg=Te has lanzado Apocalipsis.
+Tipo=1
+WAV=27
+FXgrh=13
+Loops=1
+Resis=1
+
+SubeHP=2
+MinHP=85
+MaxHP=95
+    
+MinSkill=75
+ManaRequerido=950
+ExclusivoClase=Clerigo
+ExclusivoClase1=Mago
+Target=3
+
+'CP1="MAGO"
+'CP2="CLERIGO"
+CP3="GUERRERO"
+CP4="ASESINO"
+CP5="LADRON"
+CP6="BARDO"
+CP7="DRUIDA"
+CP8="PALADIN"
+CP9="PIRATA"
+CP10="TRABAJADOR"
+CP11="BRUJO"
+CP12="ARQUERO"
+CP13="BANDIDO"
+CP14="DOMADOR"
+
+
+
+
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+[HECHIZO26]
+Nombre=Invocar Elemental de Fuego
+Desc=Invocar elemental de fuego que te ayuda a combatir contra criaturas
+PalabrasMagicas=Yur'rax
+HechizeroMsg=Has invocado un elemental de fuego para ayudarte a combatir
+Tipo=4
+WAV=17
+FXgrh=7
+Invoca=1
+NumNpc=619
+Cant=1
+MinSkill=90
+ManaRequerido=520
+Target=4
+
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+[HECHIZO27]
+Nombre=Invocar Elemental de Agua
+Desc=Invocar elemental de agua que te ayuda a combatir contra criaturas
+PalabrasMagicas=Mantra'rax
+HechizeroMsg=Has invocado un elemental de agua
+Tipo=4
+WAV=17
+FXgrh=61
+Invoca=1
+NumNpc=618
+Cant=1
+MinSkill=90
+ManaRequerido=520
+Target=4
+
+
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+[HECHIZO28]
+Nombre=Invocar Elemental de Tierra
+Desc=Invocar elemental de tierra que te ayuda a combatir contra criaturas
+PalabrasMagicas=Mantra'rax
+HechizeroMsg=Has invocado un elemental de tierra
+Tipo=4
+WAV=17
+FXgrh=67
+Invoca=1
+NumNpc=620
+Cant=1
+MinSkill=90
+ManaRequerido=520
+Target=4
+
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+[HECHIZO29]
+Nombre=Implorar ayuda
+Desc=Imploras ayuda a los dioses para combatir contra una criatura
+PalabrasMagicas=Ar'Cos Mantra'rax
+HechizeroMsg=Los dioses te han enviado en tu ayuda un fuego fatuo.
+Tipo=4
+WAV=17
+FXgrh=7
+Invoca=1
+NumNpc=89
+Cant=1
+MinSkill=100
+ManaRequerido=1520
+Target=4
+
+
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+[HECHIZO30]
+Nombre=Ceguera
+Desc=Ceguera
+PalabrasMagicas=Blin'dNe§§
+HechizeroMsg=Has lanzado ceguera sobre
+TargetMsg=te ha lanzado ceguera, no consigues ver nada.
+PropioMsg=Te has lanzado ceguera, ahora no podras ver nada.
+Tipo=2
+WAV=17
+FXgrh=0
+Ceguera=1
+MinSkill=50
+ManaRequerido=420
+Target=1
+ExclusivoClase=Bardo
+CP1="MAGO"
+CP2="CLERIGO"
+CP3="GUERRERO"
+CP4="ASESINO"
+CP5="LADRON"
+'CP6="BARDO"
+CP7="DRUIDA"
+CP8="PALADIN"
+CP9="PIRATA"
+CP10="TRABAJADOR"
+CP11="BRUJO"
+CP12="ARQUERO"
+CP13="BANDIDO"
+CP14="DOMADOR"
+
+
+
+
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+[HECHIZO31]
+Nombre=Estupidez
+Desc=Estupidez
+PalabrasMagicas=Stv'pÿdiTl
+HechizeroMsg=Has lanzado Estupidez sobre
+TargetMsg=te ha lanzado estupidez, no sientes tus piernas.
+PropioMsg=Te has lanzado Estupidez, no sientes tus piernas.
+Tipo=2
+WAV=17
+FXgrh=0
+Estupidez=1
+MinSkill=30
+ManaRequerido=520
+Target=1
+ExclusivoClase=Bardo
+CP1="MAGO"
+CP2="CLERIGO"
+CP3="GUERRERO"
+CP4="ASESINO"
+CP5="LADRON"
+'CP6="BARDO"
+CP7="DRUIDA"
+CP8="PALADIN"
+CP9="PIRATA"
+CP10="TRABAJADOR"
+CP11="BRUJO"
+CP12="ARQUERO"
+CP13="BANDIDO"
+CP14="DOMADOR"
+
+
+
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+
+[HECHIZO32]
+Nombre=Apocalipsis Nuclear
+Desc=Causa 140 a 155 puntos de daño a la victima.
+PalabrasMagicas=Nuclear Nañarak O'al
+HechizeroMsg=Has lanzado Apocalipsis Nuclear sobre
+TargetMsg=te ha lanzado Apocalipsis Nuclear.
+PropioMsg=Te has lanzado Apocalipsis Nuclear.
+Tipo=1
+WAV=65
+FXgrh=24
+Loops=1
+Resis=1
+
+SubeHP=2
+MinHP=140
+MaxHP=155
+
+    
+MinSkill=100
+ManaRequerido=1800
+ExclusivoClase=Mago
+Target=3
+
+'CP1="MAGO"
+CP2="CLERIGO"
+CP3="GUERRERO"
+CP4="ASESINO"
+CP5="LADRON"
+CP6="BARDO"
+CP7="DRUIDA"
+CP8="PALADIN"
+CP9="PIRATA"
+CP10="TRABAJADOR"
+CP11="BRUJO"
+CP12="ARQUERO"
+CP13="BANDIDO"
+CP14="DOMADOR"
+
+
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+
+[HECHIZO33] 'Lo usa brujo
+Nombre=Alma Incauta
+Desc=Paraliza por un momento a la victima.
+PalabrasMagicas=Seele Ergreift
+HechizeroMsg=Has paralizado a
+TargetMsg=te ha paralizado.
+PropioMsg=Te has paralizado.
+Tipo=2
+WAV=26
+FXgrh=25
+loops=1
+Paraliza=1
+MinSkill=70
+ManaRequerido=100
+Target=3
+ExclusivoClase=Brujo
+CP1="MAGO"
+CP2="CLERIGO"
+CP3="GUERRERO"
+CP4="ASESINO"
+CP5="LADRON"
+CP6="BARDO"
+CP7="DRUIDA"
+CP8="PALADIN"
+CP9="PIRATA"
+CP10="TRABAJADOR"
+'CP11="BRUJO"
+CP12="ARQUERO"
+CP13="BANDIDO"
+CP14="DOMADOR"
+
+
+
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+[HECHIZO34]
+Nombre=Solo GMs
+Desc=Causa 5000 puntos de daño a la victima.
+PalabrasMagicas=GM Power
+HechizeroMsg=Has lanzado Gm Power sobre
+TargetMsg=te ha lanzado Gm Power.
+PropioMsg=Te has lanzado Gm Power.
+Tipo=1
+WAV=27
+FXgrh=14
+Loops=1
+Resis=1
+
+SubeHP=2
+MinHP=5000
+MaxHP=5000
+    
+MinSkill=0
+ManaRequerido=0
+
+Target=3
+
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+
+[HECHIZO35] 'Lo usa brujo
+Nombre=Embrujo Letal
+Desc=Causa 140 a 150 puntos de daño a la victima.
+PalabrasMagicas= Letal Spell
+HechizeroMsg=Has lanzado Embrujo Letal sobre
+TargetMsg=lanzo Embrujo Letal sobre vos.
+PropioMsg=Has lanzado Embrujo Letal sobre ti.
+Tipo=1
+WAV=129
+FXgrh=56
+Loops=1
+Resis=1
+SubeHP=2
+MinHP=140
+MaxHP=150
+MinSkill=100
+ManaRequerido=1600
+Target=3
+ExclusivoClase=Brujo
+CP1="MAGO"
+CP2="CLERIGO"
+CP3="GUERRERO"
+CP4="ASESINO"
+CP5="LADRON"
+CP6="BARDO"
+CP7="DRUIDA"
+CP8="PALADIN"
+CP9="PIRATA"
+CP10="TRABAJADOR"
+'CP11="BRUJO"
+CP12="ARQUERO"
+CP13="BANDIDO"
+CP14="DOMADOR"
+
+
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+
+[HECHIZO36]
+Nombre=Invocar tortugas
+Desc=Invocar tortus
+PalabrasMagicas=Tortus Power
+HechizeroMsg=Apareció una tortuga a tu alrededor, puede que te ayude...
+Tipo=4
+WAV=17
+FXgrh=7
+Invoca=1
+NumNpc=721
+Cant=1
+MinSkill=50
+ManaRequerido=320
+Target=4
+
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+
+[HECHIZO37]
+Nombre=Curar heridas extremas
+Desc=Curar heridas extremas, restaura entre 70 y 110 puntos de salud.
+PalabrasMagicas=EXTREME CORP SANCTIS
+
+HechizeroMsg=Has sanado a
+TargetMsg=te ha curado algunas heridas.
+PropioMsg=Te has curado algunas heridas.
+
+Tipo=1
+WAV=128
+FXgrh=9
+loops=1
+
+SubeHP=1
+MinHP=70
+MaxHP=110
+    
+MinSkill=70
+ManaRequerido=150
+ExclusivoClase=Bardo
+ExclusivoClase1=Mago
+ExclusivoClase2=Druida
+ExclusivoClase3=Paladin
+ExclusivoClase4=Asesino
+ExclusivoClase5=Brujo
+Target=1
+
+'CP1="MAGO"
+CP2="CLERIGO"
+CP3="GUERRERO"
+'CP4="ASESINO"
+CP5="LADRON"
+'CP6="BARDO"
+'CP7="DRUIDA"
+'CP8="PALADIN"
+CP9="PIRATA"
+CP10="TRABAJADOR"
+'CP11="BRUJO"
+CP12="ARQUERO"
+CP13="BANDIDO"
+CP14="DOMADOR"
+
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+
+[HECHIZO38]
+Nombre=Fuerza Golemica
+Desc=Aumenta la fuerza del objetivo
+PalabrasMagicas=Imit Golem Power
+HechizeroMsg=Has lanzado fuerza golemica sobre 
+TargetMsg=te ha lanzado fuerza golemica.
+PropioMsg=Te has lanzado fuerza golemica.
+Tipo=1
+WAV=17
+FXgrh=0
+
+SubeFU=1
+MinFU=10
+MaxFU=11
+
+MinSkill=35
+ManaRequerido=100
+Target=1
+ExclusivoClase=Clerigo
+ExclusivoClase2=Bardo
+
+
+CP1="MAGO"
+'CP2="CLERIGO"
+CP3="GUERRERO"
+CP4="ASESINO"
+CP5="LADRON"
+'CP6="BARDO"
+CP7="DRUIDA"
+CP8="PALADIN"
+CP9="PIRATA"
+CP10="TRABAJADOR"
+CP11="BRUJO"
+CP12="ARQUERO"
+CP13="BANDIDO"
+CP14="DOMADOR"
+
+
+
+
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+
+[HECHIZO39]
+Nombre=Debilidad Golemica
+Desc=disminuye la fuerza del objetivo
+PalabrasMagicas=DeImit Golem Power
+HechizeroMsg=Has lanzado debilidad golemica sobre 
+TargetMsg=te ha lanzado debilidad golemica.
+PropioMsg=Te has lanzado debilidad golemica.
+Tipo=1
+WAV=17
+FXgrh=0
+
+SubeFU=2
+MinFU=10
+MaxFU=11
+
+MinSkill=35
+ManaRequerido=100
+Target=1
+ExclusivoClase=Mago
+ExclusivoClase2=Bardo
+'CP1="MAGO"
+CP2="CLERIGO"
+CP3="GUERRERO"
+CP4="ASESINO"
+CP5="LADRON"
+'CP6="BARDO"
+CP7="DRUIDA"
+CP8="PALADIN"
+CP9="PIRATA"
+CP10="TRABAJADOR"
+CP11="BRUJO"
+CP12="ARQUERO"
+CP13="BANDIDO"
+CP14="DOMADOR"
+
+
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+
+[HECHIZO40]
+Nombre=Cena de Dioses
+Desc=Cena de Dioses te satisface toda el hambre
+PalabrasMagicas=SicMaxlinc
+
+HechizeroMsg=Le has lanzado cena de dioses a
+TargetMsg=te ha lanzado cena de dioses.
+PropioMsg=Te has lanzado cena de dioses.
+
+Tipo=1
+WAV=16
+Resis=1
+FXgrh=82
+
+SubeHam=1
+MinHam=100
+MaxHam=100
+    
+MinSkill=60
+ManaRequerido=500
+
+Target=1
+
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+
+
+
+[HECHIZO41] 'Lo usa bardo
+Nombre=Sonata Fúnebre
+Desc=Causa 125 a 130 puntos de daño a la victima, gasta 1200 de mana.
+PalabrasMagicas= Sonate to Mortis
+HechizeroMsg=Has lanzado Sonata Fúnebre sobre
+TargetMsg=lanzaste Sonata Fúnebre.
+Tipo=1
+WAV=107
+FXgrh=57
+Loops=1
+Resis=1
+ExclusivoClase=Bardo
+SubeHP=2
+MinHP=125
+MaxHP=130
+MinSkill=100
+ManaRequerido=1200
+EstaRequerida=0
+Target=3
+
+CP1="MAGO"
+CP2="CLERIGO"
+CP3="GUERRERO"
+CP4="ASESINO"
+CP5="LADRON"
+'CP6="BARDO"
+CP7="DRUIDA"
+CP8="PALADIN"
+CP9="PIRATA"
+CP10="TRABAJADOR"
+CP11="BRUJO"
+CP12="ARQUERO"
+CP13="BANDIDO"
+CP14="DOMADOR"
+
+
+
+
+
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+
+[HECHIZO42]
+Nombre=Agua celeste
+Desc=Agua celeste te satisface toda la Sed
+PalabrasMagicas=Water'MananTil
+
+HechizeroMsg=Le has lanzado Agua celeste a
+TargetMsg=te ha lanzado Agua celeste.
+PropioMsg=Te has lanzado Agua celeste.
+
+Tipo=1
+WAV=16
+Resis=1
+FXgrh=85
+
+
+SubeSed=1
+MinSed=100
+MaxSed=100
+    
+MinSkill=60
+ManaRequerido=500
+
+Target=1
+
+
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+
+
+
+
+
+[HECHIZO43] 'Solo paladin y asesino
+Nombre=Luz Suprema
+Desc=Causa 80 a 90 puntos de daño a la victima.
+PalabrasMagicas= Supreme Light 	
+HechizeroMsg=Has lanzado Luz Suprema sobre
+TargetMsg=lanzaste Luz Suprema
+Tipo=1
+WAV=107
+FXgrh=91
+Loops=1
+Resis=1
+ExclusivoClase=Paladin
+SubeHP=2
+MinHP=100
+MaxHP=115
+MinSkill=100
+ManaRequerido=600
+EstaRequerida=0
+Target=3
+
+CP1="MAGO"
+CP2="CLERIGO"
+CP3="GUERRERO"
+CP4="ASESINO"
+CP5="LADRON"
+CP6="BARDO"
+CP7="DRUIDA"
+'CP8="PALADIN"
+CP9="PIRATA"
+CP10="TRABAJADOR"
+CP11="BRUJO"
+CP12="ARQUERO"
+CP13="BANDIDO"
+CP14="DOMADOR"
+
+
+
+
+
+[HECHIZO44]
+Nombre=Esporas de curación
+Desc=La esporas curan a todos los usuarios en tu area de vision (5 a 15).
+PalabrasMagicas=Ahap' CORP SANTICS
+HechizeroMsg=Has curado a todos los usuarios del area.
+Tipo=5
+WAV=17
+FXgrh=22
+SubeHP=1
+MinHP=5
+MaxHP=15
+MinSkill=50
+ManaRequerido=120
+Target=4
+
+
+[HECHIZO45]
+Nombre=Esporas de curación maduras
+Desc=La esporas curan a todos los usuarios en tu area de vision (20 a 50).
+PalabrasMagicas=Ahap' ENCORP SANTICS
+HechizeroMsg=Has curado a todos los usuarios del area.
+Tipo=5
+WAV=17
+FXgrh=22
+SubeHP=1
+MinHP=20
+MaxHP=50
+MinSkill=75
+ManaRequerido=520
+Target=4
+ExclusivoClase=Clerigo
+CP1="MAGO"
+'CP2="CLERIGO"
+CP3="GUERRERO"
+CP4="ASESINO"
+CP5="LADRON"
+CP6="BARDO"
+CP7="DRUIDA"
+CP8="PALADIN"
+CP9="PIRATA"
+CP10="TRABAJADOR"
+CP11="BRUJO"
+CP12="ARQUERO"
+CP13="BANDIDO"
+CP14="DOMADOR"
+
+
+
+[HECHIZO46]
+Nombre=LLuvia de fuego
+Desc=LLuvia de fuego daña a todos los usuarios del area(5 a 10). Requiere 1650 de mana.
+PalabrasMagicas=Ahap' FIRE RAIN
+HechizeroMsg=Has dañado a todos los usuarios del area.
+Tipo=5
+WAV=66
+FXgrh=7
+SubeHP=2
+MinHP=5
+MaxHP=10
+MinSkill=100
+ManaRequerido=1650
+Target=4
+
+
+
+
+[HECHIZO47] 'Solo druida
+Nombre=Fuego de Angmar
+Desc=Causa 125 a 130 puntos de daño a la victima, gasta 1200 de mana.
+PalabrasMagicas= Angmar fire
+HechizeroMsg=Has lanzado Fuego de Angmar sobre
+TargetMsg=lanzaste Fuego de Angmar.
+Tipo=1
+WAV=107
+FXgrh=55
+Loops=1
+Resis=1
+ExclusivoClase=Druida
+SubeHP=2
+MinHP=110
+MaxHP=120
+MinSkill=100
+ManaRequerido=1200
+EstaRequerida=0
+Target=3
+CP1="MAGO"
+CP2="CLERIGO"
+CP3="GUERRERO"
+CP4="ASESINO"
+CP5="LADRON"
+CP6="BARDO"
+'CP7="DRUIDA"
+CP8="PALADIN"
+CP9="PIRATA"
+CP10="TRABAJADOR"
+CP11="BRUJO"
+CP12="ARQUERO"
+CP13="BANDIDO"
+CP14="DOMADOR"
+
+
+
+[HECHIZO48]
+Nombre=Angeles
+Desc=Resucita a todos los muertos del area.
+PalabrasMagicas=Ahap' AHIL KNÄ XÄR
+
+HechizeroMsg=Has resucitado a
+TargetMsg=te ha resucitado.
+PropioMsg=Te has resucitado.
+
+Tipo=5
+WAV=128
+FXgrh=0
+
+Revivir=1
+
+Invoca=0
+NumNpc=0
+
+materializa=0
+itemindex=0
+
+MinSkill=90
+ManaRequerido=1000
+
+Target=4
+
+
+[HECHIZO49]
+Nombre=Muerte de Envenenar
+Desc=Envenenamiento, provoca la muerte si no se contraresta el veneno.
+PalabrasMagicas=SERP XON IN
+HechizeroMsg=Has envenenado a
+TargetMsg=Te ha envenenado.
+PropioMsg=Te has envenenado.
+Tipo=2
+WAV=47
+FXgrh=53
+Loops=3
+Resis=1
+Envenena=20
+MinSkill=80
+ManaRequerido=500
+Target=1
+StaRequerido= 140
+
+
+[HECHIZO50]
+Nombre=Metamorfosis a Golem
+Desc=Vuelve en un golem al user, efecto no permanente.
+PalabrasMagicas=Tans' ADN? &elemnt
+HechizeroMsg=Has convertido en un golem a
+TargetMsg=te ha convertido en un golem.
+PropioMsg=Te has convertido en un golem.
+Tipo=2
+WAV=16
+FXgrh=0
+
+Metamorfosis=1
+Body=141
+Fuerza=60
+Agilidad=15
+Inteligencia=-5
+ExclusivoClase=Druida
+MinSkill=87
+ManaRequerido=1000
+
+Target=1
+
+CP1="MAGO"
+CP2="CLERIGO"
+CP3="GUERRERO"
+CP4="ASESINO"
+CP5="LADRON"
+CP6="BARDO"
+'CP7="DRUIDA"
+CP8="PALADIN"
+CP9="PIRATA"
+CP10="TRABAJADOR"
+CP11="BRUJO"
+CP12="ARQUERO"
+CP13="BANDIDO"
+CP14="DOMADOR"
+
+
+
+[HECHIZO51]
+Nombre=Metamorfosis a Oso
+Desc=Vuelve en un oso al usuario, efecto no permanente.
+PalabrasMagicas=Trans' ADN? &element
+HechizeroMsg=Has convertido en un oso a
+TargetMsg=Te ha convertido en un oso.
+PropioMsg=Te has convertido en un odo.
+Tipo=2
+WAV=16
+FXgrh=0
+
+Metamorfosis=1
+Body=73
+Fuerza=15
+Agilidad=0
+Inteligencia=0
+ExclusivoClase=Druida
+MinSkill=50
+ManaRequerido=340
+
+Target=1
+
+CP1="MAGO"
+CP2="CLERIGO"
+CP3="GUERRERO"
+CP4="ASESINO"
+CP5="LADRON"
+CP6="BARDO"
+'CP7="DRUIDA"
+CP8="PALADIN"
+CP9="PIRATA"
+CP10="TRABAJADOR"
+CP11="BRUJO"
+CP12="ARQUERO"
+CP13="BANDIDO"
+CP14="DOMADOR"
+
+
+
+[HECHIZO52]
+Nombre=Metamorfosis a Medusa
+Desc=Vuelve en una medusa al usuario, efecto no permanente.
+PalabrasMagicas=Trans' ADN? &element
+HechizeroMsg=Has convertido en una medusa a
+TargetMsg=Te ha convertido en una medusa.
+PropioMsg=Te has convertido en una medusa.
+Tipo=2
+WAV=16
+FXgrh=0
+ExclusivoClase=Druida
+Metamorfosis=1
+Body=151
+Fuerza=-5
+Agilidad=12
+Inteligencia=40
+
+MinSkill=87
+ManaRequerido=1100
+
+Target=1
+
+CP1="MAGO"
+CP2="CLERIGO"
+CP3="GUERRERO"
+CP4="ASESINO"
+CP5="LADRON"
+CP6="BARDO"
+'CP7="DRUIDA"
+CP8="PALADIN"
+CP9="PIRATA"
+CP10="TRABAJADOR"
+CP11="BRUJO"
+CP12="ARQUERO"
+CP13="BANDIDO"
+CP14="DOMADOR"
+
+
+
+[HECHIZO53]
+Nombre=Metamorfosis a Gran Dragon rojo
+Desc=Vuelve en un gran dragon rojo al usuario, efecto no permanente.
+PalabrasMagicas=Trans' ADN? &element
+HechizeroMsg=Has convertido en un gran dragon rojo a
+TargetMsg=te ha convertido en un dran dragon rojo.
+PropioMsg=Te has convertido en un dragon rojo.
+Tipo=2
+WAV=16
+FXgrh=0
+ExclusivoClase=Druida
+Metamorfosis=1
+Body=82
+Fuerza=35
+Agilidad=35
+Inteligencia=35
+
+MinSkill=100
+ManaRequerido=2000
+
+Target=1
+
+CP1="MAGO"
+CP2="CLERIGO"
+CP3="GUERRERO"
+CP4="ASESINO"
+CP5="LADRON"
+CP6="BARDO"
+'CP7="DRUIDA"
+CP8="PALADIN"
+CP9="PIRATA"
+CP10="TRABAJADOR"
+CP11="BRUJO"
+CP12="ARQUERO"
+CP13="BANDIDO"
+CP14="DOMADOR"
+
+
+
+[HECHIZO54]
+Nombre=Metamorfosis a Lobo
+Desc=Vuelve en un lobo al usuario, efecto no permanente.
+PalabrasMagicas=Trans' ADN? &element
+HechizeroMsg=Has convertido en un lobo a
+TargetMsg=te ha convertido en un lobo.
+PropioMsg=Te has convertido en un lobo.
+Tipo=2
+WAV=16
+FXgrh=0
+
+Metamorfosis=1
+Body=10
+Fuerza=9
+Agilidad=4
+Inteligencia=-5
+ExclusivoClase=Druida
+MinSkill=48
+ManaRequerido=200
+
+Target=1
+
+CP1="MAGO"
+CP2="CLERIGO"
+CP3="GUERRERO"
+CP4="ASESINO"
+CP5="LADRON"
+CP6="BARDO"
+'CP7="DRUIDA"
+CP8="PALADIN"
+CP9="PIRATA"
+CP10="TRABAJADOR"
+CP11="BRUJO"
+CP12="ARQUERO"
+CP13="BANDIDO"
+CP14="DOMADOR"
+
+
+[HECHIZO55]
+Nombre=Metamorfosis a Araña Gigante
+Desc=Vuelve en una Araña Gigante al usuario, efecto no permanente.
+PalabrasMagicas=Trans' ADN? &element
+HechizeroMsg=Has convertido en una araña gigante a
+TargetMsg=te ha convertido en una araña gigante.
+PropioMsg=Te has convertido en una araña gigante.
+Tipo=2
+WAV=16
+FXgrh=0
+
+Metamorfosis=1
+Body=42
+Fuerza=20
+Agilidad=8
+Inteligencia=0
+
+MinSkill=69
+ManaRequerido=650
+ExclusivoClase=Druida
+Target=1
+
+CP1="MAGO"
+CP2="CLERIGO"
+CP3="GUERRERO"
+CP4="ASESINO"
+CP5="LADRON"
+CP6="BARDO"
+'CP7="DRUIDA"
+CP8="PALADIN"
+CP9="PIRATA"
+CP10="TRABAJADOR"
+CP11="BRUJO"
+CP12="ARQUERO"
+CP13="BANDIDO"
+CP14="DOMADOR"
+
+
+[HECHIZO56]
+Nombre=Curo Mundial 
+Desc=Curo Mundial, restaura entre todo.
+PalabrasMagicas=kûro MûndiæL
+HechizeroMsg=Has sanado a
+TargetMsg=te ha curado algunas heridas.
+PropioMsg=Te has curado algunas heridas.
+
+Tipo=1
+WAV=17
+FXgrh=0
+
+SubeHP=1
+MinHP=998
+MaxHP=999
+    
+SubeMana=1
+MinMana=10000
+MaxMana=20000
+    
+SubeSta=1
+MinSta=900
+MaxSta=999
+    
+SubeHam=1
+MinHam=100
+MaxHam=100
+    
+SubeSed=1
+MinSed=100
+MaxSed=100
+
+Invisibilidad=0
+Paraliza=0
+CuraVeneno=0
+Envenena=0
+Maldicion=0
+RemoverMaldicion=0
+Bendicion=0
+Revivir=0
+
+Invoca=0
+NumNpc=0
+
+materializa=0
+itemindex=0
+
+MinSkill=100
+ManaRequerido=1
+
+Target=1
+
+[HECHIZO57]
+Nombre=Veneno extremo
+Desc=Envenena a la victima por 90
+PalabrasMagicas=SERP XOR IN exTrëme
+HechizeroMsg=Has envenenado a
+TargetMsg=Te ha envenenado.
+PropioMsg=Te has envenenado.
+Tipo=2
+WAV=47
+FXgrh=52
+Loops=3
+Resis=1
+Envenena=80
+MinSkill=100
+ManaRequerido=1450
+Target=1
+StaRequerido= 140
+ExclusivoClase=Druida
+ExclusivoClase1=Brujo
+CP1="MAGO"
+CP2="CLERIGO"
+CP3="GUERRERO"
+CP4="ASESINO"
+CP5="LADRON"
+CP6="BARDO"
+'CP7="DRUIDA"
+CP8="PALADIN"
+CP9="PIRATA"
+CP10="TRABAJADOR"
+'CP11="BRUJO"
+CP12="ARQUERO"
+CP13="BANDIDO"
+CP14="DOMADOR"
+
+
+
+
+'****************************************
+'****************************************
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+
+[HECHIZO58] 
+Nombre=Llama de Venus
+Desc=Causa 80 a 90 puntos de daño a la victima.
+PalabrasMagicas=dÈßÕn µr Ven×§
+HechizeroMsg=Has lanzado Llama de Venus sobre
+TargetMsg=te ha lanzado Llama de Venus.
+PropioMsg=Te has lanzado Llama de Venus.
+Tipo=1
+WAV=129
+FXgrh=83
+Loops=1
+Resis=1
+
+SubeHP=2
+MinHP=80
+MaxHP=90
+ExclusivoClase=Brujo  
+MinSkill=75
+ManaRequerido=1000
+
+Target=3
+
+CP1="MAGO"
+CP2="CLERIGO"
+CP3="GUERRERO"
+CP4="ASESINO"
+CP5="LADRON"
+CP6="BARDO"
+CP7="DRUIDA"
+CP8="PALADIN"
+CP9="PIRATA"
+CP10="TRABAJADOR"
+'CP11="BRUJO"
+CP12="ARQUERO"
+CP13="BANDIDO"
+CP14="DOMADOR"
+
+
+
+[HECHIZO59]
+Nombre=Santus divina
+Desc=Sanacion, restaura entre 100 y 170 puntos de salud.
+PalabrasMagicas=§æntû§ diviÑæ
+HechizeroMsg=Has sanado a
+TargetMsg=te ha curado.
+PropioMsg=Te has curado.
+Tipo=1
+WAV=58
+FXgrh=22
+loops=1
+SubeHP=1
+MinHP=100
+MaxHP=170
+MinSkill=100
+ManaRequerido=620
+Target=1
+ExclusivoClase=cLERIGO
+
+CP1="MAGO"
+'CP2="CLERIGO"
+CP3="GUERRERO"
+CP4="ASESINO"
+CP5="LADRON"
+CP6="BARDO"
+CP7="DRUIDA"
+CP8="PALADIN"
+CP9="PIRATA"
+CP10="TRABAJADOR"
+CP11="BRUJO"
+CP12="ARQUERO"
+CP13="BANDIDO"
+CP14="DOMADOR"
+
+[HECHIZO60]
+Nombre=Nuclear de Reyes(Solo NPC's la lanzan(castillos))
+Desc=Causa 250 a 350 puntos de daño a la victima.
+PalabrasMagicas=Nuclear Nañarak Rey'al 
+HechizeroMsg=Has lanzado Nuclear de Reyes sobre
+TargetMsg=te ha lanzado Nuclear de Reyes.
+PropioMsg=Te has lanzado Nuclear de Reyes.
+Tipo=1
+WAV=65
+FXgrh=24
+Loops=1
+Resis=1
+
+SubeHP=2
+MinHP=255
+MaxHP=365
+    
+MinSkill=100
+ManaRequerido=5000
+
+Target=3
+
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+
+[HECHIZO61]
+Nombre=Apoka de Reyes(Solo NPC's la lanzan(castillos))
+Desc=Causa 200 a 300 puntos de daño a la victima.
+PalabrasMagicas=ApoKa Nañarak Rey'al 
+HechizeroMsg=Has lanzado Apoka de Reyes sobre
+TargetMsg=te ha lanzado Apoka de Reyes.
+PropioMsg=Te has lanzado Apoka de Reyes.
+Tipo=1
+WAV=65
+FXgrh=24
+Loops=1
+Resis=1
+
+SubeHP=2
+MinHP=75
+MaxHP=95
+    
+MinSkill=100
+ManaRequerido=5000
+
+Target=3
+
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+
+[HECHIZO62]
+Nombre=Santus divina Real (Solo clérigos)
+Desc=Sanacion, restaura entre 120 y 150 puntos de salud.
+PalabrasMagicas=§æntû§ diviÑæ ReæL
+
+HechizeroMsg=Has sanado a
+TargetMsg=te ha curado.
+PropioMsg=Te has curado.
+
+Tipo=1
+WAV=58
+FXgrh=22
+loops=1
+ExclusivoClase=Clerigo
+SubeHP=1
+MinHP=120
+MaxHP=150
+    
+MinSkill=100
+ManaRequerido=750
+
+Target=2
+
+CP1="MAGO"
+'CP2="CLERIGO"
+CP3="GUERRERO"
+CP4="ASESINO"
+CP5="LADRON"
+CP6="BARDO"
+CP7="DRUIDA"
+CP8="PALADIN"
+CP9="PIRATA"
+CP10="TRABAJADOR"
+CP11="BRUJO"
+CP12="ARQUERO"
+CP13="BANDIDO"
+CP14="DOMADOR"
+
+
+'<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+[HECHIZO63]
+Nombre=Poder Demoniaco
+Desc=Causa 100 puntos de daño a todos en el área.
+PalabrasMagicas= DEMON ULNOL
+HechizeroMsg=Has lanzado Poder Demoniaco sobre
+TargetMsg=lanzaste Poder Demoniaco.
+PropioMsg=Has lanzado Poder Demoniaco sobre ti.
+Tipo=1
+WAV=107
+FXgrh=22
+Loops=4
+Resis=1
+SubeHP=4
+MinHP=120
+MaxHP=120
+MinSkill=0
+ManaRequerido=0
+EstaRequerida=250
+Target=1
+
+'<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+[HECHIZO64]
+Nombre=Reavivar Poder
+Desc=Aumenta la fuerza y Agilidad
+PalabrasMagicas=A'kron + A'INC
+HechizeroMsg=Has lanzado Reavivar Poder sobre 
+TargetMsg=ha lanzado Reavivar Poder sobre ti.
+PropioMsg=Has lanzado Reavivar Poder sobre ti.
+Tipo=1
+WAV=17
+FXgrh=0
+
+SubeFU=1
+MinFU=10
+MaxFU=15
+SubeAG=1
+MinAG=10
+MaxAG=15
+
+MinSkill=0
+ManaRequerido=0
+EstaRequerida=250
+Target=1
+
+'<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+[HECHIZO65]
+Nombre=Resurección Angel
+Desc=Resucita a todos los muertos del area.
+PalabrasMagicas=Mass AHIL KNÄ XÄR
+
+HechizeroMsg=Has resucitado a
+TargetMsg=te ha resucitado.
+PropioMsg=Te has resucitado.
+
+Tipo=5
+WAV=128
+FXgrh=0
+
+Revivir=1
+
+Invoca=0
+NumNpc=0
+
+materializa=0
+itemindex=0
+
+MinSkill=0
+ManaRequerido=0
+EstaRequerida=250
+Target=4
+
+'<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+[HECHIZO66]
+Nombre=Ira De Dios
+Desc=Causa 100 puntos de daño a todos en el área.
+PalabrasMagicas=DEUS EX DIOX
+HechizeroMsg=Has lanzado Irá De Dios sobre
+TargetMsg=lanzaste Irá De Dios.
+PropioMsg=Has lanzado Irá De Dios sobre ti.
+Tipo=1
+WAV=27
+FXgrh=20
+Loops=1
+Resis=1
+
+SubeHP=4
+MinHP=100
+MaxHP=100
+    
+MinSkill=0
+ManaRequerido=0
+EstaRequerida=500
+Target=1
+
+
+'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+
+[HECHIZO67]' SOLO GM
+Nombre=Paralisis De GM
+Desc=Paraliza a todos los usuarios de un mapa.
+PalabrasMagicas=HOAX VORP AR HËKËN
+
+HechizeroMsg=Has paralizado a
+TargetMsg=te ha paralizado.
+PropioMsg=Te has paralizado.
+
+Tipo=2
+WAV=16
+FXgrh=8
+loops=1
+Paralizaarea=1
+
+MinSkill=0
+ManaRequerido=0
+
+Target=2
+
+[HECHIZO68]
+Nombre=Santus divina (Solo clérigos)
+Desc=Sanacion, restaura entre 200 y 300 puntos de salud.
+PalabrasMagicas=§æntû§ diviÑæ
+HechizeroMsg=Has sanado a
+TargetMsg=te ha curado.
+PropioMsg=Te has curado.
+Tipo=1
+WAV=58
+FXgrh=22
+loops=1
+SubeHP=1
+MinHP=200
+MaxHP=300
+MinSkill=100
+ManaRequerido=400
+Target=1
+CuraVeneno=1
+ExclusivoClase=Clerigo
+SubeHam=1
+MinHam=50
+MaxHam=50
+    
+SubeSed=1
+MinSed=50
+MaxSed=50
+
+CP1="MAGO"
+'CP2="CLERIGO"
+CP3="GUERRERO"
+CP4="ASESINO"
+CP5="LADRON"
+CP6="BARDO"
+CP7="DRUIDA"
+CP8="PALADIN"
+CP9="PIRATA"
+CP10="TRABAJADOR"
+CP11="BRUJO"
+CP12="ARQUERO"
+CP13="BANDIDO"
+CP14="DOMADOR"
+
+
+[HECHIZO69]
+Nombre=Resurrección de Ancestros (Solo clérigos)
+Desc=Resucita y cura al muerto una cantidad de vida.
+PalabrasMagicas= ±ŒlerŒ AncesÐÎa±
+HechizeroMsg=Has sanado a
+TargetMsg=te ha curado.
+PropioMsg=Te has curado.
+WAV=58
+FXgrh=74
+Tipo=2
+Revivir=3
+SubeHP=1
+MinHP=100
+MaxHP=200
+MinSkill=100
+ManaRequerido=700
+Target=1
+ExclusivoClase=Clerigo
+CP1="MAGO"
+'CP2="CLERIGO"
+CP3="GUERRERO"
+CP4="ASESINO"
+CP5="LADRON"
+CP6="BARDO"
+CP7="DRUIDA"
+CP8="PALADIN"
+CP9="PIRATA"
+CP10="TRABAJADOR"
+CP11="BRUJO"
+CP12="ARQUERO"
+CP13="BANDIDO"
+CP14="DOMADOR
+
+
+
+[HECHIZO70]
+Nombre=Escudo de Energia (Solo clerigos)
+Desc=Crea un escudo que te proteje por unos instantes
+PalabrasMagicas=Shield Süm
+HechizeroMsg=Has creado un escudo de energia sobre
+TargetMsg=creo un escudo de energia sobre vos.
+PropioMsg=Has creado un escudo de energia sobre ti.
+Tipo=2
+WAV=17
+Imagen=Escudo
+Escudo=1
+FXgrh=0
+ManaRequerido=20
+StaRequerido=100
+Target=1
+ExclusivoClase=Clerigo
+CP1="MAGO"
+'CP2="CLERIGO"
+CP3="GUERRERO"
+CP4="ASESINO"
+CP5="LADRON"
+CP6="BARDO"
+CP7="DRUIDA"
+CP8="PALADIN"
+CP9="PIRATA"
+CP10="TRABAJADOR"
+CP11="BRUJO"
+CP12="ARQUERO"
+CP13="BANDIDO"
+CP14="DOMADOR"
+
+
+[HECHIZO71]
+Nombre=Mimetismo
+Desc=Asimila momentáneamente tu apariencia a la del usuario a quien se lo lances.
+PalabrasMagicas=Cimim Ux Maïo
+HechizeroMsg=Te has mimetizado con
+TargetMsg=se ha mimetizado contigo.
+PropioMsg=Generas una ilusión de tu apariencia actual.
+Tipo=2
+WAV=16
+FXgrh=0
+Mimetiza=1
+MinSkill=75
+ManaRequerido=800
+Target=1
+StaRequerido= 44

@@ -1,0 +1,16 @@
+[MAPA34]
+Name=Nix
+MusicNum=13
+MagiaSinefecto=0
+InviSinEfecto=1
+ResuSinEfecto=0
+NoEncriptarMP=0
+Terreno=BOSQUE
+Zona=CIUDAD
+Restringir=No
+BackUp= 1
+Pk=1
+SeCaenItems=0
+PuedeMascotas=0
+MinLevel=0
+MaxLevel=0

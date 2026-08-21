@@ -1,0 +1,14 @@
+[Mapa162]
+Name=Guerra de Bandas
+StartPos=0-0-0
+Terreno=BOSQUE
+Zona=DUNGEON
+Restringir=No
+BackUp= 0
+MusicNum=26
+MagiaSinefecto=0
+InviSinEfecto=1
+ResuSinEfecto=0
+NoEncriptarMP=0
+Pk=0
+SeCaenItems=1

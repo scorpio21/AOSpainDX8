@@ -1,0 +1,14 @@
+[Mapa65]
+Name=Bosque de Arghâl
+StartPos=0-0-0
+Terreno=BOSQUE
+Zona=CAMPO
+Restringir=No
+MagiaSinefecto=0
+NoEncriptarMP=0
+BackUp= 0
+Pk=0
+MusicNum=39
+InviSinEfecto=0
+ResuSinEfecto=0
+SeCaenItems=1

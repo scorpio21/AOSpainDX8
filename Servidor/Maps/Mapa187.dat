@@ -1,0 +1,17 @@
+[MAPA187]
+Name=Aire
+MusicNum=35
+Terreno=BOSQUE
+Zona=DUNGEON
+Restringir=No
+InviSinEfecto=0
+ResuSinEfecto=0
+SeCaenItems=1
+MagiaSinefecto=0
+InviSinEfecto=0
+ResuSinEfecto=0
+NoEncriptarMP=0
+BackUp= 0
+Pk=0
+MinLevel=25
+PuedeMascotas=0

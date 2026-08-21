@@ -1,0 +1,9 @@
+[Mapa34]
+Name=Nix
+MusicNum=13
+StartPos=0-0-0
+Terreno=BOSQUE
+Zona=CIUDAD
+Restringir=No
+BackUp= 1
+pk=1

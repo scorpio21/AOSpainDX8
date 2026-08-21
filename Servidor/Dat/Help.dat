@@ -1,0 +1,8 @@
+[INIT]
+NumLines=4
+
+[Help]
+Line1=(Caminar = Flechas) 
+Line2=Para hablar, pulsa "enter", escribe tu mensaje y de nuevo "enter"
+Line3=(Mensaje privado = \nombre_usuario mensaje) 
+Line4=(Atacar = CONTROL) (Llamar a un GM /GM)

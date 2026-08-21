@@ -1,0 +1,101 @@
+[INIT]
+NumArmas=33
+
+[Arma1] ' Espada larga
+Index=2
+
+[Arma2] ' Hacha
+Index=3
+
+[Arma3] ' Daga
+Index=15
+
+[Arma4] ' Espada vikinga
+Index=123
+
+[Arma5] ' Katana
+Index=124
+
+[Arma6] ' Sable
+Index=125
+
+[Arma7] ' Hacha larga de guerra
+Index=126
+
+[Arma8] ' Hacha de leñador
+Index=127
+
+[Arma9] ' Hacha de guerra de dos filos
+Index=159
+
+[Arma10] ' Espada corta
+Index=164
+
+[Arma11] ' Daga +1
+Index=165
+
+[Arma12] ' Piquete de minero
+Index=187
+
+[Arma13] ' Serrucho
+Index=198
+
+[Arma14] ' Daga +2
+Index=365
+
+[Arma15] ' Daga +3
+Index=366
+
+[Arma16] ' Daga +4
+Index=367
+
+[Arma17] ' Martillo de Herrero
+Index=389
+
+[Arma18] ' Cimitarra
+Index=399
+
+[Arma19] ' Vara de mago
+Index=400
+
+[Arma20] ' Martillo de guerra
+Index=401
+
+[Arma21] ' Espada matadragones
+Index=402
+
+[Arma22] ' Espada de plata
+Index=403
+
+[Arma23] ' Daga de Plata
+Index=559
+
+[Arma24] ' Espada Paralizante
+Index=643
+
+[Arma25] ' Bola de Hierro
+Index=972
+
+[Arma26] ' Bola de Plata
+Index=973
+
+[Arma27] ' Bola de Oro
+Index=974
+
+[Arma28] ' Espada Cegadora
+Index=1194
+
+[Arma29] ' Espada Envenenada
+Index=1196
+
+[Arma30] ' Martillo Herrero Magico
+Index=1272
+
+[Arma31] ' Hacha de leña Elefica
+Index=1665
+
+[Arma32] ' Cuchillas
+Index=991
+
+[Arma33] 'Piquete Busca tesoro
+Index=561

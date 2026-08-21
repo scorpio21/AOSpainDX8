@@ -1,0 +1,16 @@
+[Mapa151]
+Name=Dungeon de Hielo
+StartPos=0-0-0
+Terreno=NIEVE
+Zona=DUNGEON
+Restringir=No
+MagiaSinefecto=0
+NoEncriptarMP=0
+BackUp= 1
+MinLevel=25
+Pk=0
+MusicNum=28
+InviSinEfecto=0
+ResuSinEfecto=0
+SeCaenItems=1
+PuedeMascotas=0

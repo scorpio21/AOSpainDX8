@@ -1,0 +1,14 @@
+[Mapa105]
+Name=Mar
+MusicNum=12
+StartPos=1-0-0
+Terreno=BOSQUE
+Zona=CAMPO
+Restringir=No
+MagiaSinefecto=0
+InviSinEfecto=0
+ResuSinEfecto=0
+NoEncriptarMP=0
+BackUp= 0
+SeCaenItems=1
+Pk=0

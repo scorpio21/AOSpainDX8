@@ -1,0 +1,128 @@
+[INIT]
+NumObjs=33
+
+[Obj1] ' Caña de Pesca
+Index=138
+
+[Obj2] ' Silla
+Index=162
+
+[Obj3] ' Cuchara
+Index=163
+
+[Obj4] 'Mueble 
+Index=167
+
+[Obj5] 'Silla
+Index=168
+
+[Obj6] 'Tambor
+Index=362
+
+[Obj7] ' Arco Mediaval
+Index=380
+
+[Obj8] ' Laud
+Index=469
+
+[Obj9] ' Fragata reforzada
+Index=475
+
+[Obj10] ' Fragata guerra
+Index=476
+
+[Obj11] ' Arco Largo
+Index=478
+
+
+[Obj12] ' Arco compuesto
+Index=479
+
+[Obj13] ' Flecha
+Index=480
+
+[Obj14] 'Flauta
+Index=540
+
+[Obj15] 'Flecha + 1
+Index=551
+
+[Obj16] 'Flecha + 2
+Index=552
+
+[Obj17] 'Flecha + 3
+Index=553
+
+[Obj18] 'Escudo de Madera
+Index=601
+
+[Obj19] 'Ballesta Simple
+Index=930
+
+[Obj20] 'Flecha Ballesta
+Index=964
+
+[Obj21] 'Ballesta Compuesta
+Index=965
+
+[Obj22] 'Dardo
+Index=966
+
+[Obj23] 'Dardo +1
+Index=967
+
+[Obj24] 'Dardo +2
+Index=968
+
+[Obj25] 'Cervatana
+Index=969
+
+[Obj26] 'Resoltera
+Index=970
+
+[Obj27] 'Bola Madera
+Index=971
+
+[Obj28] ' Arco Mediaval verde
+Index=1167
+
+[Obj29] ' Arco Mediaval Rojo
+Index=1168
+
+[Obj30] ' Flecha De Heken
+Index=1313
+
+[Obj31] ' Flecha De Isis
+Index=1314
+
+[Obj32] ' Flecha Envenenada
+Index=1315
+
+[Obj33] ' Fragata
+Index=1983
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,14 @@
+[Mapa9]
+Name=Bosque élfico
+MusicNum=44
+StartPos=0-0-0
+Restringir=No
+Terreno=NIEVE
+Zona=CAMPO
+BackUp= 1
+MagiaSinefecto=0
+NoEncriptarMP=0
+Pk=0
+InviSinEfecto=0
+ResuSinEfecto=0
+SeCaenItems=1

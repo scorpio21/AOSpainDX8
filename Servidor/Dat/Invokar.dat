@@ -1,0 +1,620 @@
+'#################### LISTA DE SPAWN #############################
+[INIT]
+NumNPCs=205
+
+
+[LIST]
+NI1=500
+NN1=Murcielago
+
+NI2=501
+NN2=Lobo
+
+NI3=502
+NN3=Zombie
+
+NI4=503
+NN4=Esqueleto
+
+NI5=504
+NN5=Serpiente cobra
+
+NI6=505
+NN6=Goblin
+
+NI7=506
+NN7=Gallo Salvaje
+
+NI8=507
+NN8=Zombi
+
+NI9=508
+NN9=Esqueleto Guerrero
+
+NI10=509
+NN10=Dragon rojo
+
+NI11=510
+NN11=Araña gigante
+
+NI12=511
+NN12=Murcielago
+
+NI13=512
+NN13=Lobo
+
+NI14=513
+NN14=Zombie
+
+NI15=514
+NN15=Esqueleto
+
+NI16=515
+NN16=Serpiente cobra
+
+NI17=516
+NN17=Goblin
+
+NI18=517
+NN18=Gallo salvaje
+
+NI19=518
+NN19=Lord Zombie
+
+NI20=519
+NN20=Esqueleto Guerrero
+
+NI21=520
+NN21=Dragon rojo
+
+NI22=521
+NN22=Araña gigante
+
+NI23=522
+NN23=Orco
+
+NI24=523
+NN24=Orco
+
+NI25=524
+NN25=Jefe Orco
+
+NI26=525
+NN26=Aguila
+
+NI27=526
+NN27=Araña gigante (Llave)
+
+NI28=527
+NN28=Dragon rojo (llave)
+
+NI29=528
+NN29=Araña gigante
+
+NI30=529
+NN30=Escorpion
+
+NI31=530
+NN31=Bandido
+
+NI32=531
+NN32=Caballero klox
+
+NI33=532
+NN33=Aguila
+
+NI34=533
+NN34=Cuervo
+
+NI35=534
+NN35=Hormiga Gigante
+
+NI36=535
+NN36=Hormiga
+
+NI37=536
+NN37=Rata Gigante
+
+NI38=537
+NN38=Beholder
+
+NI39=538
+NN39=Oso pardo
+
+NI40=539
+NN40=Tortuga gigante
+
+NI41=540
+NN41=Duende
+
+NI42=541
+NN42=Ogro
+
+NI43=542
+NN43=Gran Dragón Rojo
+
+NI44=543
+NN44=Demonio
+
+NI45=544
+NN45=Lobo (no domable)
+
+NI46=545
+NN46=Lobo magico (NO DEJA PIEL)
+
+NI47=546
+NN47=Zombie magico (NO DEJA ORO)
+
+NI48=547
+NN48=Dragon Rojo magico (NO DEJA ORO)
+
+NI49=548
+NN49=Leviatán
+
+NI50=609
+NN50=Tiburon
+
+NI51=610
+NN51=Gran Dragón Rojo Alas Lilas
+
+NI52=549
+NN52=Orco brujo
+
+NI53=550
+NN53=Bruja
+
+NI54=551
+NN54=Mago malvado
+
+NI55=552
+NN55=Golem
+
+NI56=553
+NN56=Medusa
+
+NI57=554
+NN57=Liche
+
+NI58=555
+NN58=Lord Orco
+
+NI59=556
+NN59=Quark
+
+NI60=557
+NN60=Jabalí Salvaje
+
+NI61=558
+NN61=Dark Anubis
+
+NI62=559
+NN62=Dark Adonis
+
+NI63=560
+NN63=Dark Osiris
+
+NI64=561
+NN64=Dark Efestos
+
+NI65=562
+NN65=Dark Heken
+
+NI66=563
+NN66=Goblin NO RESPAWN
+
+NI67=564
+NN67=Escorpion NO RESPAWN
+
+NI68=565
+NN68=Serpiente cobra NO RESPAWN
+
+NI69=566
+NN69=Murcielago NO RESPAWN
+
+NI70=567
+NN70=Golem de Oro
+
+NI71=568
+NN71=Gran Dragón Negro
+
+NI72=569
+NN72=Aladino Azul
+
+NI73=570
+NN73=Golem de Cristal
+
+NI74=571
+NN74=Ogro Gordo
+
+NI75=572
+NN75=Fango
+
+NI76=573
+NN76=Ciclope
+
+NI77=574
+NN77=Momia
+
+NI78=575
+NN78=Mago Invisible
+
+NI79=576
+NN79=Fantasma
+
+NI80=577
+NN80=Aladino Verde
+
+NI81=578
+NN81=Aladino Marron
+
+NI82=579
+NN82=Ogro Mendigo
+
+NI83=580
+NN83=Lobo Solitario
+
+NI84=581
+NN84=Devastador
+
+NI85=582
+NN85=Demonio Gigante
+
+NI86=583
+NN86=Arbol Gigante
+
+NI87=584
+NN87=Thorn
+
+NI88=585
+NN88=Calamar
+
+NI89=586
+NN89=Yeti oscuro
+
+NI90=587
+NN90=hada
+
+NI91=588
+NN91=Golem de Bronce
+
+NI92=589
+NN92=Golem de lava
+
+NI93=590
+NN93=Rey Escorpion Sagrado
+
+NI94=591
+NN94=Anaconda
+
+NI95=592
+NN95=diablilla
+
+NI96=593
+NN96=Brujo
+
+NI97=594
+NN97=Demonio
+
+NI98=595
+NN98=piraña
+
+NI99=596
+NN99=Gran Dragón azul
+
+NI100=597
+NN100=Gran Dragón Naranja
+
+NI101=598
+NN101=Gran Dragón Verde
+
+NI102=599
+NN102=Gran Dragón Lila
+
+NI103=600
+NN103=Caballo Salvaje
+
+NI104=601
+NN104=Servidor Beholder
+
+NI105=602
+NN105=Ogro Luchador
+
+NI106=603
+NN106=Gran Dragón Blanco
+
+NI107=604
+NN107=Demonio Ferozillo
+
+NI108=605
+NN108=Roble Elfico
+
+NI109=606
+NN109=Pino Elfico
+
+NI110=607
+NN110=Sauce Elfico
+
+NI111=608
+NN111=Olmo Elfico
+
+NI112=611
+NN112=Golem azul del Pantano
+
+NI113=612
+NN113=Fenix
+
+NI114=613
+NN114=Planta Carnivora
+
+NI115=614
+NN115=Gusano Pantano
+
+NI116=615
+NN116=Gran dragón rojo
+
+NI117=616
+NN117=Dark Helios
+
+NI118=617
+NN118=Dark Isis
+
+NI119=618
+NN119=Elemental de Agua
+
+NI120=619
+NN120=Elemental de Fuego
+
+NI121=620
+NN121=Elemental de Tierra
+
+NI122=621
+NN122=Vaca Loca
+
+NI123=622
+NN123=Gran Dragón Rojo Sagrado
+
+NI124=623
+NN124=Yeti Sagrado Oscuro
+
+NI125=624
+NN125=Servidor Beholder De Lava
+
+NI126=625
+NN126=Lobo polar
+
+NI127=626
+NN127=Lobo polar asesino
+
+NI128=627
+NN128=Beholder de Hielo
+
+NI129=628
+NN129=oso polar
+
+NI130=629
+NN130=yeti
+
+NI131=630
+NN131=yeti Sagrado
+
+NI132=631
+NN132=Minotauro
+
+NI133=632
+NN133=Esfinge
+
+NI134=633
+NN134=Sirena
+
+NI135=634
+NN135=Hombre de las nieves
+
+NI136=635
+NN136=Cleopatra Sagrada
+
+NI137=636
+NN137=Hada Elfica Sagrada
+
+NI138=637
+NN138=Guardia del Caos
+
+NI139=638
+NN139=Pingüino
+
+NI140=639
+NN140=Anubis Sagrado
+
+NI141=640
+NN141=Tiburon Blanco Sagrado
+
+NI142=641
+NN142=Pirata Malvado
+
+NI143=642
+NN143=Guerrero Esqueleto
+
+NI144=643
+NN144=Novio amargado
+
+NI145=644
+NN145=Novia amargada
+
+NI146=645
+NN146=Viuda Negra
+
+NI147=646
+NN147=Sirena
+
+NI148=647
+NN148=Tuareg
+
+NI149=648
+NN149=Nomada Del desierto
+
+NI150=649
+NN150=Tuareg
+
+NI151=650
+NN151=Viuda Celeste
+
+NI152=651
+NN152=Viuda Verde
+
+NI153=652
+NN153=Viuda Azul
+
+NI154=653
+NN154=Viuda lila
+
+NI155=654
+NN155=Viuda Roja
+
+NI156=655
+NN156=Viuda Amarilla
+
+NI157=656
+NN157=Tigre de bengala
+
+NI158=657
+NN158=Rey del Castillo
+
+NI159=658
+NN159=Mago Invisible del Rey
+
+NI160=659
+NN160=Araña gigante del Rey
+
+NI161=660
+NN161=Devastador del Rey
+
+NI162=661
+NN162=Demonio de Fuego Invocacion
+
+NI163=662
+NN163=Nosferatu
+
+NI164=663
+NN164=Defensor Fortaleza
+
+NI165=664
+NN165=Tornado
+
+NI166=665
+NN166=Caballo Unicornio(no Sacar)
+
+NI167=666
+NN167=Caballo Negro(no Sacar)
+
+NI168=667
+NN168=Tigre Blanco(no Sacar)
+
+NI169=668
+NN169=Elefante(no Sacar)
+
+NI170=669
+NN170=Dragón Dorado(no Sacar)
+
+NI171=670
+NN171=Araña gigante Color
+
+NI172=671
+NN172=Golum
+
+NI173=672
+NN173=Dragon Alado
+
+NI174=673
+NN174=Troll Sangriento
+
+NI175=674
+NN175=Señor De La Oscuridad
+
+NI176=675
+NN176=Diablillo
+
+NI177=676
+NN177=Guardian del tesoro
+
+NI178=677
+NN178=Cobra oscura
+
+NI179=678
+NN179=Escorpion del desierto
+
+NI180=679
+NN180=Conejo de campo
+
+NI181=680
+NN181=Hombre Lobo
+
+NI182=681
+NN182=Hada Elfica
+
+NI183=682
+NN183=Barco fantasma
+
+NI184=683
+NN184=Bestia de las Mazmorras
+
+NI185=684
+NN185=Bestia Infernal
+
+NI186=685
+NN186=Araña Sarnosa
+
+NI187=686
+NN187=Tarantula Asesina
+
+NI188=687
+NN188=Espiritu
+
+NI189=688
+NN189=Ent
+
+NI190=689
+NN190=Pulpo Marina
+
+NI191=690
+NN191=Pirata
+
+NI192=691
+NN192=Alma Infernal
+
+NI193=692
+NN193=Nosferatum
+
+NI194=693
+NN194=Elemental Templario
+
+NI195=694
+NN195=Aragleas
+
+NI196=695
+NN196=Pirata
+
+NI197=696
+NN197=Viuda Oscura
+
+NI198=697
+NN198=balon prisionero
+
+NI199=698
+NN199=Fragata Pirata
+
+NI200=699
+NN200=Fragata Reforzada Pirata
+
+NI201=700
+NN201=Fragata de Guerra Pirata
+
+NI202=701
+NN202=Fragata Fantasmal Pirata
+
+NI203=702
+NN203=Héroe Guardián
+
+NI204=703
+NN204=Devorador
+
+NI205=704
+NN205=Devorador Canino
