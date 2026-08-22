@@ -170,7 +170,7 @@ On Error GoTo errhandler
     Dim surface_desc As D3DSURFACE_DESC
     Dim texture_info As D3DXIMAGE_INFO
     Dim InfoHead As INFOHEADER
-    Dim buffer() As Byte
+    Dim Buffer() As Byte
    
     With newSurface
         .fileIndex = fileIndex
@@ -185,18 +185,30 @@ On Error GoTo errhandler
             Open App.Path & "\Graficos\" & fileIndex & ".bmp" For Binary As #FileNum
                 FileSize = LOF(FileNum)
                 If FileSize > 0 Then
-                    ReDim buffer(0 To FileSize - 1)
-                    Get #FileNum, , buffer
-                    Set .Surface = DirectD3D.CreateTextureFromFileInMemoryEx(DirectDevice, buffer(0), FileSize, _
+                    ReDim Buffer(0 To FileSize - 1)
+                    Get #FileNum, , Buffer
+                    Set .Surface = DirectD3D.CreateTextureFromFileInMemoryEx(DirectDevice, Buffer(0), FileSize, _
                             D3DX_DEFAULT, D3DX_DEFAULT, 3, 0, D3DFMT_A8R8G8B8, D3DPOOL_MANAGED, D3DX_FILTER_NONE, _
                             D3DX_FILTER_NONE, &HFF000000, texture_info, ByVal 0)
-                    Erase buffer
+                    If LogsEnabled And Log_Inventario Then
+                            LogLimited "Inventario_Texture.log", _
+                            "LOAD TEXTURE FileIndex=" & fileIndex & _
+                            " BMP=" & App.Path & "\Graficos\" & fileIndex & ".bmp" & _
+                            " Size=" & FileSize & _
+                            " DX8=" & texture_info.Width & "x" & texture_info.Height, 100
+                    End If
+                    Erase Buffer
                 End If
             Close #FileNum
         End If
 
         .Surface.GetLevelDesc 0, surface_desc
-       
+       If LogsEnabled And Log_Inventario Then
+            LogLimited "Inventario_Texture.log", _
+            "TEXTURE FileIndex=" & fileIndex & _
+            " DX8Width=" & surface_desc.Width & _
+            " DX8Height=" & surface_desc.Height, 100
+        End If
     End With
    
     'Insert surface to the list

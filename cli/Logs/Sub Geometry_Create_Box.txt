@@ -1,0 +1,104 @@
+Public Sub Geometry_Create_Box(ByRef verts() As TLVERTEX, ByRef dest As RECT, ByRef src As RECT, ByRef rgb_list() As Long, _
+                                Optional ByRef Textures_Width As Long, Optional ByRef Textures_Height As Long, Optional ByVal Angle As Single)
+'**************************************************************
+'Author: Aaron Perkins
+'Modified by Juan Martin Sotuyo Dodero
+'Last Modify Date: 11/17/2002
+'
+' * v1      * v3
+' |\        |
+' |  \      |
+' |    \    |
+' |      \  |
+' |        \|
+' * v0      * v2
+'**************************************************************
+    Dim x_center As Single
+    Dim y_center As Single
+    Dim radius As Single
+    Dim x_Cor As Single
+    Dim y_Cor As Single
+    Dim left_point As Single
+    Dim right_point As Single
+    Dim temp As Single
+    
+    If Angle > 0 Then
+        'Center coordinates on screen of the square
+        x_center = dest.Left + (dest.Right - dest.Left) / 2
+        y_center = dest.Top + (dest.Bottom - dest.Top) / 2
+        
+        'Calculate radius
+        radius = Sqr((dest.Right - x_center) ^ 2 + (dest.Bottom - y_center) ^ 2)
+        
+        'Calculate left and right points
+        temp = (dest.Right - x_center) / radius
+        right_point = Atn(temp / Sqr(-temp * temp + 1))
+        left_point = 3.1459 - right_point
+    End If
+    
+    'Calculate screen coordinates of sprite, and only rotate if necessary
+    If Angle = 0 Then
+        x_Cor = dest.Left
+        y_Cor = dest.Bottom
+    Else
+        x_Cor = x_center + Cos(-left_point - Angle) * radius
+        y_Cor = y_center - Sin(-left_point - Angle) * radius
+    End If
+    
+    
+    '0 - Bottom left vertex
+    If Textures_Width Or Textures_Height Then
+        verts(2) = Geometry_Create_TLVertex(x_Cor, y_Cor, 0, 1, rgb_list(0), 0, src.Left / Textures_Width + 0.001, (src.Bottom + 1) / Textures_Height)
+    Else
+        verts(2) = Geometry_Create_TLVertex(x_Cor, y_Cor, 0, 1, rgb_list(0), 0, 0, 0)
+    End If
+    'Calculate screen coordinates of sprite, and only rotate if necessary
+    If Angle = 0 Then
+        x_Cor = dest.Left
+        y_Cor = dest.Top
+    Else
+        x_Cor = x_center + Cos(left_point - Angle) * radius
+        y_Cor = y_center - Sin(left_point - Angle) * radius
+    End If
+    
+    
+    '1 - Top left vertex
+    If Textures_Width Or Textures_Height Then
+        verts(0) = Geometry_Create_TLVertex(x_Cor, y_Cor, 0, 1, rgb_list(1), 0, src.Left / Textures_Width + 0.001, src.Top / Textures_Height + 0.001)
+    Else
+        verts(0) = Geometry_Create_TLVertex(x_Cor, y_Cor, 0, 1, rgb_list(1), 0, 0, 1)
+    End If
+    'Calculate screen coordinates of sprite, and only rotate if necessary
+    If Angle = 0 Then
+        x_Cor = dest.Right
+        y_Cor = dest.Bottom
+    Else
+        x_Cor = x_center + Cos(-right_point - Angle) * radius
+        y_Cor = y_center - Sin(-right_point - Angle) * radius
+    End If
+    
+    
+    '2 - Bottom right vertex
+    If Textures_Width Or Textures_Height Then
+        verts(3) = Geometry_Create_TLVertex(x_Cor, y_Cor, 0, 1, rgb_list(2), 0, (src.Right + 1) / Textures_Width, (src.Bottom + 1) / Textures_Height)
+    Else
+        verts(3) = Geometry_Create_TLVertex(x_Cor, y_Cor, 0, 1, rgb_list(2), 0, 1, 0)
+    End If
+    'Calculate screen coordinates of sprite, and only rotate if necessary
+    If Angle = 0 Then
+        x_Cor = dest.Right
+        y_Cor = dest.Top
+    Else
+        x_Cor = x_center + Cos(right_point - Angle) * radius
+        y_Cor = y_center - Sin(right_point - Angle) * radius
+    End If
+    
+    
+    '3 - Top right vertex
+    If Textures_Width Or Textures_Height Then
+        verts(1) = Geometry_Create_TLVertex(x_Cor, y_Cor, 0, 1, rgb_list(3), 0, (src.Right + 1) / Textures_Width, src.Top / Textures_Height + 0.001)
+    Else
+        verts(1) = Geometry_Create_TLVertex(x_Cor, y_Cor, 0, 1, rgb_list(3), 0, 1, 1)
+    End If
+
+End Sub

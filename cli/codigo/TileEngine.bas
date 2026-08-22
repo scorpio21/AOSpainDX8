@@ -159,7 +159,7 @@ Public Type char
     
     Criminal As Byte
     
-    Nombre As String
+    nombre As String
     ClanName As String
     PartyId As Integer
     NPCtype As Integer
@@ -616,7 +616,7 @@ Sub ResetCharInfo(ByVal CharIndex As Integer)
         .invisible = False
         .Moving = 0
         .Muerto = False
-        .Nombre = ""
+        .nombre = ""
         .PartyId = 0
         .pie = False
         .Pos.X = 0
@@ -1830,9 +1830,9 @@ Private Sub CharRender(ByVal CharIndex As Long, ByVal PixelOffsetX As Integer, B
         If .invisible = False Then
             'Dibujamos el nombre debajo de la cabeza.
             If Opciones.NamePlayers Then
-                If Len(.Nombre) > 0 Then
-                    Pos = InStr(.Nombre, "<")
-                    If Pos = 0 Then Pos = Len(.Nombre) + 2
+                If Len(.nombre) > 0 Then
+                    Pos = InStr(.nombre, "<")
+                    If Pos = 0 Then Pos = Len(.nombre) + 2
                             
                     If .priv = 0 Then
                         Select Case .Criminal
@@ -1852,7 +1852,7 @@ Private Sub CharRender(ByVal CharIndex As Long, ByVal PixelOffsetX As Integer, B
                     End If
                             
                     'Nick
-                    line = .Nombre
+                    line = .nombre
                     Call Texto.Engine_Text_Draw(PixelOffsetX + 15, PixelOffsetY + 30, line, Color, , True)
                             
                     If Not .ClanName = "" Then
@@ -2112,17 +2112,17 @@ On Error GoTo Error
         End If
         
         If LogsEnabled And Log_Inventario Then
-    LogLimited "Inventario_Render.log", _
-        "Grh=" & Grh.GrhIndex & _
-        " Frame=" & CurrentGrhIndex & _
-        " FileNum=" & .FileNum & _
-        " SX=" & .sx & _
-        " SY=" & .sy & _
-        " W=" & .pixelWidth & _
-        " H=" & .pixelHeight & _
-        " X=" & X & _
-        " Y=" & Y, 100
-End If
+            LogLimited "Inventario_Render.log", _
+            "Grh=" & Grh.GrhIndex & _
+            " Frame=" & CurrentGrhIndex & _
+            " FileNum=" & .FileNum & _
+            " SX=" & .sx & _
+            " SY=" & .sy & _
+            " W=" & .pixelWidth & _
+            " H=" & .pixelHeight & _
+            " X=" & X & _
+            " Y=" & Y, 100
+        End If
         'Draw
         Call Device_Textured_Render(X, Y, SurfaceDB.Surface(.FileNum), SourceRect, Light)
     End With
@@ -2614,6 +2614,16 @@ Public Sub Device_Textured_Render(ByVal X As Integer, ByVal Y As Integer, ByVal 
     texheight = srdesc.Height
     
     If LogsEnabled And Log_Inventario Then
+        LogLimited "Inventario_Texture.log", _
+            "TEXTURE: X=" & X & _
+            " Y=" & Y & _
+            " SRC=" & src_rect.Left & "," & src_rect.Top & _
+            " -> " & src_rect.Right & "," & src_rect.Bottom & _
+            " SIZE=" & (src_rect.Right - src_rect.Left) & "x" & _
+                  (src_rect.Bottom - src_rect.Top) & _
+            " TEX=" & texwidth & "x" & texheight, 100
+    End If
+    If LogsEnabled And Log_Inventario Then
     
     LogLimited "Inventario_Texture.log", _
         "X=" & X & _
@@ -2625,7 +2635,35 @@ Public Sub Device_Textured_Render(ByVal X As Integer, ByVal Y As Integer, ByVal 
     End If
     
     Geometry_Create_Box temp_verts(), dest_rect, src_rect, light_value(), texwidth, texheight, Angle
-    
+    If LogsEnabled And Log_Inventario Then
+    LogLimited "Inventario_Vertex.log", _
+        "V0 X=" & temp_verts(0).X & _
+        " Y=" & temp_verts(0).Y & _
+        " TU=" & temp_verts(0).tu & _
+        " TV=" & temp_verts(0).tv & _
+        " COLOR=" & temp_verts(0).Color, 100
+
+    LogLimited "Inventario_Vertex.log", _
+        "V1 X=" & temp_verts(1).X & _
+        " Y=" & temp_verts(1).Y & _
+        " TU=" & temp_verts(1).tu & _
+        " TV=" & temp_verts(1).tv & _
+        " COLOR=" & temp_verts(1).Color, 100
+
+    LogLimited "Inventario_Vertex.log", _
+        "V2 X=" & temp_verts(2).X & _
+        " Y=" & temp_verts(2).Y & _
+        " TU=" & temp_verts(2).tu & _
+        " TV=" & temp_verts(2).tv & _
+        " COLOR=" & temp_verts(2).Color, 100
+
+    LogLimited "Inventario_Vertex.log", _
+        "V3 X=" & temp_verts(3).X & _
+        " Y=" & temp_verts(3).Y & _
+        " TU=" & temp_verts(3).tu & _
+        " TV=" & temp_verts(3).tv & _
+        " COLOR=" & temp_verts(3).Color, 100
+End If
     DirectDevice.SetTexture 0, Texture
     
     If Alpha Then
